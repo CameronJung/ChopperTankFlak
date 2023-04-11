@@ -11,12 +11,14 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     [SerializeField] private SpriteRenderer[] colourableSprites;
 
-    [SerializeField] private int mobility = 5;
+    [SerializeField] public int mobility { get; protected set; } = 5;
 
     [SerializeField] private string unitName;
     [TextArea][SerializeField] private string unitDescription;
 
     private Tilemap map;
+
+    public Vector3Int myTilePos { get; protected set; }
 
     // Start is called before the first frame update
     void Start()
@@ -62,9 +64,9 @@ public abstract class Unit : MonoBehaviour, ISelectable
     protected void PutOnBoard()
     {
         map = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<Tilemap>();
-        Vector3Int tileCoord = map.WorldToCell(gameObject.transform.position);
-        map.GetInstantiatedObject(tileCoord).GetComponent<HexOverlay>().SetOccupiedBy(this);
-        transform.position = map.GetCellCenterWorld(tileCoord);
+        myTilePos = map.WorldToCell(gameObject.transform.position);
+        map.GetInstantiatedObject(myTilePos).GetComponent<HexOverlay>().SetOccupiedBy(this);
+        transform.position = map.GetCellCenterWorld(myTilePos);
     }
 
     public string GetTitle()
@@ -74,5 +76,19 @@ public abstract class Unit : MonoBehaviour, ISelectable
     public string GetDescription()
     {
         return unitDescription;
+    }
+
+    public List<HexOverlay> OnSelected()
+    {
+        //This method is only relavent for the player's units
+        if(this.allegiance == UniversalConstants.Faction.PlayerTeam)
+        {
+            return map.GetInstantiatedObject(this.myTilePos).GetComponent<HexOverlay>().BeginExploration(this);
+        }
+        else
+        {
+            //return an empty list
+            return new List<HexOverlay>();
+        }
     }
 }

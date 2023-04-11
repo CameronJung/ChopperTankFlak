@@ -11,6 +11,10 @@ public class ClickHandler : MonoBehaviour
     [SerializeField] private Camera cam;
     [SerializeField] private ReconPanel recon;
     [SerializeField] private GameObject cursor;
+    [SerializeField] private SelectionManager selecter;
+
+    //Initialized with a nonsense coordinates
+    private Vector3Int selectionPos = new Vector3Int(0,0,100);
     
     // Start is called before the first frame update
     void Start()
@@ -26,28 +30,18 @@ public class ClickHandler : MonoBehaviour
             
             Vector3 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
             Vector3Int tilePos = gameBoard.WorldToCell(mousePos);
+            
             tilePos.z = 0;
 
-            Debug.Log("Mouse Clicked on hex at: " + tilePos);
-            HexOverlay hex = map.GetInstantiatedObject(tilePos).GetComponent<HexOverlay>();
+            selecter.HandleNewSelection(tilePos);
 
-
-            if(hex.GetOccupiedBy() != null)
-            {
-                recon.DisplayIntelAbout(hex.GetOccupiedBy());
-            }
-            else
-            {
-                recon.DisplayIntelAbout(map.GetTile<TerrainTile>(tilePos));
-            }
-            cursor.SetActive(true);
-            cursor.transform.position = map.CellToWorld(tilePos);
+            
             
         }
         else if (Input.GetMouseButtonDown(1))
         {
-            cursor.SetActive(false);
-            recon.DisplayNone();
+            selecter.HandleDeselect();
+            
         }
     }
 

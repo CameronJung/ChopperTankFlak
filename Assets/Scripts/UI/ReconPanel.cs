@@ -11,6 +11,10 @@ public class ReconPanel : MonoBehaviour
     private string noTitle;
     private string noInfo;
 
+    public bool hasSelection { get; private set; } = false;
+    public bool unitSelected { get; private set; } = false;
+    private Vector3Int selectedTile;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -30,7 +34,7 @@ public class ReconPanel : MonoBehaviour
         descriptionText.text = info;
     }
 
-    public void DisplayIntelAbout(Object subject)
+    public void DisplayIntelAbout(Object subject, Vector3Int tilePos)
     {
         if(subject is ISelectable)
         {
@@ -38,6 +42,7 @@ public class ReconPanel : MonoBehaviour
             titleText.text = selectable.GetTitle();
             descriptionText.text = selectable.GetDescription();
         }
+        unitSelected = subject is Unit;
         
     }
 
