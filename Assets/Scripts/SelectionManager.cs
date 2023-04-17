@@ -8,6 +8,7 @@ public class SelectionManager : MonoBehaviour
     [SerializeField] private Tilemap map;
     [SerializeField] private ReconPanel recon;
     [SerializeField] private GameObject cursor;
+    [SerializeField] private CommandTracer commander;
 
     public Unit selectedUnit { get; private set; }
 
@@ -29,19 +30,21 @@ public class SelectionManager : MonoBehaviour
 
     public void HandleNewSelection(Vector3Int tilePos)
     {
-        Debug.Log("Mouse Clicked on hex at: " + tilePos + " distance from unit was: " + map.GetInstantiatedObject(tilePos).GetComponent<HexOverlay>().distanceFrom);
+        
 
         HexOverlay hex = map.GetInstantiatedObject(tilePos).GetComponent<HexOverlay>();
+        Debug.Log("Mouse Clicked on hex at: " + tilePos + " distance from unit was: " + hex.distanceFrom);
+
 
         if (tilePos == selectedPos)
         {
             //If we have clicked on the same tile display the other type of data
-            if (recon.unitSelected)
+            if (selectedUnit != null)
             {
                 HandleUnitDeselected();
                 recon.DisplayIntelAbout(map.GetTile<TerrainTile>(tilePos), tilePos);
             }
-            else
+            else if(hex.GetOccupiedBy() != null)
             {
                 HandleUnitSelected();
                 recon.DisplayIntelAbout(hex.GetOccupiedBy(), tilePos);
@@ -80,10 +83,12 @@ public class SelectionManager : MonoBehaviour
     {
         selectedUnit = map.GetInstantiatedObject(selectedPos).GetComponent<HexOverlay>().GetOccupiedBy();
         affectedHexes = selectedUnit.OnSelected();
+        commander.StartDrawingCommand(selectedUnit);
     }
 
     private void HandleUnitDeselected()
     {
+        commander.StopDrawingCommand();
         //reset tiles
         foreach(HexOverlay hex in affectedHexes)
         {
@@ -92,5 +97,9 @@ public class SelectionManager : MonoBehaviour
         selectedUnit = null;
     }
 
+    public bool IsUnitSelected()
+    {
+        return selectedUnit != null;
+    }
     
 }

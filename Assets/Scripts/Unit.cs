@@ -7,16 +7,42 @@ using static UniversalConstants;
 public abstract class Unit : MonoBehaviour, ISelectable
 {
 
+    protected const int MAXFRAMESPERACTION = 60;
+    
+
     [SerializeField] protected Faction allegiance = Faction.PlayerTeam;
 
     [SerializeField] private SpriteRenderer[] colourableSprites;
 
+    [SerializeField] protected GameObject availSprite;
+
+    //This is the sprite all other sprites making up the unit are parented to
+    [SerializeField] protected GameObject baseSprite;
+
     [SerializeField] public int mobility { get; protected set; } = 5;
 
     [SerializeField] private string unitName;
+
     [TextArea][SerializeField] private string unitDescription;
 
+    
+
     private Tilemap map;
+    private GameManager manager;
+
+    protected Stack<Order> orders = new Stack<Order>();
+
+    protected float speed = 12.0f;
+    protected float turnSpeed = 225.0f;
+
+    protected Order currOrder = null;
+    protected bool orderComplete = false;
+    protected bool executingOrders = false;
+    protected bool ordersComplete = false;
+
+    protected IEnumerator execution;
+
+    public bool hasAlreadyMadeAction { get; protected set; } = false;
 
     public Vector3Int myTilePos { get; protected set; }
 
@@ -44,6 +70,14 @@ public abstract class Unit : MonoBehaviour, ISelectable
     public abstract void BeEngaged(Unit assailant);
 
 
+    protected void die()
+    {
+        HexOverlay hex = map.GetInstantiatedObject(myTilePos).GetComponent<HexOverlay>();
+        hex.SetOccupiedBy(null);
+        Destroy(gameObject);
+    }
+
+
     public Faction GetAllegiance()
     {
         return allegiance;
@@ -69,19 +103,22 @@ public abstract class Unit : MonoBehaviour, ISelectable
         transform.position = map.GetCellCenterWorld(myTilePos);
     }
 
-    public string GetTitle()
+    //called by Start, this method initializes the manager property and adds the unit to the manager's unit list
+    protected void Enlist()
     {
-        return unitName;
+        manager = GameObject.Find(MANAGERPATH).GetComponent<GameManager>();
+        manager.Recruit(this);
     }
-    public string GetDescription()
-    {
-        return unitDescription;
-    }
+
+
+
+
+
 
     public List<HexOverlay> OnSelected()
     {
         //This method is only relavent for the player's units
-        if(this.allegiance == UniversalConstants.Faction.PlayerTeam)
+        if(this.allegiance == UniversalConstants.Faction.PlayerTeam && !this.hasAlreadyMadeAction)
         {
             return map.GetInstantiatedObject(this.myTilePos).GetComponent<HexOverlay>().BeginExploration(this);
         }
@@ -91,4 +128,176 @@ public abstract class Unit : MonoBehaviour, ISelectable
             return new List<HexOverlay>();
         }
     }
+
+    public void RecieveOrders(Stack<Order> commands)
+    {
+        Debug.Log("Orders Recieved");
+        this.orders = commands;
+    }
+
+    public IEnumerator ExecuteMoveOrder(Vector3 origin, Vector3 destination)
+    {
+        Vector3 direction = destination - origin;
+        float travel = this.speed * Time.deltaTime;
+        WaitForFixedUpdate wait = new WaitForFixedUpdate();
+
+        int count = 1;
+
+        //If we can make it to the destination this frame we just set our location instead
+        while((travel * travel) <= (destination - gameObject.transform.position).sqrMagnitude && count < MAXFRAMESPERACTION)
+        {
+            gameObject.transform.position += direction.normalized * travel;
+
+            //We only rotate the base sprite so the availSprite remains aligned with the grid
+            Vector3 angles = baseSprite.transform.eulerAngles;
+            angles.z = Vector3.SignedAngle(Vector3.right, direction, Vector3.forward);
+            baseSprite.transform.eulerAngles = angles;
+
+            yield return wait;
+            direction = destination - transform.position;
+            travel = this.speed * Time.deltaTime;
+            count++;
+        }
+
+        if (count >= MAXFRAMESPERACTION)
+        {
+            Debug.Log("!ERROR! Move order completed through exceeding maximum frame tolerance");
+        }
+
+        //Debug.Log("Unit moving to position");
+        gameObject.transform.position = destination;
+        orderComplete = true;
+        yield return null;
+    }
+
+
+    //This is a default implementation viable as a replacement
+    public IEnumerator ExecuteAttackOrder(Vector3 origin, Vector3 destination)
+    {
+        Vector3 displacement = destination - origin;
+        Vector3 heading = baseSprite.transform.eulerAngles;
+        float turnBy = Time.deltaTime * this.turnSpeed;
+        float bearing = Vector3.SignedAngle(Vector3.right, displacement, Vector3.forward);
+        WaitForFixedUpdate wait = new WaitForFixedUpdate();
+
+
+
+        if (bearing < 0)
+        {
+            bearing += 360;
+        }
+
+        float direction = Vector3.SignedAngle(baseSprite.transform.TransformDirection(Vector3.right), displacement, Vector3.forward);
+
+        direction = Mathf.Sign(direction);
+
+        int count = 1;
+
+        //Debug.Log("Target is at a bearing of: " + bearing + " radians");
+        while((turnBy < Mathf.Abs(heading.z - bearing)) && count < MAXFRAMESPERACTION)
+        {
+            baseSprite.transform.Rotate(Vector3.forward, direction * turnBy);
+            yield return wait;
+            turnBy = Time.deltaTime * this.turnSpeed;
+            heading = baseSprite.transform.eulerAngles;
+            count++;
+        }
+
+        if(count >= MAXFRAMESPERACTION)
+        {
+            Debug.Log("!ERROR! Attack order completed through exceeding maximum frame tolerance");
+        }
+
+        baseSprite.transform.eulerAngles = new Vector3(0, 0, bearing);
+
+        orderComplete = true;
+        yield return null;
+        
+    }
+
+
+    protected void FollowOrders()
+    {
+        
+        if (orders.Count > 0 || currOrder != null)
+        {
+            availSprite.SetActive(false);
+            executingOrders = true;
+            //There are orders to follow
+            if(currOrder == null)
+            {
+                currOrder = orders.Pop();
+                execution = currOrder.Execute();
+                StartCoroutine(execution);
+            }
+            
+
+            
+            if (orderComplete)
+            {
+                currOrder = null;
+                orderComplete = false;
+            }
+            
+        }
+        else if (executingOrders)
+        {
+            executingOrders = false;
+            FinalizeAction();
+        }
+    }
+
+    //This method updates this units data to reflect changes made when an action was performed
+    protected void FinalizeAction()
+    {
+        hasAlreadyMadeAction = true;
+        this.FinalizeMovement();
+
+        //Temporary Delete line below later
+        Revitalize();
+
+    }
+
+
+    //After the unit moves update the game board to reflect that
+    protected void FinalizeMovement()
+    {
+        Debug.Log("Action Completed");
+
+        Vector3Int from = myTilePos;
+
+        map.GetInstantiatedObject(myTilePos).GetComponent<HexOverlay>().SetOccupiedBy(null);
+        myTilePos = map.WorldToCell(gameObject.transform.position);
+        map.GetInstantiatedObject(myTilePos).GetComponent<HexOverlay>().SetOccupiedBy(this);
+
+        Debug.Log("The claim that the tiles are the same is: " + (from == myTilePos));
+
+        transform.position = map.GetCellCenterWorld(myTilePos);
+    }
+
+
+
+    //This method sets the unit as being ready to move this
+    public void Revitalize()
+    {
+        this.hasAlreadyMadeAction = false;
+        availSprite.SetActive(this.allegiance == Faction.PlayerTeam);
+    }
+
+
+  
+
+
+
+
+    public string GetTitle()
+    {
+        return unitName;
+    }
+    public string GetDescription()
+    {
+        return unitDescription;
+    }
+
+
 }

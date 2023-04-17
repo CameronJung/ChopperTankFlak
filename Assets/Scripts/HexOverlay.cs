@@ -10,13 +10,15 @@ public class HexOverlay : MonoBehaviour
     [SerializeField] private Unit occupiedBy { get; set; }
     public bool hasUnit = false;
 
-    [SerializeField] private GameObject availSprite;
     [SerializeField] private GameObject combatSprite;
     [SerializeField] private GameObject moveSprite;
 
     private TerrainTile myTile;
     private Tilemap map;
     private Vector3Int myCoords;
+
+    //Represents the state of the hexagaon in a single property
+    public HexState currState { get; private set; } = HexState.unreachable;
 
     private List<HexOverlay> adjacent;
 
@@ -86,7 +88,6 @@ public class HexOverlay : MonoBehaviour
     public void SetOccupiedBy(Unit unit)
     {
         hasUnit = unit != null;
-        availSprite.SetActive(unit.GetAllegiance() == Faction.PlayerTeam);
         this.occupiedBy = unit;
     }
 
@@ -95,9 +96,9 @@ public class HexOverlay : MonoBehaviour
     {
         visited = false;
         distanceFrom = -1;
-        availSprite.SetActive(false);
         combatSprite.SetActive(false);
         moveSprite.SetActive(false);
+        currState = HexState.unreachable;
     }
 
     //Find what there is to do, return bool if this tile can be traversed
@@ -113,11 +114,11 @@ public class HexOverlay : MonoBehaviour
                 this.MarkCombat();
                 //Enemies block movement so we return false
                 return traversable;
-            }// we don't do anything with an allied unit because we don't want to mess with the state
+            }
         }
             //Weather or not we can traverse this tile depends on terrain
         traversable = myTile.CanUnitPass(unit);
-        if (traversable && (occupiedBy == null))
+        if (traversable)
         {
             MarkMove();
         }
@@ -146,7 +147,26 @@ public class HexOverlay : MonoBehaviour
                 {
                     if (hex.distanceFrom > travelled + 1 || !hex.visited)
                     {
-                        hex.Explore(unit, travelled + 1, affected);
+                        //MODIFIED SECTION STARTS
+                        if(hex.occupiedBy != null)
+                        {
+                            if(hex.occupiedBy.GetAllegiance() != unit.GetAllegiance())
+                            {
+                                //The hex is occupied by an enemy
+                                if(this.occupiedBy == null)
+                                {
+                                    //Tiles occupied by enemies should only be expplored from empty tiles
+                                    hex.Explore(unit, travelled + 1, affected);
+                                }
+                                
+                            }
+                        }
+                        else
+                        {
+                            hex.Explore(unit, travelled + 1, affected);
+                        }
+                        //MODIFIED SECTION ENDS
+                        //hex.Explore(unit, travelled + 1, affected);
                     }
                 }
             }
@@ -157,10 +177,11 @@ public class HexOverlay : MonoBehaviour
                 {
                     if(!hex.visited && hex.GetOccupiedBy() != null)
                     {
-                        if(hex.GetOccupiedBy().GetAllegiance() != unit.GetAllegiance())
+                        if(hex.GetOccupiedBy().GetAllegiance() != unit.GetAllegiance() && this.occupiedBy == null)
                         {
                             //The unit is hostile
                             hex.MarkCombat();
+                            hex.distanceFrom = travelled + 1;
                             affected.Add(hex);
                         }
                     }
@@ -175,35 +196,89 @@ public class HexOverlay : MonoBehaviour
 
 
     //Used to start exploration
+    // !TODO! make it so that tiles occupied by an enemy are only explored from tiles with no occupant
     public List<HexOverlay> BeginExploration(Unit unit)
     {
         List<HexOverlay> affected = new List<HexOverlay>();
         visited = true;
         distanceFrom = 0;
+        affected.Add(this);
+        //foreach(HexOverlay hex in adjacent)
+        //{
+        //    hex.distanceFrom = 1;
+        //}
+        this.currState = HexState.reachable;
         foreach(HexOverlay hex in adjacent)
         {
-            hex.distanceFrom = 1;
-        }
-        foreach(HexOverlay hex in adjacent)
-        {
-             hex.Explore(unit, 1, affected);
+            hex.Explore(unit, 1, affected);
             
             
         }
         return affected;
     }
 
+
+
+    public Vector3[] MakePathToHere(Unit unit, Vector3[] path)
+    {
+        Vector3[] validPath = (Vector3[])path.Clone();
+
+        foreach (HexOverlay hex in adjacent)
+        {
+            if (hex.distanceFrom == this.distanceFrom - 1 && hex.currState == HexState.reachable)
+            {
+                if (hex.ContinuePath(unit, ref validPath))
+                {
+                    validPath[this.distanceFrom] = gameObject.transform.position;
+                }
+            }
+        }
+        Debug.Log("Path was fixed");
+        return validPath;
+    }
+
+    public bool ContinuePath(Unit unit, ref Vector3[] path)
+    {
+        bool allTheWay = false;
+        
+        if(this.distanceFrom > 0)
+        {
+            foreach (HexOverlay hex in adjacent)
+            {
+                if (hex.distanceFrom == this.distanceFrom - 1 && hex.currState == HexState.reachable)
+                {
+                    Debug.Log("Viable tile at: " + hex.myCoords);
+                    if(hex.ContinuePath(unit, ref path))
+                    {
+                        path[this.distanceFrom] = gameObject.transform.position;
+                        Debug.Log("Found a path through: " + this.myCoords);
+                        //Return immediately we don't need to look at anything else
+                        allTheWay = true;
+                    }
+                }
+            }
+        }
+        else
+        {
+            Debug.Log("Zero tile at: " + this.myCoords);
+            allTheWay = (this.distanceFrom == 0);
+        }
+        
+
+        return allTheWay;
+    }
+
     private void MarkMove()
     {
         moveSprite.SetActive(true);
         combatSprite.SetActive(false);
-        availSprite.SetActive(false);
+        currState = HexState.reachable;
     }
 
     private void MarkCombat()
     {
         moveSprite.SetActive(false);
         combatSprite.SetActive(true);
-        availSprite.SetActive(false);
+        currState = HexState.attackable;
     }
 }

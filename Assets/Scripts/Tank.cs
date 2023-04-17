@@ -5,17 +5,22 @@ using static UniversalConstants;
 
 public class Tank : Unit
 {
+    private void Awake()
+    {
+        Enlist();
+        PutOnBoard();
+    }
+
+
     // Start is called before the first frame update
     void Start()
     {
         PaintUnit();
-        PutOnBoard();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        
+        FollowOrders();
     }
 
     public override UnitType GetUnitType()

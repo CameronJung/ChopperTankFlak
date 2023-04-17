@@ -4,17 +4,25 @@ using UnityEngine;
 
 public class Helicopter : Unit
 {
-    // Start is called before the first frame update
-    void Start()
+
+    private void Awake()
     {
-        PaintUnit();
+        Enlist();
         PutOnBoard();
     }
 
-    // Update is called once per frame
-    void Update()
+
+    // Start is called before the first frame update
+    void Start()
     {
         
+        PaintUnit();
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        FollowOrders();
     }
 
     public override UniversalConstants.UnitType GetUnitType()

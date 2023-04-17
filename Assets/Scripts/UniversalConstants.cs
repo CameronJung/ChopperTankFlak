@@ -5,6 +5,8 @@ using UnityEngine;
 public static class UniversalConstants : object
 {
     public const string MAPPATH = "GameBoard/Map";
+    public const string MANAGERPATH = "GameManager";
+    public const float HEXDISTANCESQUARED = 1.0f;
 
     //Constants for unit types using enums makes code more readable
     public enum UnitType : int
@@ -31,6 +33,16 @@ public static class UniversalConstants : object
         ComputerTeam = 0,
         PlayerTeam = 1
     }
+
+    public enum HexState: int
+    {
+        unreachable = 0,
+        reachable = 1,
+        attackable = 2,
+    }
+
+    //The square of the world distance between two adjacent hexes
+    
 
 
     public static Dictionary<Faction, Color> TeamColours = new Dictionary<Faction, Color>
