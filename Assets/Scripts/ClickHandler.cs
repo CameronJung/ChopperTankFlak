@@ -32,10 +32,12 @@ public class ClickHandler : MonoBehaviour
 
             Vector3 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
             Vector3Int tilePos = gameBoard.WorldToCell(mousePos);
-            
-
-
             tilePos.z = 0;
+
+            if (commander.drawing)
+            {
+                commander.SendCommand();
+            }
 
             selecter.HandleNewSelection(tilePos);
 

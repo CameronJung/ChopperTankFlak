@@ -6,6 +6,8 @@ public static class UniversalConstants : object
 {
     public const string MAPPATH = "GameBoard/Map";
     public const string MANAGERPATH = "GameManager";
+
+    //The square of the world distance between two adjacent hexes
     public const float HEXDISTANCESQUARED = 1.0f;
 
     //Constants for unit types using enums makes code more readable
@@ -41,7 +43,12 @@ public static class UniversalConstants : object
         attackable = 2,
     }
 
-    //The square of the world distance between two adjacent hexes
+    public enum UnitState: int
+    {
+        tired = 0,
+        ready = 1,
+        stalemate = 2,
+    }
     
 
 

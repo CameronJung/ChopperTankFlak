@@ -18,7 +18,7 @@ public class CommandTracer : MonoBehaviour
 
     private Vector3Int currTilePos = new Vector3Int(0, 0, 100);
     private Vector3Int prevTilePos = new Vector3Int(0, 0, 100);
-    private bool drawing = false;
+    public bool drawing { get; private set; } = false;
 
     //indicates if the tile hovered over displays a valid move for the commandee
     private bool validTile = false;
@@ -79,7 +79,7 @@ public class CommandTracer : MonoBehaviour
 
     public void StartDrawingCommand(Unit unit)
     {
-        if (unit.GetAllegiance() == Faction.PlayerTeam && !unit.hasAlreadyMadeAction)
+        if (unit.GetAllegiance() == Faction.PlayerTeam && (unit.myState == UnitState.ready))
         {
             //The most tiles any unit could have will be mobility + 2
             points = new Vector3[unit.mobility + 2];
@@ -97,7 +97,7 @@ public class CommandTracer : MonoBehaviour
         {
             //Check if the click would be a valid command, if it is than execut it
             
-            SendCommand();
+            //SendCommand();
             drawing = false;
             commandee = null;
             liner.enabled = false;

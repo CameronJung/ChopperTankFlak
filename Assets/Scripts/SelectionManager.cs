@@ -31,9 +31,8 @@ public class SelectionManager : MonoBehaviour
     public void HandleNewSelection(Vector3Int tilePos)
     {
         
-
         HexOverlay hex = map.GetInstantiatedObject(tilePos).GetComponent<HexOverlay>();
-        Debug.Log("Mouse Clicked on hex at: " + tilePos + " distance from unit was: " + hex.distanceFrom);
+        //Debug.Log("Mouse Clicked on hex at: " + tilePos + " distance from unit was: " + hex.distanceFrom);
 
 
         if (tilePos == selectedPos)

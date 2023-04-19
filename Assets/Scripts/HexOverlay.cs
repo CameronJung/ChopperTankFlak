@@ -116,7 +116,8 @@ public class HexOverlay : MonoBehaviour
                 return traversable;
             }
         }
-            //Weather or not we can traverse this tile depends on terrain
+
+        //Weather or not we can traverse this tile depends on terrain
         traversable = myTile.CanUnitPass(unit);
         if (traversable)
         {
@@ -147,7 +148,7 @@ public class HexOverlay : MonoBehaviour
                 {
                     if (hex.distanceFrom > travelled + 1 || !hex.visited)
                     {
-                        //MODIFIED SECTION STARTS
+                        
                         if(hex.occupiedBy != null)
                         {
                             if(hex.occupiedBy.GetAllegiance() != unit.GetAllegiance())
@@ -160,13 +161,15 @@ public class HexOverlay : MonoBehaviour
                                 }
                                 
                             }
+                            else
+                            {
+                                hex.Explore(unit, travelled + 1, affected);
+                            }
                         }
                         else
                         {
                             hex.Explore(unit, travelled + 1, affected);
                         }
-                        //MODIFIED SECTION ENDS
-                        //hex.Explore(unit, travelled + 1, affected);
                     }
                 }
             }
@@ -196,17 +199,13 @@ public class HexOverlay : MonoBehaviour
 
 
     //Used to start exploration
-    // !TODO! make it so that tiles occupied by an enemy are only explored from tiles with no occupant
     public List<HexOverlay> BeginExploration(Unit unit)
     {
         List<HexOverlay> affected = new List<HexOverlay>();
         visited = true;
         distanceFrom = 0;
         affected.Add(this);
-        //foreach(HexOverlay hex in adjacent)
-        //{
-        //    hex.distanceFrom = 1;
-        //}
+
         this.currState = HexState.reachable;
         foreach(HexOverlay hex in adjacent)
         {
@@ -233,9 +232,11 @@ public class HexOverlay : MonoBehaviour
                 }
             }
         }
-        Debug.Log("Path was fixed");
+        
         return validPath;
     }
+
+
 
     public bool ContinuePath(Unit unit, ref Vector3[] path)
     {
@@ -247,11 +248,11 @@ public class HexOverlay : MonoBehaviour
             {
                 if (hex.distanceFrom == this.distanceFrom - 1 && hex.currState == HexState.reachable)
                 {
-                    Debug.Log("Viable tile at: " + hex.myCoords);
+                    
                     if(hex.ContinuePath(unit, ref path))
                     {
                         path[this.distanceFrom] = gameObject.transform.position;
-                        Debug.Log("Found a path through: " + this.myCoords);
+                        //Debug.Log("Found a path through: " + this.myCoords);
                         //Return immediately we don't need to look at anything else
                         allTheWay = true;
                     }
@@ -260,7 +261,7 @@ public class HexOverlay : MonoBehaviour
         }
         else
         {
-            Debug.Log("Zero tile at: " + this.myCoords);
+            
             allTheWay = (this.distanceFrom == 0);
         }
         

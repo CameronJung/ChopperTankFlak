@@ -32,11 +32,39 @@ public class Flak : Unit
 
     public override void ResolveCombat(Unit other)
     {
-        Debug.Log("Violence is never the answer.");
+        other.BeEngaged(this);
     }
+
 
     public override void BeEngaged(Unit assailant)
     {
-        throw new System.NotImplementedException();
+        if (assailant != this.stalematedWith)
+        {
+            if (myState == UnitState.stalemate)
+            {
+                //Any unit locked in stalemate is vulnerable
+                this.stalematedWith.StalemateResolved();
+                this.die();
+            }
+            else
+            {
+                if (assailant.GetUnitType() == UnitType.Tank)
+                {
+                    //Flak Cars are vulnerable to Tanks
+                    this.die();
+                }
+                else
+                {
+                    if (assailant.GetUnitType() == this.GetUnitType())
+                    {
+                        //Alike units go into stalemate
+                        EnterStalemate(assailant);
+                        assailant.EnterStalemate(this);
+                    }
+                    //The unit is unscathed from the attack and will now retaliate
+                    this.Retaliate(assailant);
+                }
+            }
+        }
     }
 }

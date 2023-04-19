@@ -15,6 +15,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     [SerializeField] private SpriteRenderer[] colourableSprites;
 
     [SerializeField] protected GameObject availSprite;
+    [SerializeField] protected GameObject staleSprite;
 
     //This is the sprite all other sprites making up the unit are parented to
     [SerializeField] protected GameObject baseSprite;
@@ -32,7 +33,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     protected Stack<Order> orders = new Stack<Order>();
 
-    protected float speed = 12.0f;
+    protected float speed = 8.0f;
     protected float turnSpeed = 225.0f;
 
     protected Order currOrder = null;
@@ -42,7 +43,12 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     protected IEnumerator execution;
 
-    public bool hasAlreadyMadeAction { get; protected set; } = false;
+    //public bool hasAlreadyMadeAction { get; protected set; } = false;
+    public UnitState myState { get; private set; } = UnitState.tired;
+
+
+    protected Unit stalematedWith;
+    
 
     public Vector3Int myTilePos { get; protected set; }
 
@@ -118,7 +124,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     public List<HexOverlay> OnSelected()
     {
         //This method is only relavent for the player's units
-        if(this.allegiance == UniversalConstants.Faction.PlayerTeam && !this.hasAlreadyMadeAction)
+        if(this.allegiance == UniversalConstants.Faction.PlayerTeam && myState == UnitState.ready)
         {
             return map.GetInstantiatedObject(this.myTilePos).GetComponent<HexOverlay>().BeginExploration(this);
         }
@@ -210,9 +216,19 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
         baseSprite.transform.eulerAngles = new Vector3(0, 0, bearing);
 
+        //Any sort of combat animation/ effects should be called here
+        this.ResolveCombat(map.GetInstantiatedObject(map.WorldToCell(destination)).GetComponent<HexOverlay>().GetOccupiedBy());
+
         orderComplete = true;
         yield return null;
         
+    }
+
+
+    protected void Retaliate(Unit assailant)
+    {
+        AttackOrder retaliation = new AttackOrder(transform.position, assailant.gameObject.transform.position, this);
+        this.orders.Push(retaliation);
     }
 
 
@@ -250,11 +266,15 @@ public abstract class Unit : MonoBehaviour, ISelectable
     //This method updates this units data to reflect changes made when an action was performed
     protected void FinalizeAction()
     {
-        hasAlreadyMadeAction = true;
-        this.FinalizeMovement();
+        if(myState != UnitState.stalemate)
+        {
+            SetStateTired();
+        }
+        
+        FinalizeMovement();
 
         //Temporary Delete line below later
-        Revitalize();
+        //Revitalize();
 
     }
 
@@ -262,34 +282,88 @@ public abstract class Unit : MonoBehaviour, ISelectable
     //After the unit moves update the game board to reflect that
     protected void FinalizeMovement()
     {
-        Debug.Log("Action Completed");
-
-        Vector3Int from = myTilePos;
-
+        //Reset the the tile this unit was at
         map.GetInstantiatedObject(myTilePos).GetComponent<HexOverlay>().SetOccupiedBy(null);
+
+        //Update the tile this unit is now on
         myTilePos = map.WorldToCell(gameObject.transform.position);
         map.GetInstantiatedObject(myTilePos).GetComponent<HexOverlay>().SetOccupiedBy(this);
 
-        Debug.Log("The claim that the tiles are the same is: " + (from == myTilePos));
 
         transform.position = map.GetCellCenterWorld(myTilePos);
     }
 
 
 
-    //This method sets the unit as being ready to move this
+    //This method sets the unit as being ready to move this turn
     public void Revitalize()
     {
-        this.hasAlreadyMadeAction = false;
-        availSprite.SetActive(this.allegiance == Faction.PlayerTeam);
+        if(myState != UnitState.stalemate)
+        {
+            Debug.Log("Unit revitalized");
+            SetStateReady();
+        }
+        
     }
+
+
+
+
+    //Called by the unit this unit is in stalemate with
+    public void StalemateResolved()
+    {
+        Debug.Log(this.GetTitle() + " Freed from stalemate");
+        this.stalematedWith = null;
+        this.SetStateTired();
+    }
+
+    public void EnterStalemate(Unit blocker) 
+    {
+        Debug.Log(this.GetTitle() + " locked in stalemate");
+        this.stalematedWith = blocker;
+        SetStateStalemate();
+    }
+
+
+
+
+    // State setters
+    protected void SetStateTired()
+    {
+        this.myState = UnitState.tired;
+        availSprite.SetActive(false);
+        staleSprite.SetActive(false);
+    }
+
+
+    protected void SetStateReady()
+    {
+        this.myState = UnitState.ready;
+        if(allegiance == Faction.PlayerTeam)
+        {
+            availSprite.SetActive(true);
+        }
+        staleSprite.SetActive(false);
+    }
+
+
+    protected void SetStateStalemate()
+    {
+        myState = UnitState.stalemate;
+        availSprite.SetActive(false);
+        staleSprite.SetActive(true);
+    }
+
+
+    
+
 
 
   
 
 
 
-
+    // Accessors/ Getters
     public string GetTitle()
     {
         return unitName;
@@ -297,6 +371,11 @@ public abstract class Unit : MonoBehaviour, ISelectable
     public string GetDescription()
     {
         return unitDescription;
+    }
+
+    public bool IsInStalemate()
+    {
+        return this.stalematedWith != null;
     }
 
 
