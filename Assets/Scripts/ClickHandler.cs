@@ -16,6 +16,9 @@ public class ClickHandler : MonoBehaviour
 
     //Initialized with a nonsense coordinates
     private Vector3Int selectionPos = new Vector3Int(0,0,100);
+
+    //This value blocks the processing of clicks
+    private bool blocked = false;
     
     // Start is called before the first frame update
     void Start()
@@ -26,29 +29,41 @@ public class ClickHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (!blocked)
         {
-            
-
-            Vector3 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
-            Vector3Int tilePos = gameBoard.WorldToCell(mousePos);
-            tilePos.z = 0;
-
-            if (commander.drawing)
+            if (Input.GetMouseButtonDown(0))
             {
-                commander.SendCommand();
+
+
+                Vector3 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+                Vector3Int tilePos = gameBoard.WorldToCell(mousePos);
+                tilePos.z = 0;
+
+                if (commander.drawing)
+                {
+                    commander.SendCommand();
+                }
+
+                selecter.HandleNewSelection(tilePos);
+
+
+
             }
+            else if (Input.GetMouseButtonDown(1))
+            {
+                selecter.HandleDeselect();
 
-            selecter.HandleNewSelection(tilePos);
-
-            
-            
-        }
-        else if (Input.GetMouseButtonDown(1))
-        {
-            selecter.HandleDeselect();
-            
+            }
         }
     }
 
+    public void BlockClicks()
+    {
+        blocked = true;
+    }
+
+    public void AllowClicks()
+    {
+        blocked = false;
+    }
 }

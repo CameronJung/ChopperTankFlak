@@ -42,14 +42,15 @@ public class Tank : Unit
             {
                 //Any unit locked in stalemate is vulnerable
                 this.stalematedWith.StalemateResolved();
-                this.die();
+                this.Die();
             }
             else
             {
                 if (assailant.GetUnitType() == UnitType.Helicopter)
                 {
                     //Tanks are vulnerable to Helicopters
-                    this.die();
+                    //manager.ReportActionComplete(this);
+                    this.Die();
                 }
                 else
                 {

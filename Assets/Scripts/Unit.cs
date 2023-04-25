@@ -6,7 +6,7 @@ using static UniversalConstants;
 
 public abstract class Unit : MonoBehaviour, ISelectable
 {
-
+    //This value acts as a failsafe for order execution
     protected const int MAXFRAMESPERACTION = 60;
     
 
@@ -29,7 +29,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     
 
     private Tilemap map;
-    private GameManager manager;
+    protected GameManager manager;
 
     protected Stack<Order> orders = new Stack<Order>();
 
@@ -40,6 +40,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     protected bool orderComplete = false;
     protected bool executingOrders = false;
     protected bool ordersComplete = false;
+    private bool retaliation = false;
 
     protected IEnumerator execution;
 
@@ -76,8 +77,9 @@ public abstract class Unit : MonoBehaviour, ISelectable
     public abstract void BeEngaged(Unit assailant);
 
 
-    protected void die()
+    protected void Die()
     {
+        manager.ReportDeath(this);
         HexOverlay hex = map.GetInstantiatedObject(myTilePos).GetComponent<HexOverlay>();
         hex.SetOccupiedBy(null);
         Destroy(gameObject);
@@ -113,7 +115,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     protected void Enlist()
     {
         manager = GameObject.Find(MANAGERPATH).GetComponent<GameManager>();
-        manager.Recruit(this);
+        manager.ReportForDuty(this);
     }
 
 
@@ -124,7 +126,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     public List<HexOverlay> OnSelected()
     {
         //This method is only relavent for the player's units
-        if(this.allegiance == UniversalConstants.Faction.PlayerTeam && myState == UnitState.ready)
+        if(this.allegiance == manager.WhosTurn() && myState == UnitState.ready)
         {
             return map.GetInstantiatedObject(this.myTilePos).GetComponent<HexOverlay>().BeginExploration(this);
         }
@@ -137,7 +139,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     public void RecieveOrders(Stack<Order> commands)
     {
-        Debug.Log("Orders Recieved");
+        
         this.orders = commands;
     }
 
@@ -170,7 +172,6 @@ public abstract class Unit : MonoBehaviour, ISelectable
             Debug.Log("!ERROR! Move order completed through exceeding maximum frame tolerance");
         }
 
-        //Debug.Log("Unit moving to position");
         gameObject.transform.position = destination;
         orderComplete = true;
         yield return null;
@@ -186,6 +187,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
         float bearing = Vector3.SignedAngle(Vector3.right, displacement, Vector3.forward);
         WaitForFixedUpdate wait = new WaitForFixedUpdate();
 
+        //Attack orders always come at the end of a stack so we should update the board ASAP
+        this.FinalizeMovement();
 
 
         if (bearing < 0)
@@ -199,7 +202,6 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
         int count = 1;
 
-        //Debug.Log("Target is at a bearing of: " + bearing + " radians");
         while((turnBy < Mathf.Abs(heading.z - bearing)) && count < MAXFRAMESPERACTION)
         {
             baseSprite.transform.Rotate(Vector3.forward, direction * turnBy);
@@ -215,10 +217,12 @@ public abstract class Unit : MonoBehaviour, ISelectable
         }
 
         baseSprite.transform.eulerAngles = new Vector3(0, 0, bearing);
+        HexOverlay hex = map.GetInstantiatedObject(map.WorldToCell(destination)).GetComponent<HexOverlay>();
+        Unit target = hex.GetOccupiedBy();
 
-        //Any sort of combat animation/ effects should be called here
-        this.ResolveCombat(map.GetInstantiatedObject(map.WorldToCell(destination)).GetComponent<HexOverlay>().GetOccupiedBy());
+        this.ResolveCombat(target);
 
+        
         orderComplete = true;
         yield return null;
         
@@ -227,6 +231,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     protected void Retaliate(Unit assailant)
     {
+        this.retaliation = true;
+
         AttackOrder retaliation = new AttackOrder(transform.position, assailant.gameObject.transform.position, this);
         this.orders.Push(retaliation);
     }
@@ -237,6 +243,11 @@ public abstract class Unit : MonoBehaviour, ISelectable
         
         if (orders.Count > 0 || currOrder != null)
         {
+            if (!executingOrders)
+            {
+                manager.ReportActionStarted();
+            }
+
             availSprite.SetActive(false);
             executingOrders = true;
             //There are orders to follow
@@ -260,22 +271,21 @@ public abstract class Unit : MonoBehaviour, ISelectable
         {
             executingOrders = false;
             FinalizeAction();
+            manager.ReportActionComplete(this);
         }
     }
 
     //This method updates this units data to reflect changes made when an action was performed
     protected void FinalizeAction()
     {
-        if(myState != UnitState.stalemate)
+        //If the sequence of attacks was retaliation we don't tire
+        if(myState != UnitState.stalemate && !retaliation)
         {
             SetStateTired();
+            retaliation = false;
         }
         
         FinalizeMovement();
-
-        //Temporary Delete line below later
-        //Revitalize();
-
     }
 
 
@@ -296,14 +306,15 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
 
     //This method sets the unit as being ready to move this turn
-    public void Revitalize()
+    public bool Revitalize()
     {
-        if(myState != UnitState.stalemate)
+        bool ready = myState != UnitState.stalemate;
+        if (ready)
         {
-            Debug.Log("Unit revitalized");
+            
             SetStateReady();
         }
-        
+        return ready;
     }
 
 
@@ -312,14 +323,14 @@ public abstract class Unit : MonoBehaviour, ISelectable
     //Called by the unit this unit is in stalemate with
     public void StalemateResolved()
     {
-        Debug.Log(this.GetTitle() + " Freed from stalemate");
+        
         this.stalematedWith = null;
         this.SetStateTired();
     }
 
     public void EnterStalemate(Unit blocker) 
     {
-        Debug.Log(this.GetTitle() + " locked in stalemate");
+        
         this.stalematedWith = blocker;
         SetStateStalemate();
     }
@@ -354,6 +365,12 @@ public abstract class Unit : MonoBehaviour, ISelectable
         staleSprite.SetActive(true);
     }
 
+    protected void SetStateRetaliating()
+    {
+        myState = UnitState.retaliating;
+        availSprite.SetActive(false);
+        staleSprite.SetActive(false);
+    }
 
     
 

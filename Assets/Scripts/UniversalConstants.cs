@@ -48,6 +48,7 @@ public static class UniversalConstants : object
         tired = 0,
         ready = 1,
         stalemate = 2,
+        retaliating = 3,
     }
     
 

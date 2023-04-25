@@ -44,14 +44,15 @@ public class Flak : Unit
             {
                 //Any unit locked in stalemate is vulnerable
                 this.stalematedWith.StalemateResolved();
-                this.die();
+                this.Die();
             }
             else
             {
                 if (assailant.GetUnitType() == UnitType.Tank)
                 {
                     //Flak Cars are vulnerable to Tanks
-                    this.die();
+                    //manager.ReportActionComplete(this);
+                    this.Die();
                 }
                 else
                 {

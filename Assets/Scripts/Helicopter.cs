@@ -48,14 +48,15 @@ public class Helicopter : Unit
             {
                 //Any unit locked in stalemate is vulnerable
                 this.stalematedWith.StalemateResolved();
-                this.die();
+                this.Die();
             }
             else
             {
                 if (assailant.GetUnitType() == UnitType.Flak)
                 {
                     //Helicopters are vulnerable to Flak
-                    this.die();
+                    //manager.ReportActionComplete(this);
+                    this.Die();
                 }
                 else
                 {

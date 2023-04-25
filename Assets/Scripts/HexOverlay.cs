@@ -15,7 +15,7 @@ public class HexOverlay : MonoBehaviour
 
     private TerrainTile myTile;
     private Tilemap map;
-    private Vector3Int myCoords;
+    public Vector3Int myCoords { get; private set;}
 
     //Represents the state of the hexagaon in a single property
     public HexState currState { get; private set; } = HexState.unreachable;
@@ -100,6 +100,14 @@ public class HexOverlay : MonoBehaviour
         moveSprite.SetActive(false);
         currState = HexState.unreachable;
     }
+
+    public bool CanIpass(Unit me)
+    {
+        return myTile.CanUnitPass(me);
+    }
+    
+
+
 
     //Find what there is to do, return bool if this tile can be traversed
     public bool TravelGuide(Unit unit)

@@ -32,7 +32,7 @@ public class SelectionManager : MonoBehaviour
     {
         
         HexOverlay hex = map.GetInstantiatedObject(tilePos).GetComponent<HexOverlay>();
-        //Debug.Log("Mouse Clicked on hex at: " + tilePos + " distance from unit was: " + hex.distanceFrom);
+        Debug.Log("Mouse Clicked on hex at: " + tilePos + " The real worlf position is " + hex.gameObject.transform.position);
 
 
         if (tilePos == selectedPos)
@@ -85,6 +85,8 @@ public class SelectionManager : MonoBehaviour
         commander.StartDrawingCommand(selectedUnit);
     }
 
+
+
     private void HandleUnitDeselected()
     {
         commander.StopDrawingCommand();
@@ -99,6 +101,44 @@ public class SelectionManager : MonoBehaviour
     public bool IsUnitSelected()
     {
         return selectedUnit != null;
+    }
+
+
+
+    //Returns a list of hexes the selected unit can move to
+    //this is mostly used by the AI
+    public List<HexOverlay> GetPossibilities()
+    {
+        List<HexOverlay> possibilities = new List<HexOverlay>();
+
+        bool viable;
+        foreach(HexOverlay hex in affectedHexes)
+        {
+            viable = false;
+            
+            if (hex.CanIpass(selectedUnit))
+            {
+                if (hex.GetOccupiedBy() != null)
+                {
+                    viable = hex.GetOccupiedBy().GetAllegiance() != selectedUnit.GetAllegiance();
+                }
+                else
+                {
+                    viable = true;
+                }
+
+            }
+
+            if (viable)
+            {
+                possibilities.Add(hex);
+            }
+            
+        }
+
+        //Debug.Log("We found " + possibilities.Count + " things this unit could do.");
+
+        return possibilities;
     }
     
 }

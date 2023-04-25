@@ -14,6 +14,8 @@ public class CommandTracer : MonoBehaviour
 
     [SerializeField] private Tilemap map;
 
+    [SerializeField] private GameManager manager;
+
     private LineRenderer liner;
 
     private Vector3Int currTilePos = new Vector3Int(0, 0, 100);
@@ -38,48 +40,60 @@ public class CommandTracer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (drawing && Input.mousePresent)
+        if (drawing && Input.mousePresent && manager.WhosTurn() == Faction.PlayerTeam)
         {
             Vector3Int rawPos = map.WorldToCell(cam.ScreenToWorldPoint(Input.mousePosition));
             rawPos.z = 0;
-            currTilePos = rawPos;
+
+            HandleMouseAtTile(rawPos);
 
             
-            if(currTilePos != prevTilePos && map.HasTile(currTilePos))
-            {
-                HexOverlay currHex = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>();
-                if(currHex.currState > 0)
-                {
-                    validTile = currHex.currState == HexState.attackable || currHex.GetOccupiedBy() == null;
-
-
-                    liner.enabled = true;
-                    liner.positionCount = currHex.distanceFrom +1;
-
-                    points[currHex.distanceFrom] = map.GetCellCenterWorld(currTilePos);
-                    if(!validateLine(currHex.distanceFrom))
-                    {
-                        points = currHex.MakePathToHere(commandee, points);
-
-                    }
-                    liner.SetPositions(points);
-                    endPoint = currHex.distanceFrom;
-                }
-                else
-                {
-                    liner.enabled = false;
-                    validTile = false;
-                }
-                prevTilePos = currTilePos;
-            }
             
         }
         
     }
 
+
+
+    private void HandleMouseAtTile(Vector3Int mouseTilePos)
+    {
+        currTilePos = mouseTilePos;
+
+
+        if (currTilePos != prevTilePos && map.HasTile(currTilePos))
+        {
+            HexOverlay currHex = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>();
+            if (currHex.currState > 0)
+            {
+                validTile = currHex.currState == HexState.attackable || currHex.GetOccupiedBy() == null;
+
+
+                liner.enabled = true;
+                liner.positionCount = currHex.distanceFrom + 1;
+
+                points[currHex.distanceFrom] = map.GetCellCenterWorld(currTilePos);
+                if (!validateLine(currHex.distanceFrom))
+                {
+                    points = currHex.MakePathToHere(commandee, points);
+
+                }
+                liner.SetPositions(points);
+                endPoint = currHex.distanceFrom;
+            }
+            else
+            {
+                liner.enabled = false;
+                validTile = false;
+            }
+            prevTilePos = currTilePos;
+        }
+    }
+
+
+
     public void StartDrawingCommand(Unit unit)
     {
-        if (unit.GetAllegiance() == Faction.PlayerTeam && (unit.myState == UnitState.ready))
+        if (unit.GetAllegiance() == manager.WhosTurn() && (unit.myState == UnitState.ready))
         {
             //The most tiles any unit could have will be mobility + 2
             points = new Vector3[unit.mobility + 2];
@@ -138,7 +152,6 @@ public class CommandTracer : MonoBehaviour
     public void SendCommand()
     {
         if (validTile) {
-            Debug.Log("Sending " + endPoint + " orders to unit");
             Stack<Order> orders = new Stack<Order>();
 
             //Check if the last order is an attack
@@ -161,4 +174,15 @@ public class CommandTracer : MonoBehaviour
         }
     }
 
+
+
+
+    //This method sets up the command tracer as though the mouse moved to a specific tile
+    //This allows the code to be used by the AI
+    public void SpoofSendCommand(Vector3Int fakeMouseTile)
+    {
+        prevTilePos = new Vector3Int(0, 0, -100);
+        HandleMouseAtTile(fakeMouseTile);
+        SendCommand();
+    }
 }
