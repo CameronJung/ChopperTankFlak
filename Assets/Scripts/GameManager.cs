@@ -169,6 +169,7 @@ public class GameManager : MonoBehaviour
 
     public void ReportActionStarted(bool isRetaliation = false)
     {
+        
         if(WhosTurn() == Faction.PlayerTeam)
         {
             clicker.BlockClicks();
@@ -205,9 +206,12 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator AwaitTurnChange() 
     {
+        int cycles = 0;
         while (IsUnitMoving())
         {
             yield return null;
+            cycles++;
+            Debug.Assert(cycles < 600, "movement is taking too long to end");
         }
 
         EndTurn();

@@ -13,8 +13,6 @@ public class AIcommander : MonoBehaviour
     private Unit[] military;
     private List<HexOverlay> possibilities;
     
-    private bool myTurn = false;
-    private bool turnStarted = false;
 
     // Start is called before the first frame update
     void Start()
@@ -23,24 +21,16 @@ public class AIcommander : MonoBehaviour
     }
 
     // Update is called once per frame
-    void FixedUpdate()
+    void Update()
     {
-        if (myTurn)
-        {
-            if (turnStarted)
-            {
-                turnStarted = false;
-                StartCoroutine(IssueOrders());
-            }
-        }
+        
     }
 
 
     public void TakeTurn(List<Unit> units)
     {
         this.military = units.ToArray();
-        myTurn = true;
-        turnStarted = true;
+        StartCoroutine(IssueOrders());
     }
 
 
@@ -64,7 +54,7 @@ public class AIcommander : MonoBehaviour
             {
                 yield return null;
 
-                selector.HandleDeselect();
+                
 
                 yield return null;
 
@@ -87,10 +77,22 @@ public class AIcommander : MonoBehaviour
                 }
 
                 commander.SpoofSendCommand(choice.myCoords);
-
+                selector.HandleDeselect();
                 yield return null;
 
                 int cycles = 1;
+
+                //wait until the unit is moving
+                while (!manager.IsUnitMoving() && cycles < 600)
+                {
+                    cycles++;
+                    Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
+                    yield return null;
+                }
+
+                cycles = 0;
+
+                //Wait until the unit is done moving
                 while (manager.IsUnitMoving() && cycles < 600)
                 {
                     yield return null;
@@ -111,7 +113,6 @@ public class AIcommander : MonoBehaviour
 
         selector.HandleDeselect();
 
-        myTurn = false;
 
         yield return delay;
         //manager.EndTurn();
