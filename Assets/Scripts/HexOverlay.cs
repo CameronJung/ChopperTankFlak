@@ -230,10 +230,13 @@ public class HexOverlay : MonoBehaviour
     {
         Vector3[] validPath = (Vector3[])path.Clone();
 
+        bool isAttack = this.currState == HexState.attackable;
+
         foreach (HexOverlay hex in adjacent)
         {
             if (hex.distanceFrom == this.distanceFrom - 1 && hex.currState == HexState.reachable)
             {
+                if(!(isAttack && hex.occupiedBy != null ))
                 if (hex.ContinuePath(unit, ref validPath))
                 {
                     validPath[this.distanceFrom] = gameObject.transform.position;
@@ -250,6 +253,8 @@ public class HexOverlay : MonoBehaviour
     {
         bool allTheWay = false;
         
+
+
         if(this.distanceFrom > 0)
         {
             foreach (HexOverlay hex in adjacent)

@@ -31,12 +31,20 @@ public class Tank : Unit
 
     public override void ResolveCombat(Unit other) 
     {
+        //We will not expect a response if we are responding
+        if (other.myState != UnitState.stalemate && !other.waitingForResponse)
+        {
+            waitingForResponse = (other.GetUnitType() == this.GetUnitType() || other.GetUnitType() == UnitType.Helicopter);
+        }
         other.BeEngaged(this);
     }
 
     public override void BeEngaged(Unit assailant)
     {
-        if(assailant != this.stalematedWith)
+        
+
+
+        if (assailant != this.stalematedWith)
         {
             if (myState == UnitState.stalemate)
             {
@@ -66,8 +74,11 @@ public class Tank : Unit
             }
         }
 
-        
-        
+        if (this.waitingForResponse)
+        {
+            waitingForResponse = false;
+        }
+
     }
 
 

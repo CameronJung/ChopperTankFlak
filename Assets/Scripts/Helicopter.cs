@@ -34,6 +34,12 @@ public class Helicopter : Unit
 
     public override void ResolveCombat(Unit other)
     {
+        //We will not expect a response if we are responding
+        if (other.myState != UnitState.stalemate && !other.waitingForResponse)
+        {
+            waitingForResponse = (other.GetUnitType() == this.GetUnitType() || other.GetUnitType() == UnitType.Flak);
+        }
+        
         other.BeEngaged(this);
     }
 
@@ -42,6 +48,7 @@ public class Helicopter : Unit
 
     public override void BeEngaged(Unit assailant)
     {
+        
         if (assailant != this.stalematedWith)
         {
             if (myState == UnitState.stalemate)
@@ -70,6 +77,11 @@ public class Helicopter : Unit
                     this.Retaliate(assailant);
                 }
             }
+        }
+
+        if (this.waitingForResponse)
+        {
+            waitingForResponse = false;
         }
     }
 }

@@ -15,10 +15,17 @@ public class GameManager : MonoBehaviour
 
     private int numUnitsMoving = 0;
 
+    private int numComputerUnitsReady = 0;
+    private int numPlayerUnitsReady = 0;
+
+
 
     public bool unitMoving { get; private set; } = false;
 
     public int unitsAvailable { get; private set; } = 0;
+
+
+
 
     //Changes to true when the game ends for some reason
     //private bool gameEnd = false;
@@ -38,6 +45,7 @@ public class GameManager : MonoBehaviour
 
     public void ReportForDuty(Unit unit)
     {
+        
         if(unit.GetAllegiance() == Faction.PlayerTeam)
         {
             playerUnits.Add(unit);
@@ -60,7 +68,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            
             Debug.Log("Computer turn begins");
             clicker.BlockClicks();
             enemyCO.TakeTurn(computerUnits);
@@ -70,7 +77,7 @@ public class GameManager : MonoBehaviour
 
 
     //Handles operations for ending a turn
-    public void EndTurn()
+    private void EndTurn()
     {
         turn++;
         BeginTurn();
@@ -90,6 +97,7 @@ public class GameManager : MonoBehaviour
                 if (unit.Revitalize())
                 {
                     unitsAvailable++;
+                    numPlayerUnitsReady++;
                 }
             }
         }
@@ -100,6 +108,7 @@ public class GameManager : MonoBehaviour
                 if (unit.Revitalize())
                 {
                     unitsAvailable++;
+                    numComputerUnitsReady++;
                 }
             }
         }
@@ -110,6 +119,8 @@ public class GameManager : MonoBehaviour
 
     public void ReportDeath(Unit casualty)
     {
+
+
         if (casualty.GetAllegiance() == Faction.PlayerTeam)
         {
             playerUnits.Remove(casualty);
@@ -118,32 +129,45 @@ public class GameManager : MonoBehaviour
         {
             computerUnits.Remove(casualty);
         }
+
+
+        Debug.Log(casualty.GetAllegiance() + " " + casualty.GetUnitType() + " has died");
     }
 
 
 
     public void ReportActionComplete(Unit unit)
     {
-        if(unit.GetAllegiance() == WhosTurn())
-        {
-            unitsAvailable--;
-            if (unitsAvailable == 0)
-            {
-                EndTurn();
-            }
-            unitMoving = false;
-        }
+        
 
         if (WhosTurn() == Faction.PlayerTeam)
         {
             clicker.AllowClicks();
+            numPlayerUnitsReady--;
         }
+        else
+        {
+            numComputerUnitsReady--;
+        }
+        numUnitsMoving--;
 
-        Debug.Log("There are " + unitsAvailable + " units left to move.");
+        if (unit.GetAllegiance() == WhosTurn())
+        {
+            unitsAvailable--;
+            if (unitsAvailable == 0)
+            {
+                HandleTurnEnd();
+            }
+            unitMoving = false;
+            Debug.Log("There are " + unitsAvailable + " units left to move.");
+        }
+        
     }
 
 
-    public void ReportActionStarted()
+    //Called by a unit when they start performing an action
+
+    public void ReportActionStarted(bool isRetaliation = false)
     {
         if(WhosTurn() == Faction.PlayerTeam)
         {
@@ -152,6 +176,7 @@ public class GameManager : MonoBehaviour
 
 
         unitMoving = true;
+        numUnitsMoving++;
     }
 
 
@@ -173,6 +198,23 @@ public class GameManager : MonoBehaviour
 
     public bool IsUnitMoving()
     {
+        Debug.Assert(numUnitsMoving >= 0, "!ERROR! num units moving has become negative");
         return numUnitsMoving > 0;
+    }
+
+
+    private IEnumerator AwaitTurnChange() 
+    {
+        while (IsUnitMoving())
+        {
+            yield return null;
+        }
+
+        EndTurn();
+    }
+
+    public void HandleTurnEnd()
+    {
+        StartCoroutine(AwaitTurnChange());
     }
 }

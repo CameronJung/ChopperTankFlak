@@ -46,32 +46,71 @@ public class AIcommander : MonoBehaviour
 
     private IEnumerator IssueOrders()
     {
-        WaitForFixedUpdate wait = new WaitForFixedUpdate();
+        //WaitForFixedUpdate wait = new WaitForFixedUpdate();
         WaitForSeconds delay = new WaitForSeconds(1.0f);
 
-        yield return wait;
-        int unitsAvailable = manager.unitsAvailable;
+        yield return null;
+        int unitsAvailable = military.Length;
+
+
         
         Debug.Log("There are " + unitsAvailable + " enemy units ready to move.");
         
         for(int idx = 0; idx < unitsAvailable; idx++)
         {
-            yield return delay;
 
-            selector.HandleNewSelection(military[idx].myTilePos);
-            possibilities = selector.GetPossibilities();
-            
-            commander.SpoofSendCommand(RandomCommand().myCoords);
 
-            while (manager.unitMoving)
+            if(military[idx].myState == UnitState.ready)
             {
-                yield return wait;
+                yield return null;
+
+                selector.HandleDeselect();
+
+                yield return null;
+
+                selector.HandleNewSelection(military[idx].myTilePos);
+                possibilities = selector.GetPossibilities();
+
+                yield return delay;
+
+                Debug.Assert(possibilities.Count > 0, "!ERROR! the AI selected a " 
+                    + selector.selectedUnit.GetTitle() + " with no possible moves it was in the "
+                    + selector.selectedUnit.myState + " state");
+
+                HexOverlay choice = RandomCommand(possibilities);
+
+                List<HexOverlay> attacks = AttackFilter(possibilities);
+
+                if(attacks.Count > 0)
+                {
+                    choice = RandomCommand(attacks);
+                }
+
+                commander.SpoofSendCommand(choice.myCoords);
+
+                yield return null;
+
+                int cycles = 1;
+                while (manager.IsUnitMoving() && cycles < 600)
+                {
+                    yield return null;
+                    cycles++;
+                }
+
+                Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
+                Debug.Log("waited for " + cycles + " frames");
+
+
+                yield return null;
             }
+
+            
 
         }
 
 
         selector.HandleDeselect();
+
         myTurn = false;
 
         yield return delay;
@@ -83,16 +122,35 @@ public class AIcommander : MonoBehaviour
 
     // Just choose a random command from possibilities
     // no real intelligence, mostly a place holder
-    private HexOverlay RandomCommand()
+    private HexOverlay RandomCommand(List<HexOverlay> options)
     {
-        Debug.Log("There are " + possibilities.Count + " possible orders.");
+        
+        int pick = Random.Range(0, options.Count);
 
-        int pick = Random.Range(0, possibilities.Count);
-
-        Debug.Log("Option #" + pick + " was selected.");
-
-        return possibilities[pick];
+        return options[pick];
     }
 
 
+
+
+
+    //Selection processes
+
+
+    //This function takes a list of hexOverlays and returns a list of HexOverlays with an attack state
+    private List<HexOverlay> AttackFilter(List<HexOverlay> options)
+    {
+        List<HexOverlay> attacks = new List<HexOverlay>();
+
+        foreach (HexOverlay hex in options)
+        {
+            if(hex.currState == HexState.attackable)
+            {
+                attacks.Add(hex);
+            }
+            
+        }
+
+        return attacks;
+    }
 }

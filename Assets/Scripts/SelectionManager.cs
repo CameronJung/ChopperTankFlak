@@ -32,7 +32,7 @@ public class SelectionManager : MonoBehaviour
     {
         
         HexOverlay hex = map.GetInstantiatedObject(tilePos).GetComponent<HexOverlay>();
-        Debug.Log("Mouse Clicked on hex at: " + tilePos + " The real worlf position is " + hex.gameObject.transform.position);
+        //Debug.Log("Mouse Clicked on hex at: " + tilePos + " The real world position is " + hex.gameObject.transform.position);
 
 
         if (tilePos == selectedPos)

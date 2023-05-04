@@ -21,7 +21,7 @@ public class MapPanel : MonoBehaviour
     //The playable area of the game board
     [SerializeField] private Vector2Int mapSize = Vector2Int.zero;
 
-    [SerializeField] private float scrollSpeed = 0.8f;
+    [SerializeField] private float scrollSpeed = 1.25f;
 
     private Rect mapRect;
     private Rect mapCentreRect;
@@ -29,7 +29,6 @@ public class MapPanel : MonoBehaviour
 
     private Vector2 mapDimensions;
 
-    private bool insideMap = false;
 
     private Vector2 mapPos;
 
@@ -100,7 +99,7 @@ public class MapPanel : MonoBehaviour
                 camObject.transform.position = new Vector3(Mathf.Clamp(camObject.transform.position.x + change.x, -movableWidth, movableWidth),
                     Mathf.Clamp(camObject.transform.position.y + change.y, -moveableHeight, moveableHeight),
                     camObject.transform.position.z);
-                Debug.Log("Camera is at: " + camObject.transform.position);
+                
             }
 
 

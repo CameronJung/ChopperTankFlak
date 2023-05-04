@@ -40,6 +40,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     protected bool orderComplete = false;
     protected bool executingOrders = false;
     protected bool ordersComplete = false;
+    public bool actionReported { get; protected set; } = true;
     private bool retaliation = false;
 
     protected IEnumerator execution;
@@ -52,6 +53,10 @@ public abstract class Unit : MonoBehaviour, ISelectable
     
 
     public Vector3Int myTilePos { get; protected set; }
+
+    //Set to true when the unit is expecting retaliation
+    public bool waitingForResponse { get; protected set; } = false;
+
 
     // Start is called before the first frame update
     void Start()
@@ -79,9 +84,14 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     protected void Die()
     {
-        manager.ReportDeath(this);
+        
         HexOverlay hex = map.GetInstantiatedObject(myTilePos).GetComponent<HexOverlay>();
         hex.SetOccupiedBy(null);
+        manager.ReportDeath(this);
+        if (!actionReported)
+        {
+            manager.ReportActionComplete(this);
+        }
         Destroy(gameObject);
     }
 
@@ -117,6 +127,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
         manager = GameObject.Find(MANAGERPATH).GetComponent<GameManager>();
         manager.ReportForDuty(this);
     }
+
 
 
 
@@ -173,8 +184,9 @@ public abstract class Unit : MonoBehaviour, ISelectable
         }
 
         gameObject.transform.position = destination;
+
         orderComplete = true;
-        yield return null;
+        
     }
 
 
@@ -222,9 +234,14 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
         this.ResolveCombat(target);
 
+        //wait for a few frames to ensure that the other unit has had time to handle being attacked
+        for(int i = 0; i < 3; i++)
+        {
+            yield return null;
+        }
         
         orderComplete = true;
-        yield return null;
+        
         
     }
 
@@ -245,11 +262,15 @@ public abstract class Unit : MonoBehaviour, ISelectable
         {
             if (!executingOrders)
             {
+                Debug.Log(this.allegiance + " " + this.GetUnitType() + " is now executing orders");
                 manager.ReportActionStarted();
+
+                executingOrders = true;
+                actionReported = false;
+                availSprite.SetActive(false);
             }
 
-            availSprite.SetActive(false);
-            executingOrders = true;
+            
             //There are orders to follow
             if(currOrder == null)
             {
@@ -258,8 +279,6 @@ public abstract class Unit : MonoBehaviour, ISelectable
                 StartCoroutine(execution);
             }
             
-
-            
             if (orderComplete)
             {
                 currOrder = null;
@@ -267,11 +286,17 @@ public abstract class Unit : MonoBehaviour, ISelectable
             }
             
         }
-        else if (executingOrders)
+        else if (executingOrders && !waitingForResponse)
         {
+            actionReported = true;
             executingOrders = false;
+            FinalizeMovement();
             FinalizeAction();
+            Debug.Log(this.allegiance + " " + this.GetUnitType() + " has completed orders");
+
+            //We delay reporting the action as complete if we are expecting a response from another unit
             manager.ReportActionComplete(this);
+            
         }
     }
 
@@ -285,7 +310,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
             retaliation = false;
         }
         
-        FinalizeMovement();
+        
     }
 
 

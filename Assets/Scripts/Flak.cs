@@ -32,12 +32,19 @@ public class Flak : Unit
 
     public override void ResolveCombat(Unit other)
     {
+        //We will not expect a response if we are responding
+        if (other.myState != UnitState.stalemate && !other.waitingForResponse)
+        {
+            waitingForResponse = (other.GetUnitType() == this.GetUnitType() || other.GetUnitType() == UnitType.Tank);
+        }
         other.BeEngaged(this);
     }
 
 
     public override void BeEngaged(Unit assailant)
     {
+        
+
         if (assailant != this.stalematedWith)
         {
             if (myState == UnitState.stalemate)
@@ -66,6 +73,11 @@ public class Flak : Unit
                     this.Retaliate(assailant);
                 }
             }
+        }
+
+        if (this.waitingForResponse)
+        {
+            waitingForResponse = false;
         }
     }
 }
