@@ -18,8 +18,10 @@ public class UIHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        int width = Screen.width;
+        RectTransform mytransform = gameObject.GetComponent<RectTransform>();
+        float width = mytransform.rect.width;
         float mapWidth = width * MAPFRACTION;
+
         mapPanel.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, mapWidth);
 
         Vector2 mapPos = mapPanel.anchoredPosition;
@@ -30,8 +32,9 @@ public class UIHandler : MonoBehaviour
         menuPanel.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, menuWidth);
 
         Vector2 menuPos = menuPanel.anchoredPosition;
-        menuPos.x = mapWidth + (0.5f * menuPanel.rect.width);
+        menuPos.x = mapWidth + (0.5f * menuWidth);
         menuPanel.anchoredPosition = menuPos;
+        Canvas.ForceUpdateCanvases();
     }
 
     // Update is called once per frame

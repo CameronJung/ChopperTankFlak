@@ -375,7 +375,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 384, y: 0}
-  m_SizeDelta: {x: 768, y: 0.0000076293945}
+  m_SizeDelta: {x: 768, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &203824244
 MonoBehaviour:
@@ -934,7 +934,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 819872307}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -981,6 +981,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapPanel: {fileID: 203824243}
   menuPanel: {fileID: 1017184671}
+  mapCam: {fileID: 1463816265}
 --- !u!4 &873807881 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3639321720723932259, guid: c911212b64dae9c4c92179951db77758, type: 3}
