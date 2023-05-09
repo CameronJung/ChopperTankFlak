@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private AIcommander enemyCO;
     [SerializeField] private ClickHandler clicker;
+    [SerializeField] private EndGamePanel gameEnd;
 
     private List<Unit> playerUnits = new List<Unit>();
     private List<Unit> computerUnits = new List<Unit>();
@@ -120,16 +121,22 @@ public class GameManager : MonoBehaviour
     public void ReportDeath(Unit casualty)
     {
 
-
+        bool gameOver = false;
         if (casualty.GetAllegiance() == Faction.PlayerTeam)
         {
             playerUnits.Remove(casualty);
+            gameOver = (playerUnits.Count == 0) ;
         }
         else
         {
             computerUnits.Remove(casualty);
+            gameOver = (computerUnits.Count == 0);
         }
 
+        if (gameOver)
+        {
+            HandleBattleOver(computerUnits.Count == 0);
+        }
 
         Debug.Log(casualty.GetAllegiance() + " " + casualty.GetUnitType() + " has died");
     }
@@ -139,7 +146,6 @@ public class GameManager : MonoBehaviour
     public void ReportActionComplete(Unit unit)
     {
         
-
         if (WhosTurn() == Faction.PlayerTeam)
         {
             clicker.AllowClicks();
@@ -220,5 +226,13 @@ public class GameManager : MonoBehaviour
     public void HandleTurnEnd()
     {
         StartCoroutine(AwaitTurnChange());
+    }
+
+
+    private void HandleBattleOver(bool victorious)
+    {
+        gameEnd.gameObject.SetActive(true);
+        clicker.BlockClicks();
+        gameEnd.HandleGameEnd(victorious);
     }
 }

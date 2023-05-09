@@ -36,7 +36,6 @@ public class AIcommander : MonoBehaviour
 
     private IEnumerator IssueOrders()
     {
-        //WaitForFixedUpdate wait = new WaitForFixedUpdate();
         WaitForSeconds delay = new WaitForSeconds(1.0f);
 
         yield return null;
@@ -70,11 +69,17 @@ public class AIcommander : MonoBehaviour
                 HexOverlay choice = RandomCommand(possibilities);
 
                 List<HexOverlay> attacks = AttackFilter(possibilities);
+                List<HexOverlay> useful = ProductiveMovementFilter(possibilities, military[idx]);
 
                 if(attacks.Count > 0)
                 {
                     choice = RandomCommand(attacks);
                 }
+                else if (useful.Count > 0)
+                {
+                    choice = RandomCommand(useful);
+                }
+
 
                 commander.SpoofSendCommand(choice.myCoords);
                 selector.HandleDeselect();
@@ -100,7 +105,6 @@ public class AIcommander : MonoBehaviour
                 }
 
                 Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
-                Debug.Log("waited for " + cycles + " frames");
 
 
                 yield return null;
@@ -153,5 +157,30 @@ public class AIcommander : MonoBehaviour
         }
 
         return attacks;
+    }
+
+
+
+    //This function will return a list of moves that will provide constructive movement toward a direction
+    //Case and point the returned moves don't have the unit turning around and undoing the previous move
+    private List<HexOverlay> ProductiveMovementFilter(List<HexOverlay> options, Unit unit)
+    {
+        List<HexOverlay> useful = new List<HexOverlay>();
+
+        foreach(HexOverlay hex in options)
+        {
+            int distPrev = (hex.myCoords - unit.prevTilePos).sqrMagnitude;
+            int distCurr = (hex.myCoords - unit.myTilePos).sqrMagnitude;
+
+            //If the distance from hex to the previous position is more than the current position
+            //Than we must be going in roughly the same direction
+            if( distPrev >= distCurr && hex.distanceFrom >= unit.GetMobility() -1)
+            {
+                useful.Add(hex);
+            }
+        }
+
+
+        return useful;
     }
 }

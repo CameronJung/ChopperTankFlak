@@ -6,6 +6,7 @@ using static UniversalConstants;
 public class InfantrySquad : Unit
 {
 
+    
     private void Awake()
     {
         Enlist();

@@ -20,7 +20,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     //This is the sprite all other sprites making up the unit are parented to
     [SerializeField] protected GameObject baseSprite;
 
-    [SerializeField] public int mobility { get; protected set; } = 5;
+    [SerializeField] protected int mobility = 5;
 
     [SerializeField] private string unitName;
 
@@ -53,6 +53,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
     
 
     public Vector3Int myTilePos { get; protected set; }
+
+    public Vector3Int prevTilePos { get; protected set; }
 
     //Set to true when the unit is expecting retaliation
     public bool waitingForResponse { get; protected set; } = false;
@@ -117,6 +119,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     {
         map = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<Tilemap>();
         myTilePos = map.WorldToCell(gameObject.transform.position);
+        prevTilePos = myTilePos;
         map.GetInstantiatedObject(myTilePos).GetComponent<HexOverlay>().SetOccupiedBy(this);
         transform.position = map.GetCellCenterWorld(myTilePos);
     }
@@ -320,6 +323,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
         //Reset the the tile this unit was at
         map.GetInstantiatedObject(myTilePos).GetComponent<HexOverlay>().SetOccupiedBy(null);
 
+        prevTilePos = myTilePos;
         //Update the tile this unit is now on
         myTilePos = map.WorldToCell(gameObject.transform.position);
         map.GetInstantiatedObject(myTilePos).GetComponent<HexOverlay>().SetOccupiedBy(this);
@@ -420,5 +424,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
         return this.stalematedWith != null;
     }
 
-
+    public int GetMobility()
+    {
+        return this.mobility;
+    }
 }

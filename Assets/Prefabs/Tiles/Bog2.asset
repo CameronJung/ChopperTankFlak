@@ -35,5 +35,7 @@ MonoBehaviour:
   m_Flags: 1
   m_ColliderType: 1
   traverseArray: 00010100
-  description: Wetlands are area with squishy, water sat
+  description: The  squishy, water saturated soil of the wetlands make them hazardous
+    for infantry and wheeled vehicles. Tanks distribute their weight enough to cross
+    the mud and helicopters just fly over it.
   title: Wetlands

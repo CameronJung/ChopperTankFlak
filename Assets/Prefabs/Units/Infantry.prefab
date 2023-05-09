@@ -445,8 +445,13 @@ MonoBehaviour:
   availSprite: {fileID: 7137924166732660932}
   staleSprite: {fileID: 7137924166995824302}
   baseSprite: {fileID: 7137924167586478077}
+  mobility: 4
   unitName: Infantry Squad
-  unitDescription: 
+  unitDescription: Infantry have little armour to speak of and are easily defeated
+    in combat by vehicles. However, vehicles preoccupied by a stalemate can easily
+    be flanked by infantry and eliminated. Infantry carry bulky weapons that take
+    time to aim properly, as such battles between infantry are determined by first
+    strike.
 --- !u!1 &7137924168289059883
 GameObject:
   m_ObjectHideFlags: 0

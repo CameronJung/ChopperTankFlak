@@ -148,9 +148,9 @@ public class HexOverlay : MonoBehaviour
         this.visited = true;
         this.distanceFrom = travelled;
 
-        if (TravelGuide(unit) && travelled <= unit.mobility)
+        if (TravelGuide(unit) && travelled <= unit.GetMobility())
         {
-            if (travelled < unit.mobility)
+            if (travelled < unit.GetMobility())
             {
                 foreach (HexOverlay hex in adjacent)
                 {
