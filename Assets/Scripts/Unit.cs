@@ -80,8 +80,14 @@ public abstract class Unit : MonoBehaviour, ISelectable
     public abstract UnitType GetUnitType();
 
 
+    //returns true if attacking the unit foe will result in a loss
+    public abstract bool IsWeakTo(Unit foe);
+
+
     //Called when the unit is attacked to handle how it reacts
     public abstract void BeEngaged(Unit assailant);
+
+    
 
 
     protected void Die()
@@ -247,6 +253,19 @@ public abstract class Unit : MonoBehaviour, ISelectable
         
         
     }
+
+
+    //process the order to do nothing
+    public IEnumerator ExecuteHoldOrder()
+    {
+        WaitForSeconds wait = new WaitForSeconds(0.25f);
+
+        yield return wait;
+
+        yield return null;
+        orderComplete = true;
+    }
+
 
 
     protected void Retaliate(Unit assailant)

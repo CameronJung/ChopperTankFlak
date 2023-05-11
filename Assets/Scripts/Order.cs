@@ -10,6 +10,9 @@ public abstract class Order
     public Vector3 origin { get; protected set; }
     protected Unit recipient;
 
+
+
+
     public Order(Vector3 orig, Vector3 dest, Unit unit) 
     {
         origin = orig;

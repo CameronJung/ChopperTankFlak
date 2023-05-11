@@ -136,7 +136,6 @@ public class SelectionManager : MonoBehaviour
             
         }
 
-        //Debug.Log("We found " + possibilities.Count + " things this unit could do.");
 
         return possibilities;
     }

@@ -6,18 +6,26 @@ using static UniversalConstants;
 
 public class AIcommander : MonoBehaviour
 {
+    private const int MAXCAUTION = 10;
+    private const int MINCAUTION = 2;
+
     [SerializeField] private SelectionManager selector;
     [SerializeField] private CommandTracer commander;
     [SerializeField] private GameManager manager;
 
     private Unit[] military;
     private List<HexOverlay> possibilities;
+
+    //The higher this value is the less likely the AI is to follow through with unfavorable
+    //engagements
+    private int caution;
     
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        caution = Random.Range(MINCAUTION, MAXCAUTION +1);
+        Debug.Log("The AI has a caution level of: " + caution);
     }
 
     // Update is called once per frame
@@ -68,7 +76,7 @@ public class AIcommander : MonoBehaviour
 
                 HexOverlay choice = RandomCommand(possibilities);
 
-                List<HexOverlay> attacks = AttackFilter(possibilities);
+                List<HexOverlay> attacks = AttackFilter(possibilities, military[idx]);
                 List<HexOverlay> useful = ProductiveMovementFilter(possibilities, military[idx]);
 
                 if(attacks.Count > 0)
@@ -143,7 +151,7 @@ public class AIcommander : MonoBehaviour
 
 
     //This function takes a list of hexOverlays and returns a list of HexOverlays with an attack state
-    private List<HexOverlay> AttackFilter(List<HexOverlay> options)
+    private List<HexOverlay> AttackFilter(List<HexOverlay> options, Unit unit)
     {
         List<HexOverlay> attacks = new List<HexOverlay>();
 
@@ -151,7 +159,19 @@ public class AIcommander : MonoBehaviour
         {
             if(hex.currState == HexState.attackable)
             {
-                attacks.Add(hex);
+                if (unit.IsWeakTo(hex.GetOccupiedBy()))
+                {
+                    float chance = Random.Range(0.0f, 1.0f) * MAXCAUTION;
+                    if(chance > caution)
+                    {
+                        attacks.Add(hex);
+                    }
+                }
+                else
+                {
+                    attacks.Add(hex);
+                }
+                
             }
             
         }
@@ -174,7 +194,7 @@ public class AIcommander : MonoBehaviour
 
             //If the distance from hex to the previous position is more than the current position
             //Than we must be going in roughly the same direction
-            if( distPrev >= distCurr && hex.distanceFrom >= unit.GetMobility() -1)
+            if( distPrev > distCurr && hex.distanceFrom >= unit.GetMobility() -1)
             {
                 useful.Add(hex);
             }

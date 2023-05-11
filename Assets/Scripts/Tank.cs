@@ -29,6 +29,20 @@ public class Tank : Unit
     }
 
 
+
+    public override bool IsWeakTo(Unit foe)
+    {
+        bool weak = false;
+
+        if (foe.myState != UnitState.stalemate)
+        {
+            weak = foe.GetUnitType() == UnitType.Helicopter;
+        }
+
+        return weak;
+    }
+
+
     public override void ResolveCombat(Unit other) 
     {
         //We will not expect a response if we are responding

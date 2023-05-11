@@ -65,7 +65,9 @@ public class CommandTracer : MonoBehaviour
             HexOverlay currHex = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>();
             if (currHex.currState > 0)
             {
-                validTile = currHex.currState == HexState.attackable || currHex.GetOccupiedBy() == null;
+                //The only valid occupied tiles contain the selected unit or an enemy
+                validTile = currHex.currState == HexState.attackable || currHex.GetOccupiedBy() == null 
+                    || currHex.currState == HexState.hold;
 
 
                 liner.enabled = true;
@@ -154,21 +156,30 @@ public class CommandTracer : MonoBehaviour
         if (validTile) {
             Stack<Order> orders = new Stack<Order>();
 
-            //Check if the last order is an attack
-            bool attacks = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>().currState == HexState.attackable;
-
-            for (int idx = endPoint; idx >= 1; idx--)
+            if(commandee.myTilePos == currTilePos)
             {
-                if(idx == endPoint && attacks)
-                {
-                    orders.Push(new AttackOrder(points[idx - 1], points[idx], this.commandee));
-                }
-                else
-                {
-                    orders.Push(new MoveOrder(points[idx - 1], points[idx], this.commandee));
-                }
-                
+                orders.Push(new HoldOrder(points[0], points[0], commandee));
             }
+            else
+            {
+                //Check if the last order is an attack
+                bool attacks = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>().currState == HexState.attackable;
+
+                for (int idx = endPoint; idx >= 1; idx--)
+                {
+                    if (idx == endPoint && attacks)
+                    {
+                        orders.Push(new AttackOrder(points[idx - 1], points[idx], this.commandee));
+                    }
+                    else
+                    {
+                        orders.Push(new MoveOrder(points[idx - 1], points[idx], this.commandee));
+                    }
+
+                }
+            }
+
+            
             endPoint = 0;
             commandee.RecieveOrders(orders);
         }

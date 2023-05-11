@@ -41,6 +41,7 @@ public static class UniversalConstants : object
         unreachable = 0,
         reachable = 1,
         attackable = 2,
+        hold = 3,
     }
 
     public enum UnitState: int

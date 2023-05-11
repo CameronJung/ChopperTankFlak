@@ -31,6 +31,18 @@ public class InfantrySquad : Unit
     }
 
 
+    public override bool IsWeakTo(Unit foe)
+    {
+        bool weak = false;
+
+        if(foe.myState != UnitState.stalemate)
+        {
+            weak = foe.GetUnitType() != UnitType.InfantrySquad;
+        }
+
+        return weak;
+    }
+
 
     public override void ResolveCombat(Unit other)
     {

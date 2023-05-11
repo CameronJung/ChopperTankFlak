@@ -12,6 +12,7 @@ public class HexOverlay : MonoBehaviour
 
     [SerializeField] private GameObject combatSprite;
     [SerializeField] private GameObject moveSprite;
+    [SerializeField] private GameObject holdSprite;
 
     private TerrainTile myTile;
     private Tilemap map;
@@ -98,6 +99,7 @@ public class HexOverlay : MonoBehaviour
         distanceFrom = -1;
         combatSprite.SetActive(false);
         moveSprite.SetActive(false);
+        holdSprite.SetActive(false);
         currState = HexState.unreachable;
     }
 
@@ -214,7 +216,8 @@ public class HexOverlay : MonoBehaviour
         distanceFrom = 0;
         affected.Add(this);
 
-        this.currState = HexState.reachable;
+        MarkHold();
+        //this.currState = HexState.reachable;
         foreach(HexOverlay hex in adjacent)
         {
             hex.Explore(unit, 1, affected);
@@ -234,7 +237,8 @@ public class HexOverlay : MonoBehaviour
 
         foreach (HexOverlay hex in adjacent)
         {
-            if (hex.distanceFrom == this.distanceFrom - 1 && hex.currState == HexState.reachable)
+            if (hex.distanceFrom == this.distanceFrom - 1 &&
+                (hex.currState == HexState.reachable || hex.currState == HexState.hold))
             {
                 if(!(isAttack && hex.occupiedBy != null ))
                 if (hex.ContinuePath(unit, ref validPath))
@@ -259,7 +263,8 @@ public class HexOverlay : MonoBehaviour
         {
             foreach (HexOverlay hex in adjacent)
             {
-                if (hex.distanceFrom == this.distanceFrom - 1 && hex.currState == HexState.reachable)
+                if (hex.distanceFrom == this.distanceFrom - 1 && 
+                    (hex.currState == HexState.reachable || hex.currState == HexState.hold))
                 {
                     
                     if(hex.ContinuePath(unit, ref path))
@@ -286,6 +291,7 @@ public class HexOverlay : MonoBehaviour
     {
         moveSprite.SetActive(true);
         combatSprite.SetActive(false);
+        holdSprite.SetActive(false);
         currState = HexState.reachable;
     }
 
@@ -293,6 +299,15 @@ public class HexOverlay : MonoBehaviour
     {
         moveSprite.SetActive(false);
         combatSprite.SetActive(true);
+        holdSprite.SetActive(false);
         currState = HexState.attackable;
+    }
+
+    private void MarkHold()
+    {
+        moveSprite.SetActive(false);
+        combatSprite.SetActive(false);
+        holdSprite.SetActive(true);
+        currState = HexState.hold;
     }
 }
