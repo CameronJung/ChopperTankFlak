@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
     private int numComputerUnitsReady = 0;
     private int numPlayerUnitsReady = 0;
 
-
+    private bool turnComplete = false;
 
     public bool unitMoving { get; private set; } = false;
 
@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
 
     private void BeginTurn()
     {
-        
+        turnComplete = false;
         RevitalizeTeam();
 
         if(turn % 2 == 0)
@@ -162,7 +162,7 @@ public class GameManager : MonoBehaviour
             unitsAvailable--;
             if (unitsAvailable == 0)
             {
-                HandleTurnEnd();
+                HandleTurnEnd(WhosTurn());
             }
             unitMoving = false;
             Debug.Log("There are " + unitsAvailable + " units left to move.");
@@ -223,9 +223,16 @@ public class GameManager : MonoBehaviour
         EndTurn();
     }
 
-    public void HandleTurnEnd()
+
+    //Called to end a turn voluntarily or automatically
+    public void HandleTurnEnd(UniversalConstants.Faction faction)
     {
-        StartCoroutine(AwaitTurnChange());
+        if (!turnComplete && WhosTurn() == faction)
+        {
+            turnComplete = true;
+            StartCoroutine(AwaitTurnChange());
+        }
+        
     }
 
 

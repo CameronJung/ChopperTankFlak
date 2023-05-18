@@ -210,6 +210,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
         //Attack orders always come at the end of a stack so we should update the board ASAP
         this.FinalizeMovement();
+        
+        
 
 
         if (bearing < 0)
@@ -329,10 +331,9 @@ public abstract class Unit : MonoBehaviour, ISelectable
         if(myState != UnitState.stalemate && !retaliation)
         {
             SetStateTired();
-            retaliation = false;
         }
-        
-        
+        retaliation = false;
+
     }
 
 
@@ -446,5 +447,13 @@ public abstract class Unit : MonoBehaviour, ISelectable
     public int GetMobility()
     {
         return this.mobility;
+    }
+
+
+    //Used for debugging
+    public Vector3Int GetCurrentTilePos()
+    {
+        Vector3Int realTilePos = map.WorldToCell(gameObject.transform.position);
+        return realTilePos;
     }
 }

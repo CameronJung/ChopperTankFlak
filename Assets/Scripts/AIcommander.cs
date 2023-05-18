@@ -45,19 +45,23 @@ public class AIcommander : MonoBehaviour
     private IEnumerator IssueOrders()
     {
         WaitForSeconds delay = new WaitForSeconds(1.0f);
-
-        yield return null;
         int unitsAvailable = military.Length;
 
 
+        yield return null;
+        int unmovable = 0;
+
+
         
-        Debug.Log("There are " + unitsAvailable + " enemy units ready to move.");
+        Debug.Log("The Computer starts the turn with " + unitsAvailable + " units alive");
         
         for(int idx = 0; idx < unitsAvailable; idx++)
         {
+            //issues may arise if the selected unit was selected by the player as their final move
+            selector.HandleDeselect();
 
 
-            if(military[idx].myState == UnitState.ready)
+            if (military[idx].myState == UnitState.ready)
             {
                 yield return null;
 
@@ -66,13 +70,17 @@ public class AIcommander : MonoBehaviour
                 yield return null;
 
                 selector.HandleNewSelection(military[idx].myTilePos);
+
                 possibilities = selector.GetPossibilities();
 
-                yield return delay;
+                Debug.Assert(possibilities.Count > 0, "!ERROR! the AI selected a "
+                    + military[idx].GetTitle() + " with no possible moves it was in the "
+                    + military[idx].myState + " state");
+                Debug.Assert(military[idx].GetCurrentTilePos() == military[idx].myTilePos);
 
-                Debug.Assert(possibilities.Count > 0, "!ERROR! the AI selected a " 
-                    + selector.selectedUnit.GetTitle() + " with no possible moves it was in the "
-                    + selector.selectedUnit.myState + " state");
+                yield return delay;
+                
+                
 
                 HexOverlay choice = RandomCommand(possibilities);
 
@@ -115,21 +123,28 @@ public class AIcommander : MonoBehaviour
                 Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
 
 
-                yield return null;
+                
+            }
+            else
+            {
+                unmovable++;
+                Debug.Log("The AI selected a "
+                    + military[idx].GetTitle() + " at tile: " + military[idx].myTilePos
+                    + " It is not ready to move");
             }
 
-            
+            yield return null;
 
         }
 
 
         selector.HandleDeselect();
-
-
-        yield return delay;
-        //manager.EndTurn();
-
         yield return null;
+        if(unmovable > 0)
+        {
+            manager.HandleTurnEnd(Faction.ComputerTeam);
+        }
+        
     }
 
 
@@ -186,18 +201,34 @@ public class AIcommander : MonoBehaviour
     private List<HexOverlay> ProductiveMovementFilter(List<HexOverlay> options, Unit unit)
     {
         List<HexOverlay> useful = new List<HexOverlay>();
+        bool firstMove = unit.prevTilePos == unit.myTilePos;
+
+
 
         foreach(HexOverlay hex in options)
         {
             int distPrev = (hex.myCoords - unit.prevTilePos).sqrMagnitude;
             int distCurr = (hex.myCoords - unit.myTilePos).sqrMagnitude;
 
-            //If the distance from hex to the previous position is more than the current position
-            //Than we must be going in roughly the same direction
-            if( distPrev > distCurr && hex.distanceFrom >= unit.GetMobility() -1)
+            if (firstMove)
             {
-                useful.Add(hex);
+                //For the first move we'll consider a move of significant distance productive
+                if (hex.distanceFrom >= unit.GetMobility() - 1)
+                {
+                    useful.Add(hex);
+                }
             }
+            else
+            {
+                //If the distance from hex to the previous position is more than the current position
+                //Than we must be going in roughly the same direction
+                if (distPrev > distCurr && hex.distanceFrom >= unit.GetMobility() - 1)
+                {
+                    useful.Add(hex);
+                }
+            }
+
+            
         }
 
 

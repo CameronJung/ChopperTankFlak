@@ -109,6 +109,7 @@ public class SelectionManager : MonoBehaviour
     //this is mostly used by the AI
     public List<HexOverlay> GetPossibilities()
     {
+        Debug.Assert(selectedUnit != null, "There is no unit selected");
         List<HexOverlay> possibilities = new List<HexOverlay>();
 
         bool viable;
