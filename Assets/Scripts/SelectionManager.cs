@@ -30,42 +30,49 @@ public class SelectionManager : MonoBehaviour
 
     public void HandleNewSelection(Vector3Int tilePos)
     {
-        
-        HexOverlay hex = map.GetInstantiatedObject(tilePos).GetComponent<HexOverlay>();
-        //Debug.Log("Mouse Clicked on hex at: " + tilePos + " The real world position is " + hex.gameObject.transform.position);
+
+        GameObject obj = map.GetInstantiatedObject(tilePos);
 
 
-        if (tilePos == selectedPos)
+        if(obj != null)
         {
-            //If we have clicked on the same tile display the other type of data
-            if (selectedUnit != null)
+            HexOverlay hex = obj.GetComponent(typeof(HexOverlay)) as HexOverlay;
+
+
+            if (tilePos == selectedPos)
             {
-                HandleUnitDeselected();
-                recon.DisplayIntelAbout(map.GetTile<TerrainTile>(tilePos), tilePos);
+                //If we have clicked on the same tile display the other type of data
+                if (selectedUnit != null)
+                {
+                    HandleUnitDeselected();
+                    recon.DisplayIntelAbout(map.GetTile<TerrainTile>(tilePos), tilePos);
+                }
+                else if (hex.GetOccupiedBy() != null)
+                {
+                    HandleUnitSelected();
+                    recon.DisplayIntelAbout(hex.GetOccupiedBy(), tilePos);
+                }
             }
-            else if(hex.GetOccupiedBy() != null)
-            {
-                HandleUnitSelected();
-                recon.DisplayIntelAbout(hex.GetOccupiedBy(), tilePos);
-            }
-        }
-        //Otherwise send the unit if one is present
-        else{
-            selectedPos = tilePos;
-            if (hex.GetOccupiedBy() != null)
-            {
-                HandleUnitDeselected();
-                recon.DisplayIntelAbout(hex.GetOccupiedBy(), tilePos);
-                HandleUnitSelected();
-            }
+            //Otherwise send the unit if one is present
             else
             {
-                HandleUnitDeselected();
-                recon.DisplayIntelAbout(map.GetTile<TerrainTile>(tilePos), tilePos);
+                selectedPos = tilePos;
+                if (hex.GetOccupiedBy() != null)
+                {
+                    HandleUnitDeselected();
+                    recon.DisplayIntelAbout(hex.GetOccupiedBy(), tilePos);
+                    HandleUnitSelected();
+                }
+                else
+                {
+                    HandleUnitDeselected();
+                    recon.DisplayIntelAbout(map.GetTile<TerrainTile>(tilePos), tilePos);
+                }
             }
+            cursor.SetActive(true);
+            cursor.transform.position = map.CellToWorld(tilePos);
         }
-        cursor.SetActive(true);
-        cursor.transform.position = map.CellToWorld(tilePos);
+        
     }
 
     public void HandleDeselect()
@@ -119,9 +126,12 @@ public class SelectionManager : MonoBehaviour
             
             if (hex.CanIpass(selectedUnit))
             {
-                if (hex.GetOccupiedBy() != null)
+                Unit occupier = hex.GetOccupiedBy();
+                if (occupier != null)
                 {
-                    viable = hex.GetOccupiedBy().GetAllegiance() != selectedUnit.GetAllegiance();
+                    //Throw hexes that are occupied by other allied units
+                    viable = (occupier.GetAllegiance() != selectedUnit.GetAllegiance()
+                        || occupier == selectedUnit);
                 }
                 else
                 {

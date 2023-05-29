@@ -6,6 +6,7 @@ using static UniversalConstants;
 public class InfantrySquad : Unit
 {
 
+    private BuildingOverlay capturing = null;
     
     private void Awake()
     {
@@ -70,6 +71,56 @@ public class InfantrySquad : Unit
             
         }
     }
+
+
+    public override IEnumerator ExecuteHoldOrder()
+    {
+        //Check if we are capturing a building
+        BuildingOverlay building = map.GetInstantiatedObject(map.WorldToCell(transform.position)).GetComponent(typeof(HexOverlay)) as BuildingOverlay;
+        if (building != null)
+        {
+            building.Capture(this);
+            capturing = building;
+        }
+
+        yield return null;
+        yield return base.ExecuteHoldOrder();
+    }
+
+
+
+    public override IEnumerator ExecuteMoveOrder(Vector3 origin, Vector3 destination)
+    {
+        HandleCaptureInteruption();
+        return base.ExecuteMoveOrder(origin, destination);
+    }
+
+
+
+    //This method is called when something happens to interupt a capture
+    private void HandleCaptureInteruption()
+    {
+        if(capturing != null)
+        {
+            capturing.CaptureInterrupted();
+            capturing = null;
+        }
+    }
+
+
+    protected override void Die()
+    {
+        HandleCaptureInteruption();
+        base.Die();
+    }
+
+
+
+    public override bool IsCapturing()
+    {
+        return capturing != null;
+    }
+
 
 
 

@@ -7,6 +7,10 @@ public static class UniversalConstants : object
     public const string MAPPATH = "GameBoard/Map";
     public const string MANAGERPATH = "GameManager";
 
+    //The number of turns it takes to capture a building
+    public const int BUILDINGCAPFRESH = 2;
+
+
     //The square of the world distance between two adjacent hexes
     public const float HEXDISTANCESQUARED = 1.0f;
 
@@ -42,6 +46,7 @@ public static class UniversalConstants : object
         reachable = 1,
         attackable = 2,
         hold = 3,
+        capture = 4,
     }
 
     public enum UnitState: int

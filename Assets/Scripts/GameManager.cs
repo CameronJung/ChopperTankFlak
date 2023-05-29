@@ -235,11 +235,20 @@ public class GameManager : MonoBehaviour
         
     }
 
+    public void PlayerEndTurn()
+    {
+        HandleTurnEnd(Faction.PlayerTeam);
+    }
 
     private void HandleBattleOver(bool victorious)
     {
         gameEnd.gameObject.SetActive(true);
         clicker.BlockClicks();
         gameEnd.HandleGameEnd(victorious);
+    }
+
+    public void ReportHQCapture(Faction victor)
+    {
+        HandleBattleOver(victor == Faction.PlayerTeam);
     }
 }

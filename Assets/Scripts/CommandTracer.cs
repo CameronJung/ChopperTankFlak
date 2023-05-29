@@ -65,9 +65,10 @@ public class CommandTracer : MonoBehaviour
             HexOverlay currHex = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>();
             if (currHex.currState > 0)
             {
-                //The only valid occupied tiles contain the selected unit or an enemy
+                //Determine if the hex represents a valid move
+                //A hex is invalid if it is occupied by another allied unit
                 validTile = currHex.currState == HexState.attackable || currHex.GetOccupiedBy() == null 
-                    || currHex.currState == HexState.hold;
+                    || currHex.currState == HexState.hold || currHex.currState == HexState.capture;
 
 
                 liner.enabled = true;
@@ -167,9 +168,23 @@ public class CommandTracer : MonoBehaviour
 
                 for (int idx = endPoint; idx >= 1; idx--)
                 {
-                    if (idx == endPoint && attacks)
+                    if (idx == endPoint)
                     {
-                        orders.Push(new AttackOrder(points[idx - 1], points[idx], this.commandee));
+                        if (attacks)
+                        {
+                            orders.Push(new AttackOrder(points[idx - 1], points[idx], this.commandee));
+                        }
+                        else 
+                        {
+                            //Add an extra hold command at the end
+                            if ((map.GetInstantiatedObject(map.WorldToCell(points[endPoint])).GetComponent(typeof(HexOverlay)) as HexOverlay).currState == HexState.capture)
+                            {
+                                orders.Push(new HoldOrder(points[endPoint], points[endPoint], commandee));
+                            }
+                                
+                            orders.Push(new MoveOrder(points[endPoint - 1], points[endPoint], this.commandee));
+                        }
+                        
                     }
                     else
                     {

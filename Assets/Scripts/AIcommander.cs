@@ -7,7 +7,8 @@ using static UniversalConstants;
 public class AIcommander : MonoBehaviour
 {
     private const int MAXCAUTION = 10;
-    private const int MINCAUTION = 2;
+    private const int MINCAUTION = 4;
+
 
     [SerializeField] private SelectionManager selector;
     [SerializeField] private CommandTracer commander;
@@ -25,6 +26,7 @@ public class AIcommander : MonoBehaviour
     void Start()
     {
         caution = Random.Range(MINCAUTION, MAXCAUTION +1);
+        
         Debug.Log("The AI has a caution level of: " + caution);
     }
 
@@ -84,18 +86,37 @@ public class AIcommander : MonoBehaviour
 
                 HexOverlay choice = RandomCommand(possibilities);
 
-                List<HexOverlay> attacks = AttackFilter(possibilities, military[idx]);
-                List<HexOverlay> useful = ProductiveMovementFilter(possibilities, military[idx]);
 
-                if(attacks.Count > 0)
+                List<HexOverlay> special = new List<HexOverlay>();
+                //List<HexOverlay> attacks = AttackFilter(possibilities, military[idx]);
+                //List<HexOverlay> useful = ProductiveMovementFilter(possibilities, military[idx]);
+
+                //If infantry try to capture a facility
+                if(military[idx].GetUnitType() == UnitType.InfantrySquad)
                 {
-                    choice = RandomCommand(attacks);
-                }
-                else if (useful.Count > 0)
-                {
-                    choice = RandomCommand(useful);
+                    special = CaptureFilter(possibilities);
                 }
 
+                //Otherwise look for enemies to attack
+                if(special.Count == 0 || military[idx].GetUnitType() != UnitType.InfantrySquad)
+                {
+                    special = AttackFilter(possibilities, military[idx]);
+                }
+
+                //Otherwise try to move in a useful manner
+                if (special.Count == 0)
+                {
+                    special = ProductiveMovementFilter(possibilities, military[idx]);
+                }
+
+                //If all else fails do something random
+                if (special.Count == 0)
+                {
+                    special = possibilities;
+                }
+
+                //pick an option
+                choice = RandomCommand(special);
 
                 commander.SpoofSendCommand(choice.myCoords);
                 selector.HandleDeselect();
@@ -170,22 +191,36 @@ public class AIcommander : MonoBehaviour
     {
         List<HexOverlay> attacks = new List<HexOverlay>();
 
+        bool critical = false;
+
+
         foreach (HexOverlay hex in options)
         {
-            if(hex.currState == HexState.attackable)
+            if(hex.currState == HexState.attackable && !critical)
             {
-                if (unit.IsWeakTo(hex.GetOccupiedBy()))
+
+                float chance = Random.Range(0.0f, 1.0f) * MAXCAUTION;
+                Unit enemy = hex.GetOccupiedBy();
+
+                
+                
+                //Make the AI avoid fights it will lose, unless it isn't cautious
+                if (!unit.IsWeakTo(enemy) || (chance > caution))
                 {
-                    float chance = Random.Range(0.0f, 1.0f) * MAXCAUTION;
-                    if(chance > caution)
+
+                    //Stop a capture at all costs
+                    if (enemy.IsCapturing())
                     {
-                        attacks.Add(hex);
+                        //Ignore everything else
+                        critical = true;
+                        attacks.Clear();
                     }
-                }
-                else
-                {
+
                     attacks.Add(hex);
+                    
+
                 }
+                
                 
             }
             
@@ -233,5 +268,26 @@ public class AIcommander : MonoBehaviour
 
 
         return useful;
+    }
+
+
+
+    private List<HexOverlay> CaptureFilter(List<HexOverlay> options)
+    {
+        List<HexOverlay> captures = new List<HexOverlay>();
+
+        int idx = 0;
+        bool found = false;
+        while(idx < options.Count && !found)
+        {
+            if(options[idx].currState == HexState.capture)
+            {
+                found = true;
+                captures.Add(options[idx]);
+            }
+            idx++;
+        }
+
+        return captures;
     }
 }

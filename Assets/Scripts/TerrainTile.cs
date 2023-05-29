@@ -17,7 +17,7 @@ public class TerrainTile : Tile, ISelectable
 
     [SerializeField] private bool[] traverseArray = {true, true, true, true};
 
-    [SerializeField] private string description;
+    [TextArea][SerializeField] private string description;
     [SerializeField] private string title;
 
     public bool CanUnitPass(Unit unit)

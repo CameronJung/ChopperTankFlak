@@ -10,16 +10,16 @@ public class HexOverlay : MonoBehaviour
     [SerializeField] private Unit occupiedBy { get; set; }
     public bool hasUnit = false;
 
-    [SerializeField] private GameObject combatSprite;
-    [SerializeField] private GameObject moveSprite;
-    [SerializeField] private GameObject holdSprite;
+    [SerializeField] protected GameObject combatSprite;
+    [SerializeField] protected GameObject moveSprite;
+    [SerializeField] protected GameObject holdSprite;
 
     private TerrainTile myTile;
     private Tilemap map;
     public Vector3Int myCoords { get; private set;}
 
     //Represents the state of the hexagaon in a single property
-    public HexState currState { get; private set; } = HexState.unreachable;
+    public HexState currState { get; protected set; } = HexState.unreachable;
 
     private List<HexOverlay> adjacent;
 
@@ -28,7 +28,7 @@ public class HexOverlay : MonoBehaviour
     public int distanceFrom = -1;
 
     // Start is called before the first frame update
-    void Start()
+    protected void Start()
     {
         
         Tilemap map = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<Tilemap>();
@@ -41,37 +41,37 @@ public class HexOverlay : MonoBehaviour
         Vector3Int neighbor = GridHelper.GetUpRight(myCoords);
         if (map.HasTile(neighbor))
         {
-            adjacent.Add(map.GetInstantiatedObject(neighbor).GetComponent<HexOverlay>());
+            adjacent.Add(map.GetInstantiatedObject(neighbor).GetComponent(typeof(HexOverlay)) as HexOverlay);
         }
 
         neighbor = GridHelper.GetUp(myCoords);
         if (map.HasTile(neighbor))
         {
-            adjacent.Add(map.GetInstantiatedObject(neighbor).GetComponent<HexOverlay>());
+            adjacent.Add(map.GetInstantiatedObject(neighbor).GetComponent(typeof(HexOverlay)) as HexOverlay);
         }
 
         neighbor = GridHelper.GetUpLeft(myCoords);
         if (map.HasTile(neighbor))
         {
-            adjacent.Add(map.GetInstantiatedObject(neighbor).GetComponent<HexOverlay>());
+            adjacent.Add(map.GetInstantiatedObject(neighbor).GetComponent(typeof(HexOverlay)) as HexOverlay);
         }
 
         neighbor = GridHelper.GetDownLeft(myCoords);
         if (map.HasTile(neighbor))
         {
-            adjacent.Add(map.GetInstantiatedObject(neighbor).GetComponent<HexOverlay>());
+            adjacent.Add(map.GetInstantiatedObject(neighbor).GetComponent(typeof(HexOverlay)) as HexOverlay);
         }
 
         neighbor = GridHelper.GetDown(myCoords);
         if (map.HasTile(neighbor))
         {
-            adjacent.Add(map.GetInstantiatedObject(neighbor).GetComponent<HexOverlay>());
+            adjacent.Add(map.GetInstantiatedObject(neighbor).GetComponent(typeof(HexOverlay)) as HexOverlay);
         }
 
         neighbor = GridHelper.GetDownRight(myCoords);
         if (map.HasTile(neighbor))
         {
-            adjacent.Add(map.GetInstantiatedObject(neighbor).GetComponent<HexOverlay>());
+            adjacent.Add(map.GetInstantiatedObject(neighbor).GetComponent(typeof(HexOverlay)) as HexOverlay);
         }
     }
 
@@ -92,16 +92,7 @@ public class HexOverlay : MonoBehaviour
         this.occupiedBy = unit;
     }
 
-    //reset all flags to null
-    public void SetBlank()
-    {
-        visited = false;
-        distanceFrom = -1;
-        combatSprite.SetActive(false);
-        moveSprite.SetActive(false);
-        holdSprite.SetActive(false);
-        currState = HexState.unreachable;
-    }
+    
 
     public bool CanIpass(Unit me)
     {
@@ -112,7 +103,7 @@ public class HexOverlay : MonoBehaviour
 
 
     //Find what there is to do, return bool if this tile can be traversed
-    public bool TravelGuide(Unit unit)
+    public virtual bool TravelGuide(Unit unit)
     {
         bool traversable = false;
         //firstly does this tile have a unit?
@@ -209,7 +200,7 @@ public class HexOverlay : MonoBehaviour
 
 
     //Used to start exploration
-    public List<HexOverlay> BeginExploration(Unit unit)
+    public virtual List<HexOverlay> BeginExploration(Unit unit)
     {
         List<HexOverlay> affected = new List<HexOverlay>();
         visited = true;
@@ -287,7 +278,9 @@ public class HexOverlay : MonoBehaviour
         return allTheWay;
     }
 
-    private void MarkMove()
+
+    //These functions are used to change an overlay's state
+    protected virtual void MarkMove()
     {
         moveSprite.SetActive(true);
         combatSprite.SetActive(false);
@@ -295,7 +288,7 @@ public class HexOverlay : MonoBehaviour
         currState = HexState.reachable;
     }
 
-    private void MarkCombat()
+    protected virtual void MarkCombat()
     {
         moveSprite.SetActive(false);
         combatSprite.SetActive(true);
@@ -303,11 +296,22 @@ public class HexOverlay : MonoBehaviour
         currState = HexState.attackable;
     }
 
-    private void MarkHold()
+    protected virtual void MarkHold()
     {
         moveSprite.SetActive(false);
         combatSprite.SetActive(false);
         holdSprite.SetActive(true);
         currState = HexState.hold;
+    }
+
+    //reset all flags to null
+    public virtual void SetBlank()
+    {
+        visited = false;
+        distanceFrom = -1;
+        combatSprite.SetActive(false);
+        moveSprite.SetActive(false);
+        holdSprite.SetActive(false);
+        currState = HexState.unreachable;
     }
 }

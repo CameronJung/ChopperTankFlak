@@ -28,7 +28,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     
 
-    private Tilemap map;
+    protected Tilemap map;
     protected GameManager manager;
 
     protected Stack<Order> orders = new Stack<Order>();
@@ -90,7 +90,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     
 
 
-    protected void Die()
+    protected virtual void Die()
     {
         
         HexOverlay hex = map.GetInstantiatedObject(myTilePos).GetComponent<HexOverlay>();
@@ -163,7 +163,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
         this.orders = commands;
     }
 
-    public IEnumerator ExecuteMoveOrder(Vector3 origin, Vector3 destination)
+    public virtual IEnumerator ExecuteMoveOrder(Vector3 origin, Vector3 destination)
     {
         Vector3 direction = destination - origin;
         float travel = this.speed * Time.deltaTime;
@@ -258,7 +258,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
 
     //process the order to do nothing
-    public IEnumerator ExecuteHoldOrder()
+    public virtual IEnumerator ExecuteHoldOrder()
     {
         WaitForSeconds wait = new WaitForSeconds(0.25f);
 
@@ -455,5 +455,13 @@ public abstract class Unit : MonoBehaviour, ISelectable
     {
         Vector3Int realTilePos = map.WorldToCell(gameObject.transform.position);
         return realTilePos;
+    }
+
+
+    //This method is overridden by units capable of capturing buildings
+    //Most unit can't capture buildings so this default method can stay in most cases
+    public virtual bool IsCapturing()
+    {
+        return false;
     }
 }
