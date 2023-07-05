@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class EndGamePanel : MonoBehaviour
@@ -25,5 +26,15 @@ public class EndGamePanel : MonoBehaviour
     {
         victoryText.gameObject.SetActive(victorious);
         defeatText.gameObject.SetActive(!victorious);
+    }
+
+    public void ReturnToMenu()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    public void Replay()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
