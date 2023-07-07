@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
 
 
     //Changes to true when the game ends for some reason
-    //private bool gameEnd = false;
+    private bool battleOver = false;
 
 
     // Start is called before the first frame update0
@@ -237,11 +237,16 @@ public class GameManager : MonoBehaviour
 
     public void PlayerEndTurn()
     {
-        HandleTurnEnd(Faction.PlayerTeam);
+        if (!battleOver)
+        {
+            HandleTurnEnd(Faction.PlayerTeam);
+        }
+        
     }
 
     private void HandleBattleOver(bool victorious)
     {
+        battleOver = true;
         gameEnd.gameObject.SetActive(true);
         clicker.BlockClicks();
         gameEnd.HandleGameEnd(victorious);
