@@ -10,6 +10,7 @@ public class InfantrySquad : Unit
     
     private void Awake()
     {
+        //INHERITANCE
         Enlist();
         PutOnBoard();
     }
@@ -23,6 +24,7 @@ public class InfantrySquad : Unit
     // Update is called once per frame
     void FixedUpdate()
     {
+        //INHERITANCE
         FollowOrders();
     }
 
@@ -44,7 +46,7 @@ public class InfantrySquad : Unit
         return weak;
     }
 
-
+    //POLYMORPHISM
     public override void ResolveCombat(Unit other)
     {
         if (other.myState != UnitState.stalemate)
@@ -57,7 +59,7 @@ public class InfantrySquad : Unit
     }
 
 
-
+    //POLYMORPHISM
     public override void BeEngaged(Unit assailant)
     {
         

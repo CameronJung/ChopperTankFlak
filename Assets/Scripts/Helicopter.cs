@@ -31,7 +31,7 @@ public class Helicopter : Unit
         return UnitType.Helicopter;
     }
 
-
+    //POLYMORPHISM
     public override bool IsWeakTo(Unit foe)
     {
         bool weak = false;
@@ -44,7 +44,7 @@ public class Helicopter : Unit
         return weak;
     }
 
-
+    //POLYMORPHISM
     public override void ResolveCombat(Unit other)
     {
         //We will not expect a response if we are responding
@@ -58,7 +58,7 @@ public class Helicopter : Unit
 
 
 
-
+    //POLYMORPHISM
     public override void BeEngaged(Unit assailant)
     {
         

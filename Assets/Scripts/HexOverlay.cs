@@ -219,7 +219,7 @@ public class HexOverlay : MonoBehaviour
     }
 
 
-
+    //ABSTRACTION
     public Vector3[] MakePathToHere(Unit unit, Vector3[] path)
     {
         Vector3[] validPath = (Vector3[])path.Clone();
@@ -280,6 +280,7 @@ public class HexOverlay : MonoBehaviour
 
 
     //These functions are used to change an overlay's state
+    //ENCAPSULATION
     protected virtual void MarkMove()
     {
         moveSprite.SetActive(true);
