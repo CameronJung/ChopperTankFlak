@@ -42,7 +42,7 @@ public class Flak : Unit
         return weak;
     }
 
-
+    //POLYMORPHISM
     public override void ResolveCombat(Unit other)
     {
         //We will not expect a response if we are responding
@@ -53,7 +53,7 @@ public class Flak : Unit
         other.BeEngaged(this);
     }
 
-
+    //POLYMORPHISM
     public override void BeEngaged(Unit assailant)
     {
         

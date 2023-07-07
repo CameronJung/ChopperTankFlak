@@ -26,8 +26,6 @@ public class AIcommander : MonoBehaviour
     void Start()
     {
         caution = Random.Range(MINCAUTION, MAXCAUTION +1);
-        
-        Debug.Log("The AI has a caution level of: " + caution);
     }
 
     // Update is called once per frame
@@ -55,7 +53,6 @@ public class AIcommander : MonoBehaviour
 
 
         
-        Debug.Log("The Computer starts the turn with " + unitsAvailable + " units alive");
         
         for(int idx = 0; idx < unitsAvailable; idx++)
         {

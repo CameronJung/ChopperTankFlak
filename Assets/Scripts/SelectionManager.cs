@@ -96,13 +96,17 @@ public class SelectionManager : MonoBehaviour
 
     private void HandleUnitDeselected()
     {
-        commander.StopDrawingCommand();
-        //reset tiles
-        foreach(HexOverlay hex in affectedHexes)
+        if(selectedUnit != null)
         {
-            hex.SetBlank();
+            commander.StopDrawingCommand();
+            //reset tiles
+            foreach (HexOverlay hex in affectedHexes)
+            {
+                hex.SetBlank();
+            }
+            selectedUnit = null;
         }
-        selectedUnit = null;
+        
     }
 
     public bool IsUnitSelected()

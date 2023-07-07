@@ -75,21 +75,24 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
 
     //Called to make this unit attack the other unit
+    //POLYMORPHISM
     public abstract void ResolveCombat(Unit other);
 
     public abstract UnitType GetUnitType();
 
 
     //returns true if attacking the unit foe will result in a loss
+    //POLYMORPHISM
     public abstract bool IsWeakTo(Unit foe);
 
 
     //Called when the unit is attacked to handle how it reacts
+    //POLYMORPHISM
     public abstract void BeEngaged(Unit assailant);
 
-    
 
 
+    //INHERITANCE
     protected virtual void Die()
     {
         
@@ -110,7 +113,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     }
 
 
-
+    //INHERITANCE
     //Called during start, this method will change the unit to match its team's colour
     protected void PaintUnit()
     {
@@ -120,6 +123,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
         }
     }
 
+    //INHERITANCE
     //The unit uses its own global position to add itself to the game board
     protected void PutOnBoard()
     {
@@ -130,6 +134,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
         transform.position = map.GetCellCenterWorld(myTilePos);
     }
 
+    //INHERITANCE
     //called by Start, this method initializes the manager property and adds the unit to the manager's unit list
     protected void Enlist()
     {
@@ -163,6 +168,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
         this.orders = commands;
     }
 
+
+    //ABSTRACTION
     public virtual IEnumerator ExecuteMoveOrder(Vector3 origin, Vector3 destination)
     {
         Vector3 direction = destination - origin;
@@ -199,7 +206,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     }
 
 
-    //This is a default implementation viable as a replacement
+    //ABSTRACTION
     public IEnumerator ExecuteAttackOrder(Vector3 origin, Vector3 destination)
     {
         Vector3 displacement = destination - origin;
@@ -279,6 +286,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
     }
 
 
+
+    //INHERITANCE
     protected void FollowOrders()
     {
         
@@ -286,7 +295,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
         {
             if (!executingOrders)
             {
-                Debug.Log(this.allegiance + " " + this.GetUnitType() + " is now executing orders");
+                
                 manager.ReportActionStarted();
 
                 executingOrders = true;
@@ -316,7 +325,6 @@ public abstract class Unit : MonoBehaviour, ISelectable
             executingOrders = false;
             FinalizeMovement();
             FinalizeAction();
-            Debug.Log(this.allegiance + " " + this.GetUnitType() + " has completed orders");
 
             //We delay reporting the action as complete if we are expecting a response from another unit
             manager.ReportActionComplete(this);

@@ -64,12 +64,10 @@ public class GameManager : MonoBehaviour
 
         if(turn % 2 == 0)
         {
-            Debug.Log("Player's turn begins");
             clicker.AllowClicks();
         }
         else
         {
-            Debug.Log("Computer turn begins");
             clicker.BlockClicks();
             enemyCO.TakeTurn(computerUnits);
         }
@@ -138,7 +136,6 @@ public class GameManager : MonoBehaviour
             HandleBattleOver(computerUnits.Count == 0);
         }
 
-        Debug.Log(casualty.GetAllegiance() + " " + casualty.GetUnitType() + " has died");
     }
 
 
@@ -165,7 +162,6 @@ public class GameManager : MonoBehaviour
                 HandleTurnEnd(WhosTurn());
             }
             unitMoving = false;
-            Debug.Log("There are " + unitsAvailable + " units left to move.");
         }
         
     }
