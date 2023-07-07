@@ -286,7 +286,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
         {
             if (!executingOrders)
             {
-                Debug.Log(this.allegiance + " " + this.GetUnitType() + " is now executing orders");
+                
                 manager.ReportActionStarted();
 
                 executingOrders = true;
@@ -316,7 +316,6 @@ public abstract class Unit : MonoBehaviour, ISelectable
             executingOrders = false;
             FinalizeMovement();
             FinalizeAction();
-            Debug.Log(this.allegiance + " " + this.GetUnitType() + " has completed orders");
 
             //We delay reporting the action as complete if we are expecting a response from another unit
             manager.ReportActionComplete(this);
