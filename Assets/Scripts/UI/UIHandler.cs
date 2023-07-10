@@ -12,11 +12,7 @@ public class UIHandler : MonoBehaviour
     private const float MAPFRACTION = 0.75f;
 
 
-    
-
-
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         RectTransform mytransform = gameObject.GetComponent<RectTransform>();
         float width = mytransform.rect.width;
@@ -35,6 +31,13 @@ public class UIHandler : MonoBehaviour
         menuPos.x = mapWidth + (0.5f * menuWidth);
         menuPanel.anchoredPosition = menuPos;
         Canvas.ForceUpdateCanvases();
+    }
+
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        
     }
 
     // Update is called once per frame
