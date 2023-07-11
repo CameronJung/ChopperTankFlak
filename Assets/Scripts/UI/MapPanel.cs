@@ -46,8 +46,8 @@ public class MapPanel : MonoBehaviour
         mapCentreRect = new Rect(mapRect.xMin + BORDER, mapRect.yMin + BORDER, mapRect.width - 2 * BORDER, mapRect.height - 2 * BORDER);
         mapCentre = new Vector2(mapRect.xMin + 0.5f * cam.pixelWidth, mapRect.yMin + 0.5f * cam.pixelHeight);
 
-        movableWidth = (mapDimensions.x - cam.pixelWidth / PIXDISTX * HEXWIDTH) * 0.5f;
-        moveableHeight = (mapDimensions.y - cam.pixelHeight / PIXDISTY * HEXHEIGHT) * 0.5f;
+        movableWidth = Mathf.Max((mapDimensions.x - cam.pixelWidth / PIXDISTX * HEXWIDTH) * 0.5f, 0.0f);
+        moveableHeight = Mathf.Max((mapDimensions.y - cam.pixelHeight / PIXDISTY * HEXHEIGHT) * 0.5f, 0.0f);
     }
 
     // Update is called once per frame

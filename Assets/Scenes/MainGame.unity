@@ -451,7 +451,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camObject: {fileID: 1463816263}
-  mapSize: {x: 25, y: 9}
+  mapSize: {x: 27, y: 9}
   scrollSpeed: 1.5
 --- !u!4 &337604145 stripped
 Transform:
