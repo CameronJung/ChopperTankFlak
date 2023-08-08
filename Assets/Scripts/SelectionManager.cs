@@ -154,5 +154,62 @@ public class SelectionManager : MonoBehaviour
 
         return possibilities;
     }
-    
+
+    //Returns a list of hexes the selected unit can move to
+    //this is mostly used by the AI
+    public List<Directive> GetSmartestMoves(AIIntelHandler knowledge)
+    {
+        Debug.Assert(selectedUnit != null, "There is no unit selected");
+        List<Directive> possibilities = new List<Directive>();
+
+        bool viable;
+        foreach (HexOverlay hex in affectedHexes)
+        {
+            viable = false;
+
+            if (hex.CanIpass(selectedUnit))
+            {
+                Unit occupier = hex.GetOccupiedBy();
+                if (occupier != null)
+                {
+                    //Throw hexes that are occupied by other allied units
+                    viable = (occupier.GetAllegiance() != selectedUnit.GetAllegiance()
+                        || occupier == selectedUnit);
+                }
+                else
+                {
+                    viable = true;
+                }
+
+            }
+
+            if (viable)
+            {
+                Directive noob = new Directive(selectedUnit, hex, knowledge);
+
+                if(possibilities.Count > 0) { 
+
+                    //Maintain possibilities as a list of the best possible moves
+                    if(noob.getSmartness() >= possibilities[0].getSmartness())
+                    {
+                        if(noob.getSmartness() > possibilities[0].getSmartness())
+                        {
+                            possibilities.Clear();
+                        }
+                        possibilities.Add(noob);
+                    }
+                }
+                else
+                {
+                    possibilities.Add(noob);
+                }
+                
+            }
+
+        }
+
+
+        return possibilities;
+    }
+
 }

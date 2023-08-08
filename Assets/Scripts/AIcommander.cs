@@ -16,6 +16,8 @@ public class AIcommander : MonoBehaviour
 
     private Unit[] military;
     private List<HexOverlay> possibilities;
+    private List<Directive> bestMoves;
+    private AIIntelHandler intel;
 
     //The higher this value is the less likely the AI is to follow through with unfavorable
     //engagements
@@ -26,6 +28,7 @@ public class AIcommander : MonoBehaviour
     void Start()
     {
         caution = Random.Range(MINCAUTION, MAXCAUTION +1);
+        intel = gameObject.GetComponent<AIIntelHandler>();
     }
 
     // Update is called once per frame
@@ -38,10 +41,13 @@ public class AIcommander : MonoBehaviour
     public void TakeTurn(List<Unit> units)
     {
         this.military = units.ToArray();
-        StartCoroutine(IssueOrders());
+        //StartCoroutine(IssueOrders());
+        StartCoroutine(IssueDirectives());
     }
 
 
+
+    // This function is a legacy implementation and will be removed once a new system is implemented
     private IEnumerator IssueOrders()
     {
         WaitForSeconds delay = new WaitForSeconds(1.0f);
@@ -166,6 +172,98 @@ public class AIcommander : MonoBehaviour
     }
 
 
+    private IEnumerator IssueDirectives()
+    {
+        WaitForSeconds delay = new WaitForSeconds(1.0f);
+        int unitsAvailable = military.Length;
+
+
+        yield return null;
+        int unmovable = 0;
+
+
+
+
+        for (int idx = 0; idx < unitsAvailable; idx++)
+        {
+            //issues may arise if the selected unit was selected by the player as their final move
+            selector.HandleDeselect();
+
+
+            if (military[idx].myState == UnitState.ready)
+            {
+                yield return null;
+
+
+
+                yield return null;
+
+                selector.HandleNewSelection(military[idx].myTilePos);
+
+                bestMoves = selector.GetSmartestMoves(intel);
+
+                Debug.Assert(bestMoves.Count > 0, "!ERROR! the AI selected a "
+                    + military[idx].GetTitle() + " with no possible moves it was in the "
+                    + military[idx].myState + " state");
+                Debug.Assert(military[idx].GetCurrentTilePos() == military[idx].myTilePos);
+
+                yield return delay;
+
+
+
+                Directive choice = RandomDirective(bestMoves);
+
+                commander.SpoofSendCommand(choice.getDestinationCoords());
+                selector.HandleDeselect();
+                yield return null;
+
+                int cycles = 1;
+
+                //wait until the unit is moving
+                while (!manager.IsUnitMoving() && cycles < 600)
+                {
+                    cycles++;
+                    Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
+                    yield return null;
+                }
+
+                cycles = 0;
+
+                //Wait until the unit is done moving
+                while (manager.IsUnitMoving() && cycles < 600)
+                {
+                    yield return null;
+                    cycles++;
+                }
+
+                Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
+
+
+
+            }
+            else
+            {
+                unmovable++;
+                Debug.Log("The AI selected a "
+                    + military[idx].GetTitle() + " at tile: " + military[idx].myTilePos
+                    + " It is not ready to move");
+            }
+
+            yield return null;
+
+        }
+
+
+        selector.HandleDeselect();
+        yield return null;
+        if (unmovable > 0)
+        {
+            manager.HandleTurnEnd(Faction.ComputerTeam);
+        }
+
+    }
+
+
     // Just choose a random command from possibilities
     // no real intelligence, mostly a place holder
     private HexOverlay RandomCommand(List<HexOverlay> options)
@@ -177,6 +275,28 @@ public class AIcommander : MonoBehaviour
     }
 
 
+
+    private Directive RandomDirective(List<Directive> options)
+    {
+        int pick = Random.Range(0, options.Count);
+
+        return options[pick];
+    }
+
+
+
+    /*
+     * ExecuteDirective
+     * 
+     * this function issues a command as described by a directive parameter (direct)
+     * 
+     * !NOTE!
+     * this function requires that no unit is currently selected
+     */
+    private void ExecuteDirective(Directive direct)
+    {
+
+    }
 
 
 
