@@ -169,4 +169,9 @@ public class Directive
     {
         return this.destination.myCoords;
     }
+
+    public Unit GetUnit()
+    {
+        return this.capable;
+    }
 }

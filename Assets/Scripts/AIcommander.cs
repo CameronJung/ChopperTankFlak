@@ -181,77 +181,102 @@ public class AIcommander : MonoBehaviour
         yield return null;
         int unmovable = 0;
 
+        //List of units that haven't moved this turn
+        List<Unit> unmoved = new List<Unit>(military);
 
+        //List of the best possible moves for all units;
+        List<Directive> moves = new List<Directive>();
 
-
-        for (int idx = 0; idx < unitsAvailable; idx++)
+        //When the list unmoved is empty all units have been moved and the turn can end
+        while(unmoved.Count > 0)
         {
-            //issues may arise if the selected unit was selected by the player as their final move
-            selector.HandleDeselect();
+            int idx = 0;
 
 
-            if (military[idx].myState == UnitState.ready)
+            //Check each unit for moves
+            while (idx < unmoved.Count)
             {
-                yield return null;
-
-
-
-                yield return null;
-
-                selector.HandleNewSelection(military[idx].myTilePos);
-
-                bestMoves = selector.GetSmartestMoves(intel);
-
-                Debug.Assert(bestMoves.Count > 0, "!ERROR! the AI selected a "
-                    + military[idx].GetTitle() + " with no possible moves it was in the "
-                    + military[idx].myState + " state");
-                Debug.Assert(military[idx].GetCurrentTilePos() == military[idx].myTilePos);
-
-                yield return delay;
-
-
-
-                Directive choice = RandomDirective(bestMoves);
-
-                commander.SpoofSendCommand(choice.getDestinationCoords());
+                //issues may arise if the selected unit was selected by the player as their final move
                 selector.HandleDeselect();
-                yield return null;
 
-                int cycles = 1;
 
-                //wait until the unit is moving
-                while (!manager.IsUnitMoving() && cycles < 600)
-                {
-                    cycles++;
-                    Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
-                    yield return null;
-                }
-
-                cycles = 0;
-
-                //Wait until the unit is done moving
-                while (manager.IsUnitMoving() && cycles < 600)
+                if (unmoved[idx].myState == UnitState.ready)
                 {
                     yield return null;
-                    cycles++;
+
+
+
+                    yield return null;
+
+                    selector.HandleNewSelection(unmoved[idx].myTilePos);
+
+                    //Only keep the best moves for consideration
+
+                    moves = MaintainBest(moves, selector.GetSmartestMoves(intel));
+
+                    Debug.Assert(moves.Count > 0, "!ERROR! the AI selected a "
+                        + unmoved[idx].GetTitle() + " with no possible moves it was in the "
+                        + unmoved[idx].myState + " state");
+                    Debug.Assert(unmoved[idx].GetCurrentTilePos() == unmoved[idx].myTilePos);
+
+                    yield return null;
+
+                    //increment idx to look at next unit
+                    idx++;
+                }
+                else
+                {
+                    unmovable++;
+                    Debug.Log("The AI selected a "
+                        + unmoved[idx].GetTitle() + " at tile: " + unmoved[idx].myTilePos
+                        + " It is not ready to move");
+                    //Remove unmovable units from the list, DO NOT increment idx
+                    unmoved.RemoveAt(idx);
                 }
 
-                Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
+            }//All possible moves have been analyzed
 
 
-
-            }
-            else
-            {
-                unmovable++;
-                Debug.Log("The AI selected a "
-                    + military[idx].GetTitle() + " at tile: " + military[idx].myTilePos
-                    + " It is not ready to move");
-            }
-
+            selector.HandleDeselect();
             yield return null;
 
+            Directive choice = RandomDirective(moves);
+            selector.HandleNewSelection(choice.GetUnit().myTilePos);
+
+            yield return null;
+            yield return null;
+
+            commander.SpoofSendCommand(choice.getDestinationCoords());
+            selector.HandleDeselect();
+            yield return null;
+
+            unmoved.Remove(choice.GetUnit());
+            int cycles = 1;
+
+            //wait until the unit is moving
+            while (!manager.IsUnitMoving() && cycles < 600)
+            {
+                cycles++;
+                Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
+                yield return null;
+            }
+
+            cycles = 0;
+
+            //Wait until the unit is done moving
+            while (manager.IsUnitMoving() && cycles < 600)
+            {
+                yield return null;
+                cycles++;
+            }
+            Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
+
+            moves.Clear();
         }
+
+
+
+        
 
 
         selector.HandleDeselect();
@@ -406,5 +431,49 @@ public class AIcommander : MonoBehaviour
         }
 
         return captures;
+    }
+
+
+
+    /*
+     * MAINTAIN BEST
+     * 
+     * Given two lists of directives this method returns a list containing only the smartest moves
+     * 
+     * !NOTE! this method assumes both parameter lists contain directives of equal intelligence.
+     * Case and point this method has 3 possible outcomes it returns baseline, it returns candidates,
+     * or it returns a list with all entries from both lists.
+     */
+    private List<Directive> MaintainBest(List<Directive> baseline, List<Directive> candidates)
+    {
+        List<Directive> best = baseline;
+
+        if(baseline.Count == 0 || candidates.Count == 0)
+        {
+            if(baseline.Count == 0)
+            {
+                //The possibility remains that the returned list is empty but this is still a proper response
+                best = candidates;
+            }
+            
+        }
+        else
+        {
+            int smartest = best[0].getSmartness();
+
+            if(candidates[0].getSmartness() >= smartest)
+            {
+                if(candidates[0].getSmartness() > smartest)
+                {
+                    best = candidates;
+                }
+                else
+                {
+                    best.AddRange(candidates);
+                }
+            }
+        }
+
+        return best;
     }
 }
