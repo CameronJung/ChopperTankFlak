@@ -237,39 +237,47 @@ public class AIcommander : MonoBehaviour
             }//All possible moves have been analyzed
 
 
+
             selector.HandleDeselect();
             yield return null;
 
-            Directive choice = RandomDirective(moves);
-            selector.HandleNewSelection(choice.GetUnit().myTilePos);
-
-            yield return null;
-            yield return null;
-
-            commander.SpoofSendCommand(choice.getDestinationCoords());
-            selector.HandleDeselect();
-            yield return null;
-
-            unmoved.Remove(choice.GetUnit());
-            int cycles = 1;
-
-            //wait until the unit is moving
-            while (!manager.IsUnitMoving() && cycles < 600)
+            if(moves.Count > 0)
             {
-                cycles++;
+                Directive choice = RandomDirective(moves);
+                selector.HandleNewSelection(choice.GetUnit().myTilePos);
+
+                yield return null;
+                yield return null;
+
+                commander.SpoofSendCommand(choice.getDestinationCoords());
+                selector.HandleDeselect();
+                yield return null;
+
+                unmoved.Remove(choice.GetUnit());
+
+                int cycles = 1;
+
+                //wait until the unit is moving
+                while (!manager.IsUnitMoving() && cycles < 600)
+                {
+                    cycles++;
+                    Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
+                    yield return null;
+                }
+
+                cycles = 0;
+
+                //Wait until the unit is done moving
+                while (manager.IsUnitMoving() && cycles < 600)
+                {
+                    yield return null;
+                    cycles++;
+                }
                 Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
-                yield return null;
             }
 
-            cycles = 0;
-
-            //Wait until the unit is done moving
-            while (manager.IsUnitMoving() && cycles < 600)
-            {
-                yield return null;
-                cycles++;
-            }
-            Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
+            
+            
 
             moves.Clear();
         }
