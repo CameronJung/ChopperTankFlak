@@ -208,7 +208,7 @@ public class AIcommander : MonoBehaviour
 
                     yield return null;
 
-                    selector.HandleNewSelection(unmoved[idx].myTilePos);
+                    selector.HandleAISelection(unmoved[idx].myTilePos);
 
                     //Only keep the best moves for consideration
 
@@ -244,7 +244,7 @@ public class AIcommander : MonoBehaviour
             if(moves.Count > 0)
             {
                 Directive choice = RandomDirective(moves);
-                selector.HandleNewSelection(choice.GetUnit().myTilePos);
+                selector.HandleAISelection(choice.GetUnit().myTilePos);
 
                 yield return null;
                 yield return null;

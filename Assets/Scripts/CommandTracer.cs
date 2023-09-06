@@ -102,7 +102,9 @@ public class CommandTracer : MonoBehaviour
             points = new Vector3[unit.GetMobility() + 2];
             points[0] = map.GetCellCenterWorld(unit.myTilePos);
             commandee = unit;
-            liner.enabled = true;
+
+            //Only show the line for player controlled units
+            liner.enabled = unit.GetAllegiance() == Faction.PlayerTeam;
             drawing = true;
         }
         
@@ -112,9 +114,7 @@ public class CommandTracer : MonoBehaviour
     {
         if (drawing)
         {
-            //Check if the click would be a valid command, if it is than execut it
             
-            //SendCommand();
             drawing = false;
             commandee = null;
             liner.enabled = false;

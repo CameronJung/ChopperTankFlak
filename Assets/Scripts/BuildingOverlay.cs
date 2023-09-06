@@ -31,26 +31,26 @@ public class BuildingOverlay : HexOverlay
     }
 
 
-    public override bool TravelGuide(Unit unit)
+    public override bool TravelGuide(Unit unit, bool doShow = true)
     {
-        bool result = base.TravelGuide(unit);
+        bool result = base.TravelGuide(unit, doShow);
 
 
         if(CanCapture(unit))
         {
-            this.MarkCapture();
+            this.MarkCapture(doShow);
         }
 
         return result;
     }
 
-    public override List<HexOverlay> BeginExploration(Unit unit)
+    public override List<HexOverlay> BeginExploration(Unit unit, bool doShow = true)
     {
-        List<HexOverlay> affected = base.BeginExploration(unit);
+        List<HexOverlay> affected = base.BeginExploration(unit, doShow);
 
         if (CanCapture(unit))
         {
-            MarkCapture();
+            MarkCapture(doShow);
         }
 
         return affected;
@@ -90,30 +90,30 @@ public class BuildingOverlay : HexOverlay
 
 
     //These functions are used to change an overlay's state
-    protected override void MarkMove()
+    protected override void MarkMove(bool doShow = true)
     {
-        base.MarkMove();
+        base.MarkMove(doShow);
         captureSprite.SetActive(false);
     }
 
-    protected override void MarkCombat()
+    protected override void MarkCombat(bool doShow = true)
     {
-        base.MarkCombat();
+        base.MarkCombat(doShow);
         captureSprite.SetActive(false);
     }
 
-    protected override void MarkHold()
+    protected override void MarkHold(bool doShow = true)
     {
-        base.MarkHold();
+        base.MarkHold(doShow);
         captureSprite.SetActive(false);
     }
 
-    protected void MarkCapture()
+    protected void MarkCapture(bool doShow = true)
     {
         moveSprite.SetActive(false);
         combatSprite.SetActive(false);
         holdSprite.SetActive(false);
-        captureSprite.SetActive(true);
+        captureSprite.SetActive(doShow);
         currState = HexState.capture;
     }
 

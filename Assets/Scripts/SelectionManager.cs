@@ -28,7 +28,7 @@ public class SelectionManager : MonoBehaviour
         
     }
 
-    public void HandleNewSelection(Vector3Int tilePos)
+    public void HandleNewSelection(Vector3Int tilePos, bool conspicuous = true)
     {
 
         GameObject obj = map.GetInstantiatedObject(tilePos);
@@ -49,7 +49,7 @@ public class SelectionManager : MonoBehaviour
                 }
                 else if (hex.GetOccupiedBy() != null)
                 {
-                    HandleUnitSelected();
+                    HandleUnitSelected(conspicuous);
                     recon.DisplayIntelAbout(hex.GetOccupiedBy(), tilePos);
                 }
             }
@@ -61,7 +61,7 @@ public class SelectionManager : MonoBehaviour
                 {
                     HandleUnitDeselected();
                     recon.DisplayIntelAbout(hex.GetOccupiedBy(), tilePos);
-                    HandleUnitSelected();
+                    HandleUnitSelected(conspicuous);
                 }
                 else
                 {
@@ -69,11 +69,64 @@ public class SelectionManager : MonoBehaviour
                     recon.DisplayIntelAbout(map.GetTile<TerrainTile>(tilePos), tilePos);
                 }
             }
-            cursor.SetActive(true);
-            cursor.transform.position = map.CellToWorld(tilePos);
+            if (conspicuous)
+            {
+                cursor.SetActive(true);
+                cursor.transform.position = map.CellToWorld(tilePos);
+            }
+            
         }
         
     }
+
+
+    /*
+     * handleAISelection
+     * 
+     * This method handles selections made by the AI it differs from handleNewSelection in that it does not make
+     * visible changes to the UI or game board.
+     */
+
+    public void HandleAISelection(Vector3Int tilePos)
+    {
+        GameObject obj = map.GetInstantiatedObject(tilePos);
+
+
+        if (obj != null)
+        {
+            HexOverlay hex = obj.GetComponent(typeof(HexOverlay)) as HexOverlay;
+
+
+            if (tilePos == selectedPos)
+            {
+                //If we have clicked on the same tile display the other type of data
+                if (selectedUnit != null)
+                {
+                    HandleUnitDeselected();
+                }
+                else if (hex.GetOccupiedBy() != null)
+                {
+                    HandleUnitSelected(false);
+                }
+            }
+            //Otherwise send the unit if one is present
+            else
+            {
+                selectedPos = tilePos;
+                if (hex.GetOccupiedBy() != null)
+                {
+                    HandleUnitDeselected();
+                    HandleUnitSelected(false);
+                }
+                else
+                {
+                    HandleUnitDeselected();
+                }
+            }
+
+        }
+    }
+
 
     public void HandleDeselect()
     {
@@ -85,10 +138,18 @@ public class SelectionManager : MonoBehaviour
         recon.DisplayNone();
     }
 
-    private void HandleUnitSelected()
+
+    /*
+     * HandleUnitSelection
+     * 
+     * This function is called when a unit is selected and handles the nuances involved with the process
+     * the parameter conspicuous indicates if the selection should result in possible moves being displayed on the gameboard
+     * 
+     */
+    private void HandleUnitSelected(bool conspicuous = true)
     {
         selectedUnit = map.GetInstantiatedObject(selectedPos).GetComponent<HexOverlay>().GetOccupiedBy();
-        affectedHexes = selectedUnit.OnSelected();
+        affectedHexes = selectedUnit.OnSelected(conspicuous);
         commander.StartDrawingCommand(selectedUnit);
     }
 

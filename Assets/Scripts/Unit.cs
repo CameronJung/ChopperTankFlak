@@ -147,13 +147,13 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
 
 
-
-    public List<HexOverlay> OnSelected()
+    //The parameter conspicuous indicates if the changes to the gameboard's state should be shown
+    public List<HexOverlay> OnSelected(bool conspicuous = true)
     {
         //This method is only relavent for the player's units
         if(this.allegiance == manager.WhosTurn() && myState == UnitState.ready)
         {
-            return map.GetInstantiatedObject(this.myTilePos).GetComponent<HexOverlay>().BeginExploration(this);
+            return map.GetInstantiatedObject(this.myTilePos).GetComponent<HexOverlay>().BeginExploration(this, conspicuous);
         }
         else
         {

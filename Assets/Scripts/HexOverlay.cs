@@ -103,7 +103,7 @@ public class HexOverlay : MonoBehaviour
 
 
     //Find what there is to do, return bool if this tile can be traversed
-    public virtual bool TravelGuide(Unit unit)
+    public virtual bool TravelGuide(Unit unit, bool doShow = true)
     {
         bool traversable = false;
         //firstly does this tile have a unit?
@@ -112,7 +112,7 @@ public class HexOverlay : MonoBehaviour
             if(unit.GetAllegiance() != occupiedBy.GetAllegiance())
             {
                 //There is an enemy to fight here
-                this.MarkCombat();
+                this.MarkCombat(doShow);
                 //Enemies block movement so we return false
                 return traversable;
             }
@@ -122,7 +122,7 @@ public class HexOverlay : MonoBehaviour
         traversable = myTile.CanUnitPass(unit);
         if (traversable)
         {
-            MarkMove();
+            MarkMove(doShow);
         }
         
         return traversable;
@@ -130,7 +130,7 @@ public class HexOverlay : MonoBehaviour
 
 
     //Explore the tile
-    public List<HexOverlay> Explore(Unit unit, int travelled, List<HexOverlay> affected)
+    public List<HexOverlay> Explore(Unit unit, int travelled, List<HexOverlay> affected, bool doShow = true)
     {
         if (!visited)
         {
@@ -141,7 +141,7 @@ public class HexOverlay : MonoBehaviour
         this.visited = true;
         this.distanceFrom = travelled;
 
-        if (TravelGuide(unit) && travelled <= unit.GetMobility())
+        if (TravelGuide(unit, doShow) && travelled <= unit.GetMobility())
         {
             if (travelled < unit.GetMobility())
             {
@@ -158,18 +158,18 @@ public class HexOverlay : MonoBehaviour
                                 if(this.occupiedBy == null)
                                 {
                                     //Tiles occupied by enemies should only be expplored from empty tiles
-                                    hex.Explore(unit, travelled + 1, affected);
+                                    hex.Explore(unit, travelled + 1, affected, doShow);
                                 }
                                 
                             }
                             else
                             {
-                                hex.Explore(unit, travelled + 1, affected);
+                                hex.Explore(unit, travelled + 1, affected, doShow);
                             }
                         }
                         else
                         {
-                            hex.Explore(unit, travelled + 1, affected);
+                            hex.Explore(unit, travelled + 1, affected, doShow);
                         }
                     }
                 }
@@ -184,7 +184,7 @@ public class HexOverlay : MonoBehaviour
                         if(hex.GetOccupiedBy().GetAllegiance() != unit.GetAllegiance() && this.occupiedBy == null)
                         {
                             //The unit is hostile
-                            hex.MarkCombat();
+                            hex.MarkCombat(doShow);
                             hex.distanceFrom = travelled + 1;
                             affected.Add(hex);
                         }
@@ -200,18 +200,18 @@ public class HexOverlay : MonoBehaviour
 
 
     //Used to start exploration
-    public virtual List<HexOverlay> BeginExploration(Unit unit)
+    public virtual List<HexOverlay> BeginExploration(Unit unit, bool doShow = true)
     {
         List<HexOverlay> affected = new List<HexOverlay>();
         visited = true;
         distanceFrom = 0;
         affected.Add(this);
 
-        MarkHold();
+        MarkHold(doShow);
         //this.currState = HexState.reachable;
         foreach(HexOverlay hex in adjacent)
         {
-            hex.Explore(unit, 1, affected);
+            hex.Explore(unit, 1, affected, doShow);
             
             
         }
@@ -280,28 +280,29 @@ public class HexOverlay : MonoBehaviour
 
 
     //These functions are used to change an overlay's state
+    //The parameter doShow indicates if the changes of state should be displayed visually true by default
     //ENCAPSULATION
-    protected virtual void MarkMove()
+    protected virtual void MarkMove(bool doShow = true)
     {
-        moveSprite.SetActive(true);
+        moveSprite.SetActive(doShow);
         combatSprite.SetActive(false);
         holdSprite.SetActive(false);
         currState = HexState.reachable;
     }
 
-    protected virtual void MarkCombat()
+    protected virtual void MarkCombat(bool doShow = true)
     {
         moveSprite.SetActive(false);
-        combatSprite.SetActive(true);
+        combatSprite.SetActive(doShow);
         holdSprite.SetActive(false);
         currState = HexState.attackable;
     }
 
-    protected virtual void MarkHold()
+    protected virtual void MarkHold(bool doShow = true)
     {
         moveSprite.SetActive(false);
         combatSprite.SetActive(false);
-        holdSprite.SetActive(true);
+        holdSprite.SetActive(doShow);
         currState = HexState.hold;
     }
 
