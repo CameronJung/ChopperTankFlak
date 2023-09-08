@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static UniversalConstants;
+using static AITacticalValues;
 
 //The directive class is a representation of a move that a unit could make
 public class Directive
@@ -56,14 +57,6 @@ public class Directive
      * 
      * This method will return a modification for smartness depending on the expected result of combat
      * 
-     * Modifications:
-     * -No combat: 0
-     * -will be destroyed: -3
-     * -enter stalemate: +1
-     * -will destroy enemy +2
-     * -will resolve stalemate: +1
-     * -resolve stalemate with infantry: +1
-     * 
      */
     private int ConsiderMatchup()
     {
@@ -73,24 +66,24 @@ public class Directive
         {
             if (capable.IsWeakTo(other))
             {
-                smart = -3;
+                smart += WILL_BE_DESTROYED;
             }
-            else if (capable.GetUnitType() == other.GetUnitType())
+            else if (capable.GetUnitType() == other.GetUnitType() && capable.GetUnitType() != UnitType.InfantrySquad)
             {
-                smart = 1;
+                smart += STARTS_STALEMATE;
             }
             else
             {
-                smart = 2;
+                smart += DESTROYS_ENEMY;
             }
 
             if(other.myState == UniversalConstants.UnitState.stalemate)
             {
-                smart++;
+                smart += RESOLVES_STALEMATE;
 
                 if(capable.GetUnitType() == UniversalConstants.UnitType.InfantrySquad)
                 {
-                    smart++;
+                    smart += INFANTRY_ENDS_STALEMATE;
                 }
             }
         }
@@ -104,13 +97,6 @@ public class Directive
      * GEOGRAPHY
      * 
      * returns a modifier for smartness based on the movement of the unit
-     * 
-     * Further from computer base: +1
-     * -Travels as far as possible: +1
-     * -moves away from previous location: +1
-     * -closer to player base: +1
-     * -Infantry moves closer to player base +1
-     * -Infantry moves onto player's base: +10
      */
     private int ConsiderGeography()
     {
@@ -118,7 +104,7 @@ public class Directive
 
         if(capable.GetMobility() == destination.distanceFrom)
         {
-            smart += 1;
+            smart += MOVES_MAXIMUM;
         }
 
         int distPrev = (destination.myCoords - capable.prevTilePos).sqrMagnitude;
@@ -126,7 +112,7 @@ public class Directive
 
         if (distCurr >= distPrev)
         {
-            smart += 1;
+            smart += MARCH_ON;
         }
 
         //compare distance to computer's base
@@ -134,7 +120,7 @@ public class Directive
         distCurr = (destination.myCoords - intel.GetComputerBaseLoc()).sqrMagnitude;
         if (distCurr >= distPrev)
         {
-            smart += 1;
+            smart += AWAY_FROM_HOME;
         }
 
         //Compare distance to player's base
@@ -142,16 +128,16 @@ public class Directive
         distCurr = (destination.myCoords - intel.GetPlayerBaseLoc()).sqrMagnitude;
         if (distCurr <= distPrev)
         {
-            smart += 1;
+            smart += CLOSER_TO_ENEMY_BASE;
             if (capable.GetUnitType() == UnitType.InfantrySquad)
             {
-                smart += 1;
+                smart += INFANTRY_CLOSER_TO_ENEMY_BASE;
             }
         }
 
         if (capable.GetUnitType() == UnitType.InfantrySquad && destination.myCoords == intel.GetPlayerBaseLoc())
         {
-            smart += 10;
+            smart += INFANTRY_CAPTURES_BASE;
         }
 
         return smart;

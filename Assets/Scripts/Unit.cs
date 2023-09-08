@@ -41,6 +41,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     protected bool executingOrders = false;
     protected bool ordersComplete = false;
     public bool actionReported { get; protected set; } = true;
+    
     private bool retaliation = false;
 
     protected IEnumerator execution;
@@ -58,6 +59,9 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     //Set to true when the unit is expecting retaliation
     public bool waitingForResponse { get; protected set; } = false;
+
+    //This is the tactical value of destroying this unit
+    public int bounty { get; protected set; } = 0;
 
 
     // Start is called before the first frame update
