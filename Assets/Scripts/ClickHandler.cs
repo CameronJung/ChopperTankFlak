@@ -46,8 +46,6 @@ public class ClickHandler : MonoBehaviour
 
                 selecter.HandleNewSelection(tilePos);
 
-
-
             }
             else if (Input.GetMouseButtonDown(1))
             {

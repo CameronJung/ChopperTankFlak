@@ -69,6 +69,8 @@ public class SelectionManager : MonoBehaviour
                     recon.DisplayIntelAbout(map.GetTile<TerrainTile>(tilePos), tilePos);
                 }
             }
+
+
             if (conspicuous)
             {
                 cursor.SetActive(true);
@@ -86,7 +88,6 @@ public class SelectionManager : MonoBehaviour
      * This method handles selections made by the AI it differs from handleNewSelection in that it does not make
      * visible changes to the UI or game board.
      */
-
     public void HandleAISelection(Vector3Int tilePos)
     {
         GameObject obj = map.GetInstantiatedObject(tilePos);
@@ -103,6 +104,7 @@ public class SelectionManager : MonoBehaviour
                 if (selectedUnit != null)
                 {
                     HandleUnitDeselected();
+                    Debug.Log("AI deselected unit by clicking twice");
                 }
                 else if (hex.GetOccupiedBy() != null)
                 {
@@ -124,6 +126,40 @@ public class SelectionManager : MonoBehaviour
                 }
             }
 
+        }
+    }
+
+
+
+    /*
+     * Perform Tactical Analysis
+     * 
+     * This method is called by the AI while a player unit is selected
+     * It examines the moves that could be made by the player's unit and assigns a bounty based on that
+     */
+    public void PerformTacticalAnalysis()
+    {
+        //Ensure proper use of function
+        if(selectedUnit.GetAllegiance() == UniversalConstants.Faction.PlayerTeam)
+        {
+
+            List<Directive> directives = new List<Directive>();
+            GameObject obj = map.GetInstantiatedObject(selectedPos);
+            HexOverlay hextile = obj.GetComponent(typeof(HexOverlay)) as HexOverlay;
+
+            affectedHexes = hextile.BeginExploration(selectedUnit, false);
+            
+
+            foreach (HexOverlay hex in affectedHexes)
+            {
+                if(hex.currState == UniversalConstants.HexState.attackable || hex.currState == UniversalConstants.HexState.capture)
+                {
+                    directives.Add(new Directive(selectedUnit, hex));
+                }
+            }
+            selectedUnit.SetBounty(directives);
+
+            HandleDeselect();
         }
     }
 
@@ -216,7 +252,7 @@ public class SelectionManager : MonoBehaviour
         return possibilities;
     }
 
-    //Returns a list of hexes the selected unit can move to
+    //Returns a list of directives the selected unit can move to
     //this is mostly used by the AI
     public List<Directive> GetSmartestMoves(AIIntelHandler knowledge)
     {

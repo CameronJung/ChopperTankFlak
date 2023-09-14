@@ -19,18 +19,26 @@ public class Directive
     //This the bottom tile in the order stack, the tile you click on to execute a command
     private HexOverlay destination;
 
-    private HexState directiveType;
+    public  HexState  directiveType { get; private set; }
 
     private AIIntelHandler intel;
 
 
-    //Constructor
+    //Constructors
     public Directive(Unit unit, HexOverlay hex, AIIntelHandler knowledge)
     {
         capable = unit;
         destination = hex;
         directiveType = hex.currState;
         intel = knowledge;
+        ThinkThrough();
+    }
+
+    public Directive(Unit unit, HexOverlay hex)
+    {
+        capable = unit;
+        destination = hex;
+        directiveType = hex.currState;
         ThinkThrough();
     }
 
@@ -48,6 +56,8 @@ public class Directive
             smartness += ConsiderMatchup();
         }
         smartness += ConsiderGeography();
+        
+        
     }
 
     /*              CONSIDERATIONS              */
@@ -68,13 +78,26 @@ public class Directive
             {
                 smart += WILL_BE_DESTROYED;
             }
-            else if (capable.GetUnitType() == other.GetUnitType() && capable.GetUnitType() != UnitType.InfantrySquad)
-            {
-                smart += STARTS_STALEMATE;
-            }
             else
             {
-                smart += DESTROYS_ENEMY;
+                
+                if (capable.GetUnitType() == other.GetUnitType() && capable.GetUnitType() != UnitType.InfantrySquad)
+                {
+                    smart += STARTS_STALEMATE;
+                }
+                else
+                {
+                    if(other.GetUnitType() == UnitType.InfantrySquad)
+                    {
+                        smart += DESTROYS_INFANTRY;
+                    }
+                    else
+                    {
+                        smart += DESTROYS_VEHICLE;
+                    }
+                    
+                }
+                smart += other.bounty;
             }
 
             if(other.myState == UniversalConstants.UnitState.stalemate)
@@ -115,30 +138,35 @@ public class Directive
             smart += MARCH_ON;
         }
 
-        //compare distance to computer's base
-        distPrev = (capable.myTilePos - intel.GetComputerBaseLoc()).sqrMagnitude;
-        distCurr = (destination.myCoords - intel.GetComputerBaseLoc()).sqrMagnitude;
-        if (distCurr >= distPrev)
+        if (intel != null)
         {
-            smart += AWAY_FROM_HOME;
-        }
-
-        //Compare distance to player's base
-        distPrev = (capable.myTilePos - intel.GetPlayerBaseLoc()).sqrMagnitude;
-        distCurr = (destination.myCoords - intel.GetPlayerBaseLoc()).sqrMagnitude;
-        if (distCurr <= distPrev)
-        {
-            smart += CLOSER_TO_ENEMY_BASE;
-            if (capable.GetUnitType() == UnitType.InfantrySquad)
+            //compare distance to computer's base
+            distPrev = (capable.myTilePos - intel.GetComputerBaseLoc()).sqrMagnitude;
+            distCurr = (destination.myCoords - intel.GetComputerBaseLoc()).sqrMagnitude;
+            if (distCurr >= distPrev)
             {
-                smart += INFANTRY_CLOSER_TO_ENEMY_BASE;
+                smart += AWAY_FROM_HOME;
+            }
+
+            //Compare distance to player's base
+            distPrev = (capable.myTilePos - intel.GetPlayerBaseLoc()).sqrMagnitude;
+            distCurr = (destination.myCoords - intel.GetPlayerBaseLoc()).sqrMagnitude;
+            if (distCurr <= distPrev)
+            {
+                smart += CLOSER_TO_ENEMY_BASE;
+                if (capable.GetUnitType() == UnitType.InfantrySquad)
+                {
+                    smart += INFANTRY_CLOSER_TO_ENEMY_BASE;
+                }
+            }
+
+            if (capable.GetUnitType() == UnitType.InfantrySquad && destination.myCoords == intel.GetPlayerBaseLoc())
+            {
+                smart += INFANTRY_CAPTURES_BASE;
             }
         }
 
-        if (capable.GetUnitType() == UnitType.InfantrySquad && destination.myCoords == intel.GetPlayerBaseLoc())
-        {
-            smart += INFANTRY_CAPTURES_BASE;
-        }
+        
 
         return smart;
     }
@@ -159,5 +187,10 @@ public class Directive
     public Unit GetUnit()
     {
         return this.capable;
+    }
+
+    public Unit GetOccupant()
+    {
+        return destination.GetOccupiedBy();
     }
 }

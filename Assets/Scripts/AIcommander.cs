@@ -200,6 +200,25 @@ public class AIcommander : MonoBehaviour
                 selector.HandleDeselect();
 
 
+                //Start by considering what the player might do next turn
+                Unit[] enemies = manager.GetPlayerMilitary();
+
+                foreach(Unit enemy in enemies)
+                {
+                    yield return null;
+                    yield return null;
+
+                    selector.HandleAISelection(enemy.myTilePos);
+
+                    yield return null;
+
+                    selector.PerformTacticalAnalysis();
+                    yield return null;
+
+                    selector.HandleDeselect();
+                }
+
+
                 if (unmoved[idx].myState == UnitState.ready)
                 {
                     yield return null;
@@ -318,18 +337,6 @@ public class AIcommander : MonoBehaviour
 
 
 
-    /*
-     * ExecuteDirective
-     * 
-     * this function issues a command as described by a directive parameter (direct)
-     * 
-     * !NOTE!
-     * this function requires that no unit is currently selected
-     */
-    private void ExecuteDirective(Directive direct)
-    {
-
-    }
 
 
 

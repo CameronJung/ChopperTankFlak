@@ -39,7 +39,7 @@ public class Flak : Unit
             weak = foe.GetUnitType() == UnitType.Tank;
         }
 
-        return weak;
+        return weak || this.myState == UnitState.stalemate;
     }
 
     //POLYMORPHISM

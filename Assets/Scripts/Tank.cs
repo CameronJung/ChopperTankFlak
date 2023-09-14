@@ -39,7 +39,7 @@ public class Tank : Unit
             weak = foe.GetUnitType() == UnitType.Helicopter;
         }
 
-        return weak;
+        return weak || this.myState == UnitState.stalemate;
     }
 
 

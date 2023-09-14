@@ -122,6 +122,7 @@ public class GameManager : MonoBehaviour
         bool gameOver = false;
         if (casualty.GetAllegiance() == Faction.PlayerTeam)
         {
+            
             playerUnits.Remove(casualty);
             gameOver = (playerUnits.Count == 0) ;
         }
@@ -251,5 +252,11 @@ public class GameManager : MonoBehaviour
     public void ReportHQCapture(Faction victor)
     {
         HandleBattleOver(victor == Faction.PlayerTeam);
+    }
+
+
+    public Unit[] GetPlayerMilitary()
+    {
+        return playerUnits.ToArray();
     }
 }

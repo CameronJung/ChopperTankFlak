@@ -20,7 +20,11 @@ public class CommandTracer : MonoBehaviour
 
     private Vector3Int currTilePos = new Vector3Int(0, 0, 100);
     private Vector3Int prevTilePos = new Vector3Int(0, 0, 100);
+
+    //This boolean flag determines if the command should be drawn
     public bool drawing { get; private set; } = false;
+
+    
 
     //indicates if the tile hovered over displays a valid move for the commandee
     private bool validTile = false;
