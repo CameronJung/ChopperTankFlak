@@ -56,7 +56,7 @@ public class Directive
             smartness += ConsiderMatchup();
         }
         smartness += ConsiderGeography();
-        
+        smartness += ConsiderThreats();
         
     }
 
@@ -167,6 +167,21 @@ public class Directive
         }
 
         
+
+        return smart;
+    }
+
+
+    /*
+     * Threats
+     * 
+     * Return a modifier based on what player units will be able to attack next turn
+     * 
+     */
+    private int ConsiderThreats()
+    {
+        int smart = destination.intel.ThreatTo(capable);
+
 
         return smart;
     }

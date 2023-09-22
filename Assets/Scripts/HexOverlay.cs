@@ -27,6 +27,8 @@ public class HexOverlay : MonoBehaviour
     public bool visited = false;
     public int distanceFrom = -1;
 
+    public HexIntel intel { get; protected set; }
+
     // Start is called before the first frame update
     protected void Start()
     {
@@ -34,6 +36,7 @@ public class HexOverlay : MonoBehaviour
         Tilemap map = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<Tilemap>();
         myCoords = map.WorldToCell(gameObject.transform.position);
         myTile = map.GetTile<TerrainTile>(myCoords);
+        intel = new HexIntel();
 
         //Initialize adjacent hexes list
         adjacent = new List<HexOverlay>();
@@ -116,6 +119,12 @@ public class HexOverlay : MonoBehaviour
                 //Enemies block movement so we return false
                 return traversable;
             }
+        }
+        //This function is called on a tile that means the unit can attack it
+        //We only need to track where the player's units can attack
+        if(unit.GetAllegiance() == Faction.PlayerTeam && unit.myState != UnitState.stalemate)
+        {
+            intel.AffectedBy(unit);
         }
 
         //Weather or not we can traverse this tile depends on terrain

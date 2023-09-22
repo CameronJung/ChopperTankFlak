@@ -10,7 +10,14 @@ public class AIIntelHandler : MonoBehaviour
     [SerializeField] private Vector3Int computerBaseLoc;
     [SerializeField] private Vector3Int playerBaseLoc;
 
+    private List<HexIntel> affectedIntel;
+
     // Start is called before the first frame update
+
+    private void Awake()
+    {
+        affectedIntel = new List<HexIntel>();
+    }
     void Start()
     {
         
@@ -21,6 +28,18 @@ public class AIIntelHandler : MonoBehaviour
     {
         
     }
+
+
+    public void WipeOldData()
+    {
+        foreach (HexIntel intel in affectedIntel)
+        {
+            intel.WipeIntel();
+        }
+        affectedIntel.Clear();
+    }
+
+
 
 
     /*                  ACCESSORS                   */
@@ -34,6 +53,20 @@ public class AIIntelHandler : MonoBehaviour
     {
         return this.playerBaseLoc;
     }
+
+
+    public void ReportAffectedHex(HexIntel intel)
+    {
+        if (!affectedIntel.Contains(intel))
+        {
+            affectedIntel.Add(intel);
+        }
+        
+    }
+
+    
+
+    
 
 
 }

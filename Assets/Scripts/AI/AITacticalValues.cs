@@ -16,6 +16,10 @@ public static class AITacticalValues
     public const int WILL_BE_DESTROYED = -5;
     public const int INFANTRY_ENDS_STALEMATE = 2;
 
+    //Threat analysis
+    public const int MORTAL_DANGER = -2;
+    public const int MILD_DANGER = -1;
+
     //Movement values
     public const int MARCH_ON = 1;
     public const int MOVES_MAXIMUM = 1;
