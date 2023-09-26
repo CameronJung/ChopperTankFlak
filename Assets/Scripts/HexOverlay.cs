@@ -101,6 +101,16 @@ public class HexOverlay : MonoBehaviour
     {
         return myTile.CanUnitPass(me);
     }
+
+    protected void CanBeAttackedBy(Unit unit)
+    {
+        //This function is called on a tile it means the unit can attack it
+        //We only need to track where the player's units can attack
+        if (unit.GetAllegiance() == Faction.PlayerTeam && unit.myState != UnitState.stalemate)
+        {
+            intel.AffectedBy(unit);
+        }
+    }
     
 
 
@@ -120,12 +130,8 @@ public class HexOverlay : MonoBehaviour
                 return traversable;
             }
         }
-        //This function is called on a tile that means the unit can attack it
-        //We only need to track where the player's units can attack
-        if(unit.GetAllegiance() == Faction.PlayerTeam && unit.myState != UnitState.stalemate)
-        {
-            intel.AffectedBy(unit);
-        }
+
+        CanBeAttackedBy(unit);
 
         //Weather or not we can traverse this tile depends on terrain
         traversable = myTile.CanUnitPass(unit);
@@ -145,6 +151,8 @@ public class HexOverlay : MonoBehaviour
         {
             //add self to list if we haven't already
             affected.Add(this);
+
+            CanBeAttackedBy(unit);
         }
 
         this.visited = true;
@@ -188,6 +196,7 @@ public class HexOverlay : MonoBehaviour
                 //At the end of the units range look for enemies to attack
                 foreach(HexOverlay hex in adjacent)
                 {
+                    hex.CanBeAttackedBy(unit);
                     if(!hex.visited && hex.GetOccupiedBy() != null)
                     {
                         if(hex.GetOccupiedBy().GetAllegiance() != unit.GetAllegiance() && this.occupiedBy == null)

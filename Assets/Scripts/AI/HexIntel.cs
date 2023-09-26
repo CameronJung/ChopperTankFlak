@@ -45,7 +45,7 @@ public class HexIntel
         {
             if (Threats.ContainsValue(true))
             {
-                danger = MORTAL_DANGER;
+                danger += MORTAL_DANGER;
             }
         }
         else
@@ -54,14 +54,19 @@ public class HexIntel
 
             if (Threats[unit.GetUnitType()])
             {
-                danger = MILD_DANGER;
+                danger += MILD_DANGER;
             }
 
             if(unit.GetUnitType() == UnitType.Helicopter && Threats[UnitType.Flak] ||
                unit.GetUnitType() == UnitType.Tank && Threats[UnitType.Helicopter] ||
                unit.GetUnitType() == UnitType.Flak && Threats[UnitType.Tank]) 
             {
-                danger = MORTAL_DANGER;
+                danger += MORTAL_DANGER;
+            }
+            else
+            {
+                //If there is no imminent threat than there is an opportunity to advance
+                danger += OPPORTUNITY;
             }
         }
 
