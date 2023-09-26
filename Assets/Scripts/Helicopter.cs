@@ -41,7 +41,7 @@ public class Helicopter : Unit
             weak = foe.GetUnitType() == UnitType.Flak;
         }
 
-        return weak;
+        return weak || this.myState == UnitState.stalemate;
     }
 
     //POLYMORPHISM

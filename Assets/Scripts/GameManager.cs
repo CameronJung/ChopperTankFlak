@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AIcommander enemyCO;
     [SerializeField] private ClickHandler clicker;
     [SerializeField] private EndGamePanel gameEnd;
+    private AIIntelHandler intel;
 
     private List<Unit> playerUnits = new List<Unit>();
     private List<Unit> computerUnits = new List<Unit>();
@@ -35,6 +36,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update0
     void Start()
     {
+        intel = enemyCO.gameObject.GetComponent<AIIntelHandler>();
         BeginTurn();
     }
 
@@ -122,6 +124,7 @@ public class GameManager : MonoBehaviour
         bool gameOver = false;
         if (casualty.GetAllegiance() == Faction.PlayerTeam)
         {
+            
             playerUnits.Remove(casualty);
             gameOver = (playerUnits.Count == 0) ;
         }
@@ -176,7 +179,7 @@ public class GameManager : MonoBehaviour
         {
             clicker.BlockClicks();
         }
-
+        intel.WipeOldData();
 
         unitMoving = true;
         numUnitsMoving++;
@@ -251,5 +254,11 @@ public class GameManager : MonoBehaviour
     public void ReportHQCapture(Faction victor)
     {
         HandleBattleOver(victor == Faction.PlayerTeam);
+    }
+
+
+    public Unit[] GetPlayerMilitary()
+    {
+        return playerUnits.ToArray();
     }
 }

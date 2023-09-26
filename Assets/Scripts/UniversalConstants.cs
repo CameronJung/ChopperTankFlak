@@ -6,6 +6,7 @@ public static class UniversalConstants : object
 {
     public const string MAPPATH = "GameBoard/Map";
     public const string MANAGERPATH = "GameManager";
+    public const string AIPATH = "EnemyCommander";
 
     //The number of turns it takes to capture a building
     public const int BUILDINGCAPFRESH = 2;

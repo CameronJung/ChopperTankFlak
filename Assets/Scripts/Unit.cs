@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using static UniversalConstants;
+using static AITacticalValues;
 
 public abstract class Unit : MonoBehaviour, ISelectable
 {
@@ -41,6 +42,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     protected bool executingOrders = false;
     protected bool ordersComplete = false;
     public bool actionReported { get; protected set; } = true;
+    
     private bool retaliation = false;
 
     protected IEnumerator execution;
@@ -58,6 +60,9 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     //Set to true when the unit is expecting retaliation
     public bool waitingForResponse { get; protected set; } = false;
+
+    //This is the tactical value of destroying this unit
+    public int bounty { get; protected set; } = 0;
 
 
     // Start is called before the first frame update
@@ -146,14 +151,14 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
 
 
-
-
-    public List<HexOverlay> OnSelected()
+    
+    //The parameter conspicuous indicates if the changes to the gameboard's state should be shown
+    public List<HexOverlay> OnSelected(bool conspicuous = true)
     {
-        //This method is only relavent for the player's units
+        
         if(this.allegiance == manager.WhosTurn() && myState == UnitState.ready)
         {
-            return map.GetInstantiatedObject(this.myTilePos).GetComponent<HexOverlay>().BeginExploration(this);
+            return map.GetInstantiatedObject(this.myTilePos).GetComponent<HexOverlay>().BeginExploration(this, conspicuous);
         }
         else
         {
@@ -161,6 +166,18 @@ public abstract class Unit : MonoBehaviour, ISelectable
             return new List<HexOverlay>();
         }
     }
+
+    /**/
+    
+    /*
+    //The parameter conspicuous indicates if the changes to the gameboard's state should be shown
+    public List<HexOverlay> OnSelected(bool conspicuous = true)
+    {
+        return map.GetInstantiatedObject(this.myTilePos).GetComponent<HexOverlay>().BeginExploration(this, this.allegiance == manager.WhosTurn() && myState == UnitState.ready);
+        
+    }
+
+    /**/
 
     public void RecieveOrders(Stack<Order> commands)
     {
@@ -218,8 +235,6 @@ public abstract class Unit : MonoBehaviour, ISelectable
         //Attack orders always come at the end of a stack so we should update the board ASAP
         this.FinalizeMovement();
         
-        
-
 
         if (bearing < 0)
         {
@@ -259,8 +274,6 @@ public abstract class Unit : MonoBehaviour, ISelectable
         }
         
         orderComplete = true;
-        
-        
     }
 
 
@@ -366,12 +379,51 @@ public abstract class Unit : MonoBehaviour, ISelectable
     public bool Revitalize()
     {
         bool ready = myState != UnitState.stalemate;
+        this.bounty = 0;
         if (ready)
         {
-            
             SetStateReady();
         }
         return ready;
+    }
+
+
+    //This method sets the value of bounty
+    public void SetBounty(List<Directive> directives)
+    {
+        int highest = 0;
+        int candidate = 0;
+
+        if(directives.Count > 0)
+        {
+            foreach (Directive dir in directives)
+            {
+                if(dir.directiveType == HexState.attackable)
+                {
+                    Unit target = dir.GetOccupant();
+                    if (target.IsWeakTo(this))
+                    {
+                        if (target.GetUnitType() == UnitType.InfantrySquad)
+                        {
+                            candidate = CAN_DESTROY_INFANTRY;
+                        }
+                        else
+                        {
+                            candidate = CAN_DESTROY_VEHICLE;
+                        }
+                    }
+
+                }
+                else if(dir.directiveType == HexState.capture){
+                    candidate = CAN_CAPTURE_BASE;
+                }
+
+                highest = Mathf.Max(candidate, highest);
+            }
+        }
+
+
+        bounty = highest;
     }
 
 
