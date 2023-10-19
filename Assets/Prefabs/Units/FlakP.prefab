@@ -308,6 +308,7 @@ MonoBehaviour:
   staleSprite: {fileID: 3313454816761865333}
   baseSprite: {fileID: 5255287528532110770}
   mobility: 5
+  deathEffect: {fileID: 3338526990042780928, guid: 74eead4cb7d6e2c428e0c70082ffc027, type: 3}
   unitName: Flak Car
   unitDescription: The armoured flak car is a versatile anti air platform capable
     of downing a helicopter faster than a missile lock can be achieved. However,

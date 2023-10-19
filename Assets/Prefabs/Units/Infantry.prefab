@@ -446,6 +446,7 @@ MonoBehaviour:
   staleSprite: {fileID: 7137924166995824302}
   baseSprite: {fileID: 7137924167586478077}
   mobility: 4
+  deathEffect: {fileID: 3338526990042780928, guid: 74eead4cb7d6e2c428e0c70082ffc027, type: 3}
   unitName: Infantry Squad
   unitDescription: Infantry have little armour to speak of and are easily defeated
     in combat by vehicles. However, vehicles preoccupied by a stalemate can easily

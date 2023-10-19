@@ -477,6 +477,7 @@ MonoBehaviour:
   staleSprite: {fileID: 3035620316806390470}
   baseSprite: {fileID: 8954567185190465350}
   mobility: 4
+  deathEffect: {fileID: 3338526990042780928, guid: 74eead4cb7d6e2c428e0c70082ffc027, type: 3}
   unitName: Battle Tank
   unitDescription: Thick armour, a powerful main gun, and solid mobility make battle
     tanks a formidable adversary capable of defeating anything that dares to tread

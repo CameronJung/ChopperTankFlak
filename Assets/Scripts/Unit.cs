@@ -22,8 +22,11 @@ public abstract class Unit : MonoBehaviour, ISelectable
     [SerializeField] protected GameObject baseSprite;
 
     [SerializeField] protected int mobility = 5;
+    [SerializeField] protected GameObject deathEffect;
+
 
     [SerializeField] private string unitName;
+
 
     [TextArea][SerializeField] private string unitDescription;
 
@@ -108,6 +111,12 @@ public abstract class Unit : MonoBehaviour, ISelectable
         {
             manager.ReportActionComplete(this);
         }
+
+        if(deathEffect != null)
+        {
+            GameObject effect = Instantiate(deathEffect, gameObject.transform.position, Quaternion.identity);
+        }
+
         Destroy(gameObject);
     }
 
