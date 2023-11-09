@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UniversalConstants;
 
-public class Flak : Unit
+public class Flak : TurretedUnit
 {
     private void Awake()
     {
@@ -16,6 +16,7 @@ public class Flak : Unit
     void Start()
     {
         PaintUnit();
+        puppeteer = gameObject.GetComponent<Animator>();
     }
 
     // Update is called once per frame

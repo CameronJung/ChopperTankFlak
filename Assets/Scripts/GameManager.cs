@@ -89,30 +89,35 @@ public class GameManager : MonoBehaviour
 
     private void RevitalizeTeam()
     {
-        unitsAvailable = 0;
-        if (turn % 2 == 0)
+        if (!battleOver)
         {
-            foreach (Unit unit in playerUnits)
+            unitsAvailable = 0;
+            if (turn % 2 == 0)
             {
-                
-                if (unit.Revitalize())
+                foreach (Unit unit in playerUnits)
                 {
-                    unitsAvailable++;
-                    numPlayerUnitsReady++;
+
+                    if (unit.Revitalize())
+                    {
+                        unitsAvailable++;
+                        numPlayerUnitsReady++;
+                    }
+                }
+            }
+            else
+            {
+                foreach (Unit unit in computerUnits)
+                {
+                    if (unit.Revitalize())
+                    {
+                        unitsAvailable++;
+                        numComputerUnitsReady++;
+                    }
                 }
             }
         }
-        else
-        {
-            foreach (Unit unit in computerUnits)
-            {
-                if (unit.Revitalize())
-                {
-                    unitsAvailable++;
-                    numComputerUnitsReady++;
-                }
-            }
-        }
+        
+        Debug.Log("Team was revitalized");
     }
 
 
@@ -166,6 +171,7 @@ public class GameManager : MonoBehaviour
             }
             unitMoving = false;
         }
+        Debug.Log("Unit completed action, " + unitsAvailable + " unit(s) are left to move");
         
     }
 

@@ -19,6 +19,7 @@ public class InfantrySquad : Unit
     void Start()
     {
         PaintUnit();
+        puppeteer = gameObject.GetComponent<Animator>();
     }
 
     // Update is called once per frame

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UniversalConstants;
 
-public class Tank : Unit
+public class Tank : TurretedUnit
 {
     private void Awake()
     {
@@ -16,6 +16,7 @@ public class Tank : Unit
     void Start()
     {
         PaintUnit();
+        puppeteer = gameObject.GetComponent<Animator>();
     }
 
     private void FixedUpdate()

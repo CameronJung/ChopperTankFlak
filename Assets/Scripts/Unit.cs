@@ -23,17 +23,20 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     [SerializeField] protected int mobility = 5;
     [SerializeField] protected GameObject deathEffect;
+    protected Animator puppeteer = null;
+
+    //Sounds
+
 
 
     [SerializeField] private string unitName;
-
-
     [TextArea][SerializeField] private string unitDescription;
 
     
 
     protected Tilemap map;
     protected GameManager manager;
+    
 
     protected Stack<Order> orders = new Stack<Order>();
 
@@ -233,7 +236,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
 
     //ABSTRACTION
-    public IEnumerator ExecuteAttackOrder(Vector3 origin, Vector3 destination)
+    public virtual IEnumerator ExecuteAttackOrder(Vector3 origin, Vector3 destination)
     {
         Vector3 displacement = destination - origin;
         Vector3 heading = baseSprite.transform.eulerAngles;
@@ -273,6 +276,14 @@ public abstract class Unit : MonoBehaviour, ISelectable
         baseSprite.transform.eulerAngles = new Vector3(0, 0, bearing);
         HexOverlay hex = map.GetInstantiatedObject(map.WorldToCell(destination)).GetComponent<HexOverlay>();
         Unit target = hex.GetOccupiedBy();
+
+        //Play attack animation
+        if (puppeteer != null)
+        {
+            puppeteer.SetTrigger("Attack");
+            yield return new WaitForSeconds(0.5f);
+            Debug.Log("played attack animation");
+        }
 
         this.ResolveCombat(target);
 

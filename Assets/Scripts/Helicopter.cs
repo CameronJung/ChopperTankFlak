@@ -18,6 +18,7 @@ public class Helicopter : Unit
     {
         
         PaintUnit();
+        puppeteer = gameObject.GetComponent<Animator>();
     }
 
     // Update is called once per frame
