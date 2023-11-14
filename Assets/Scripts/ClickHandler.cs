@@ -13,6 +13,7 @@ public class ClickHandler : MonoBehaviour
     [SerializeField] private GameObject cursor;
     [SerializeField] private SelectionManager selecter;
     [SerializeField] private CommandTracer commander;
+    [SerializeField] private GameObject busyIndicator;
 
     //Initialized with a nonsense coordinates
     private Vector3Int selectionPos = new Vector3Int(0,0,100);
@@ -58,10 +59,12 @@ public class ClickHandler : MonoBehaviour
     public void BlockClicks()
     {
         blocked = true;
+        busyIndicator.SetActive(true);
     }
 
     public void AllowClicks()
     {
         blocked = false;
+        busyIndicator.SetActive(false);
     }
 }

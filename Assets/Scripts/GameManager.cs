@@ -117,7 +117,6 @@ public class GameManager : MonoBehaviour
             }
         }
         
-        Debug.Log("Team was revitalized");
     }
 
 
@@ -171,7 +170,6 @@ public class GameManager : MonoBehaviour
             }
             unitMoving = false;
         }
-        Debug.Log("Unit completed action, " + unitsAvailable + " unit(s) are left to move");
         
     }
 
