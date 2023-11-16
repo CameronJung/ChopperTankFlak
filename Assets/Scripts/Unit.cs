@@ -282,7 +282,6 @@ public abstract class Unit : MonoBehaviour, ISelectable
         {
             puppeteer.SetTrigger("Attack");
             yield return new WaitForSeconds(0.5f);
-            Debug.Log("played attack animation");
         }
 
         this.ResolveCombat(target);

@@ -8,7 +8,7 @@ public class UIHandler : MonoBehaviour
     [SerializeField] private RectTransform mapPanel;
     [SerializeField] private RectTransform menuPanel;
 
-    //How proportion of the screen width the game map occupies
+    //The portion of the screen width the game map occupies
     private const float MAPFRACTION = 0.75f;
 
 
@@ -46,4 +46,6 @@ public class UIHandler : MonoBehaviour
         
         
     }
+
+    
 }

@@ -274,12 +274,12 @@ public class AIcommander : MonoBehaviour
 
                 unmoved.Remove(choice.GetUnit());
 
-                int cycles = 1;
+                int cycles = 0;
 
                 //wait until the unit is moving
                 while (!manager.IsUnitMoving() && cycles < 600)
                 {
-                    cycles++;
+                    cycles += Mathf.RoundToInt(Time.timeScale);
                     Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
                     yield return null;
                 }
@@ -290,7 +290,7 @@ public class AIcommander : MonoBehaviour
                 while (manager.IsUnitMoving() && cycles < 600)
                 {
                     yield return null;
-                    cycles++;
+                    cycles += Mathf.RoundToInt(Time.timeScale);
                 }
                 Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
             }

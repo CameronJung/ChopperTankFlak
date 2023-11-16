@@ -51,4 +51,5 @@ public class ReconPanel : MonoBehaviour
         titleText.text = noTitle;
         descriptionText.text = noInfo;
     }
+
 }

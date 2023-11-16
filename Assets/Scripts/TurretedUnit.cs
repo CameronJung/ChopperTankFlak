@@ -122,7 +122,6 @@ public abstract class TurretedUnit : Unit
         {
             puppeteer.SetTrigger("Attack");
             yield return new WaitForSeconds(0.5f);
-            Debug.Log("played attack animation");
         }
 
 

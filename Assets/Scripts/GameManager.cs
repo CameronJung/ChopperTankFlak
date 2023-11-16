@@ -10,6 +10,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AIcommander enemyCO;
     [SerializeField] private ClickHandler clicker;
     [SerializeField] private EndGamePanel gameEnd;
+
+    [SerializeField] private GameObject pausePanel;
+
+
+
     private AIIntelHandler intel;
 
     private List<Unit> playerUnits = new List<Unit>();
@@ -25,6 +30,8 @@ public class GameManager : MonoBehaviour
     public bool unitMoving { get; private set; } = false;
 
     public int unitsAvailable { get; private set; } = 0;
+
+    public bool paused { get; private set; } = false;
 
 
 
@@ -264,5 +271,28 @@ public class GameManager : MonoBehaviour
     public Unit[] GetPlayerMilitary()
     {
         return playerUnits.ToArray();
+    }
+
+
+
+    /************* PAUSE HANDELING ***************/
+
+    public void PauseGame()
+    {
+        Time.timeScale = 0;
+        clicker.BlockClicks();
+
+        pausePanel.SetActive(true);
+    }
+
+    public void UnpauseGame()
+    {
+        if (this.WhosTurn() == UniversalConstants.Faction.PlayerTeam)
+        {
+            clicker.AllowClicks();
+        }
+        pausePanel.SetActive(false);
+        Time.timeScale = 1;
+
     }
 }
