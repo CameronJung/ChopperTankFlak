@@ -500,6 +500,7 @@ MonoBehaviour:
   baseSprite: {fileID: 5255287528532110770}
   mobility: 5
   deathEffect: {fileID: 3338526990042780928, guid: 74eead4cb7d6e2c428e0c70082ffc027, type: 3}
+  attackSound: {fileID: 8300000, guid: 81ac649d26a9a96419b76c635591f6d8, type: 3}
   unitName: Flak Car
   unitDescription: The armoured flak car is a versatile anti air platform capable
     of downing a helicopter faster than a missile lock can be achieved. However,
@@ -534,14 +535,14 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5255287528332269930}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: d40330822ccea6140b664c0560d5022f, type: 3}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: e54eb95f3bbb6f24a83d139e67ccd1eb, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

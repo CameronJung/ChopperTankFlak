@@ -8,26 +8,8 @@ public class InfantrySquad : Unit
 
     private BuildingOverlay capturing = null;
     
-    private void Awake()
-    {
-        //INHERITANCE
-        Enlist();
-        PutOnBoard();
-    }
+    
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        PaintUnit();
-        puppeteer = gameObject.GetComponent<Animator>();
-    }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        //INHERITANCE
-        FollowOrders();
-    }
 
     public override UnitType GetUnitType()
     {

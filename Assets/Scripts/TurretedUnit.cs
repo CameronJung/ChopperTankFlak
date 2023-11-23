@@ -20,6 +20,11 @@ public abstract class TurretedUnit : Unit
         Vector3 heading = Turret.transform.eulerAngles;
         float turnBy = Time.deltaTime * this.turnSpeed;
 
+        if (!soundMaker.isPlaying)
+        {
+            soundMaker.Play();
+        }
+
         int count = 1;
 
         //If we can make it to the destination this frame we just set our location instead
@@ -121,6 +126,7 @@ public abstract class TurretedUnit : Unit
         if (puppeteer != null)
         {
             puppeteer.SetTrigger("Attack");
+            soundMaker.PlayOneShot(attackSound);
             yield return new WaitForSeconds(0.5f);
         }
 

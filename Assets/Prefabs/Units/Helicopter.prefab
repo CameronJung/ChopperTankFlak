@@ -332,6 +332,7 @@ MonoBehaviour:
   baseSprite: {fileID: 4910570093529730395}
   mobility: 5
   deathEffect: {fileID: 3338526990042780928, guid: 74eead4cb7d6e2c428e0c70082ffc027, type: 3}
+  attackSound: {fileID: 8300000, guid: 281e15cc92254794eaf05caf4d044b76, type: 3}
   unitName: Attack Helicopter
   unitDescription: 'The attack helicopter has become rightfully known as a tank killer,
     able to outmanouver the tank''s turret while also carrying missiles capable of
@@ -365,14 +366,14 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4910570094358356591}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 281e15cc92254794eaf05caf4d044b76, type: 3}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: 523fc9761fcbb7a47b2e382687e4538e, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0

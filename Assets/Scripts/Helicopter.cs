@@ -6,26 +6,8 @@ using static UniversalConstants;
 public class Helicopter : Unit
 {
 
-    private void Awake()
-    {
-        Enlist();
-        PutOnBoard();
-    }
 
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-        PaintUnit();
-        puppeteer = gameObject.GetComponent<Animator>();
-    }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-        FollowOrders();
-    }
+    
 
     public override UnitType GetUnitType()
     {

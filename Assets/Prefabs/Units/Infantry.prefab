@@ -533,6 +533,7 @@ MonoBehaviour:
   baseSprite: {fileID: 7137924167586478077}
   mobility: 4
   deathEffect: {fileID: 3338526990042780928, guid: 74eead4cb7d6e2c428e0c70082ffc027, type: 3}
+  attackSound: {fileID: 8300000, guid: 0bd05763df902854a80475577a26666a, type: 3}
   unitName: Infantry Squad
   unitDescription: Infantry have little armour to speak of and are easily defeated
     in combat by vehicles. However, vehicles preoccupied by a stalemate can easily
@@ -566,14 +567,14 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7137924168088364430}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 281e15cc92254794eaf05caf4d044b76, type: 3}
-  m_PlayOnAwake: 1
+  m_audioClip: {fileID: 8300000, guid: 9b713c76b05f8b04882a23a60605b0d2, type: 3}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
