@@ -14,6 +14,7 @@ public class ClickHandler : MonoBehaviour
     [SerializeField] private SelectionManager selecter;
     [SerializeField] private CommandTracer commander;
     [SerializeField] private GameObject busyIndicator;
+    [SerializeField] private GameManager manager;
 
     //Initialized with a nonsense coordinates
     private Vector3Int selectionPos = new Vector3Int(0,0,100);
@@ -64,7 +65,12 @@ public class ClickHandler : MonoBehaviour
 
     public void AllowClicks()
     {
-        blocked = false;
-        busyIndicator.SetActive(false);
+        //Do not unblock if the battle is over
+        if (!manager.IsBattleOver())
+        {
+            blocked = false;
+            busyIndicator.SetActive(false);
+        }
+        
     }
 }

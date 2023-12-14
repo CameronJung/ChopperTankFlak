@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AIcommander enemyCO;
     [SerializeField] private ClickHandler clicker;
     [SerializeField] private EndGamePanel gameEnd;
+    [SerializeField] private GameMusicManager musicManager;
 
     [SerializeField] private GameObject pausePanel;
 
@@ -74,11 +75,13 @@ public class GameManager : MonoBehaviour
         if(turn % 2 == 0)
         {
             clicker.AllowClicks();
+            musicManager.PlayPlayerMusic();
         }
         else
         {
             clicker.BlockClicks();
             enemyCO.TakeTurn(computerUnits);
+            musicManager.PlayComputerMusic();
         }
     }
 
@@ -259,6 +262,7 @@ public class GameManager : MonoBehaviour
         battleOver = true;
         gameEnd.gameObject.SetActive(true);
         clicker.BlockClicks();
+        musicManager.StopMusic();
         gameEnd.HandleGameEnd(victorious);
     }
 
@@ -271,6 +275,11 @@ public class GameManager : MonoBehaviour
     public Unit[] GetPlayerMilitary()
     {
         return playerUnits.ToArray();
+    }
+
+    public bool IsBattleOver()
+    {
+        return battleOver;
     }
 
 

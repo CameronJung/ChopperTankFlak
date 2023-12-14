@@ -332,7 +332,7 @@ MonoBehaviour:
   baseSprite: {fileID: 4910570093529730395}
   mobility: 5
   deathEffect: {fileID: 3338526990042780928, guid: 74eead4cb7d6e2c428e0c70082ffc027, type: 3}
-  attackSound: {fileID: 8300000, guid: 281e15cc92254794eaf05caf4d044b76, type: 3}
+  attackSound: {fileID: 8300000, guid: ae99d3a6fa361f040b2505712340ec4a, type: 3}
   unitName: Attack Helicopter
   unitDescription: 'The attack helicopter has become rightfully known as a tank killer,
     able to outmanouver the tank''s turret while also carrying missiles capable of

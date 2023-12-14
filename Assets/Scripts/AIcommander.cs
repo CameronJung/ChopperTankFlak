@@ -41,135 +41,10 @@ public class AIcommander : MonoBehaviour
     public void TakeTurn(List<Unit> units)
     {
         this.military = units.ToArray();
-        //StartCoroutine(IssueOrders());
         StartCoroutine(IssueDirectives());
     }
 
 
-
-    // This function is a legacy implementation and will be removed once a new system is implemented
-    private IEnumerator IssueOrders()
-    {
-        WaitForSeconds delay = new WaitForSeconds(1.0f);
-        int unitsAvailable = military.Length;
-
-
-        yield return null;
-        int unmovable = 0;
-
-
-        
-        
-        for(int idx = 0; idx < unitsAvailable; idx++)
-        {
-            //issues may arise if the selected unit was selected by the player as their final move
-            selector.HandleDeselect();
-
-
-            if (military[idx].myState == UnitState.ready)
-            {
-                yield return null;
-
-                
-
-                yield return null;
-
-                selector.HandleNewSelection(military[idx].myTilePos);
-
-                possibilities = selector.GetPossibilities();
-
-                Debug.Assert(possibilities.Count > 0, "!ERROR! the AI selected a "
-                    + military[idx].GetTitle() + " with no possible moves it was in the "
-                    + military[idx].myState + " state");
-                Debug.Assert(military[idx].GetCurrentTilePos() == military[idx].myTilePos);
-
-                yield return delay;
-                
-                
-
-                HexOverlay choice = RandomCommand(possibilities);
-
-
-                List<HexOverlay> special = new List<HexOverlay>();
-                //List<HexOverlay> attacks = AttackFilter(possibilities, military[idx]);
-                //List<HexOverlay> useful = ProductiveMovementFilter(possibilities, military[idx]);
-
-                //If infantry try to capture a facility
-                if(military[idx].GetUnitType() == UnitType.InfantrySquad)
-                {
-                    special = CaptureFilter(possibilities);
-                }
-
-                //Otherwise look for enemies to attack
-                if(special.Count == 0 || military[idx].GetUnitType() != UnitType.InfantrySquad)
-                {
-                    special = AttackFilter(possibilities, military[idx]);
-                }
-
-                //Otherwise try to move in a useful manner
-                if (special.Count == 0)
-                {
-                    special = ProductiveMovementFilter(possibilities, military[idx]);
-                }
-
-                //If all else fails do something random
-                if (special.Count == 0)
-                {
-                    special = possibilities;
-                }
-
-                //pick an option
-                choice = RandomCommand(special);
-
-                commander.SpoofSendCommand(choice.myCoords);
-                selector.HandleDeselect();
-                yield return null;
-
-                int cycles = 1;
-
-                //wait until the unit is moving
-                while (!manager.IsUnitMoving() && cycles < 600)
-                {
-                    cycles++;
-                    Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
-                    yield return null;
-                }
-
-                cycles = 0;
-
-                //Wait until the unit is done moving
-                while (manager.IsUnitMoving() && cycles < 600)
-                {
-                    yield return null;
-                    cycles++;
-                }
-
-                Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
-
-
-                
-            }
-            else
-            {
-                unmovable++;
-                Debug.Log("The AI selected a "
-                    + military[idx].GetTitle() + " at tile: " + military[idx].myTilePos
-                    + " It is not ready to move");
-            }
-
-            yield return null;
-
-        }
-
-
-        selector.HandleDeselect();
-        yield return null;
-        if(unmovable > 0)
-        {
-            manager.HandleTurnEnd(Faction.ComputerTeam);
-        }
-        
-    }
 
 
     private IEnumerator IssueDirectives()
@@ -188,7 +63,7 @@ public class AIcommander : MonoBehaviour
         List<Directive> moves = new List<Directive>();
 
         //When the list unmoved is empty all units have been moved and the turn can end
-        while(unmoved.Count > 0)
+        while(unmoved.Count > 0 && !manager.IsBattleOver())
         {
             int idx = 0;
 
