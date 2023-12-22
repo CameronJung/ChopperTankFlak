@@ -3,25 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UniversalConstants;
 
-public class Tank : Unit
+public class Tank : TurretedUnit
 {
-    private void Awake()
-    {
-        Enlist();
-        PutOnBoard();
-    }
+    
 
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        PaintUnit();
-    }
-
-    private void FixedUpdate()
-    {
-        FollowOrders();
-    }
 
     public override UnitType GetUnitType()
     {

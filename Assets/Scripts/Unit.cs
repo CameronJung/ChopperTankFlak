@@ -22,15 +22,22 @@ public abstract class Unit : MonoBehaviour, ISelectable
     [SerializeField] protected GameObject baseSprite;
 
     [SerializeField] protected int mobility = 5;
+    [SerializeField] protected GameObject deathEffect;
+    protected Animator puppeteer = null;
+
+    //Sounds
+    [SerializeField] protected AudioClip attackSound;
+    protected AudioSource soundMaker;
+
 
     [SerializeField] private string unitName;
-
     [TextArea][SerializeField] private string unitDescription;
 
     
 
     protected Tilemap map;
     protected GameManager manager;
+    
 
     protected Stack<Order> orders = new Stack<Order>();
 
@@ -65,17 +72,25 @@ public abstract class Unit : MonoBehaviour, ISelectable
     public int bounty { get; protected set; } = 0;
 
 
+    private void Awake()
+    {
+        Enlist();
+        PutOnBoard();
+    }
+
+
     // Start is called before the first frame update
     void Start()
     {
-        
-        
+        PaintUnit();
+        soundMaker = gameObject.GetComponent<AudioSource>();
+        puppeteer = gameObject.GetComponent<Animator>();
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+        FollowOrders();
     }
 
 
@@ -108,6 +123,12 @@ public abstract class Unit : MonoBehaviour, ISelectable
         {
             manager.ReportActionComplete(this);
         }
+
+        if(deathEffect != null)
+        {
+            GameObject effect = Instantiate(deathEffect, gameObject.transform.position, Quaternion.identity);
+        }
+
         Destroy(gameObject);
     }
 
@@ -193,6 +214,11 @@ public abstract class Unit : MonoBehaviour, ISelectable
         float travel = this.speed * Time.deltaTime;
         WaitForFixedUpdate wait = new WaitForFixedUpdate();
 
+        if (!soundMaker.isPlaying)
+        {
+            soundMaker.Play();
+        }
+
         int count = 1;
 
         //If we can make it to the destination this frame we just set our location instead
@@ -224,7 +250,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
 
     //ABSTRACTION
-    public IEnumerator ExecuteAttackOrder(Vector3 origin, Vector3 destination)
+    public virtual IEnumerator ExecuteAttackOrder(Vector3 origin, Vector3 destination)
     {
         Vector3 displacement = destination - origin;
         Vector3 heading = baseSprite.transform.eulerAngles;
@@ -264,6 +290,14 @@ public abstract class Unit : MonoBehaviour, ISelectable
         baseSprite.transform.eulerAngles = new Vector3(0, 0, bearing);
         HexOverlay hex = map.GetInstantiatedObject(map.WorldToCell(destination)).GetComponent<HexOverlay>();
         Unit target = hex.GetOccupiedBy();
+
+        //Play attack animation
+        if (puppeteer != null)
+        {
+            puppeteer.SetTrigger("Attack");
+            soundMaker.PlayOneShot(attackSound);
+            yield return new WaitForSeconds(0.5f);
+        }
 
         this.ResolveCombat(target);
 
@@ -363,6 +397,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     {
         //Reset the the tile this unit was at
         map.GetInstantiatedObject(myTilePos).GetComponent<HexOverlay>().SetOccupiedBy(null);
+        soundMaker.Stop();
 
         prevTilePos = myTilePos;
         //Update the tile this unit is now on

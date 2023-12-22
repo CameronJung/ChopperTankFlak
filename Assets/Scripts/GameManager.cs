@@ -10,6 +10,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AIcommander enemyCO;
     [SerializeField] private ClickHandler clicker;
     [SerializeField] private EndGamePanel gameEnd;
+    [SerializeField] private GameMusicManager musicManager;
+
+    [SerializeField] private GameObject pausePanel;
+
+
+
     private AIIntelHandler intel;
 
     private List<Unit> playerUnits = new List<Unit>();
@@ -25,6 +31,8 @@ public class GameManager : MonoBehaviour
     public bool unitMoving { get; private set; } = false;
 
     public int unitsAvailable { get; private set; } = 0;
+
+    public bool paused { get; private set; } = false;
 
 
 
@@ -67,11 +75,13 @@ public class GameManager : MonoBehaviour
         if(turn % 2 == 0)
         {
             clicker.AllowClicks();
+            musicManager.PlayPlayerMusic();
         }
         else
         {
             clicker.BlockClicks();
             enemyCO.TakeTurn(computerUnits);
+            musicManager.PlayComputerMusic();
         }
     }
 
@@ -89,30 +99,34 @@ public class GameManager : MonoBehaviour
 
     private void RevitalizeTeam()
     {
-        unitsAvailable = 0;
-        if (turn % 2 == 0)
+        if (!battleOver)
         {
-            foreach (Unit unit in playerUnits)
+            unitsAvailable = 0;
+            if (turn % 2 == 0)
             {
-                
-                if (unit.Revitalize())
+                foreach (Unit unit in playerUnits)
                 {
-                    unitsAvailable++;
-                    numPlayerUnitsReady++;
+
+                    if (unit.Revitalize())
+                    {
+                        unitsAvailable++;
+                        numPlayerUnitsReady++;
+                    }
+                }
+            }
+            else
+            {
+                foreach (Unit unit in computerUnits)
+                {
+                    if (unit.Revitalize())
+                    {
+                        unitsAvailable++;
+                        numComputerUnitsReady++;
+                    }
                 }
             }
         }
-        else
-        {
-            foreach (Unit unit in computerUnits)
-            {
-                if (unit.Revitalize())
-                {
-                    unitsAvailable++;
-                    numComputerUnitsReady++;
-                }
-            }
-        }
+        
     }
 
 
@@ -248,6 +262,7 @@ public class GameManager : MonoBehaviour
         battleOver = true;
         gameEnd.gameObject.SetActive(true);
         clicker.BlockClicks();
+        musicManager.StopMusic();
         gameEnd.HandleGameEnd(victorious);
     }
 
@@ -260,5 +275,33 @@ public class GameManager : MonoBehaviour
     public Unit[] GetPlayerMilitary()
     {
         return playerUnits.ToArray();
+    }
+
+    public bool IsBattleOver()
+    {
+        return battleOver;
+    }
+
+
+
+    /************* PAUSE HANDELING ***************/
+
+    public void PauseGame()
+    {
+        Time.timeScale = 0;
+        clicker.BlockClicks();
+
+        pausePanel.SetActive(true);
+    }
+
+    public void UnpauseGame()
+    {
+        if (this.WhosTurn() == UniversalConstants.Faction.PlayerTeam)
+        {
+            clicker.AllowClicks();
+        }
+        pausePanel.SetActive(false);
+        Time.timeScale = 1;
+
     }
 }
