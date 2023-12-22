@@ -45,14 +45,12 @@ public class TitleMenuManager : MonoBehaviour
         if(pos.x < origin.x - movableSpace.x || pos.x > origin.x + movableSpace.x)
         {
             //bounce against a side
-            Debug.Log("Bounced on side! at: " + Background.position.x);
             direction.x *= -1;
             change.x *= -1;
         }
         if(pos.y < origin.y - movableSpace.y || pos.y > origin.y + movableSpace.y)
         {
             //bounce against the top or bottom
-            Debug.Log("Bounced on roof/floor! at: " + Background.position.y);
             direction.y *= -1;
             change.y *= -1;
         }

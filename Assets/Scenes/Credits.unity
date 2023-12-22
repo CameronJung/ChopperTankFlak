@@ -1006,7 +1006,7 @@ MonoBehaviour:
   m_text: "Unity store assets used:\n\t-Military Shooter Music Pack\n\t-96 General
     Library (Free Sample)\n\t-Free Sound  Effects Pack\n\t-Grenade Sound FX\n\t-Post
     Apocalypse Guns Demo\n\t-Vehicle Essentials\nAdditional sound effects Obtained
-    from ZapSplat.com\n\nSoftware Used:\n\t-Unity\n\t-Krita\n\t-Aesprite\n\t-Audacity\n\nEverything
+    from ZapSplat.com\n\nSoftware Used:\n\t-Unity\n\t-Krita\n\t-Aseprite\n\t-Gimp\n\t-Audacity\n\nEverything
     else:\n\t-Cameron Jung"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
