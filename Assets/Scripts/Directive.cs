@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UniversalConstants;
 using static AITacticalValues;
+using static GridHelper;
 
 //The directive class is a representation of a move that a unit could make
 public class Directive
@@ -141,16 +142,16 @@ public class Directive
         if (intel != null)
         {
             //compare distance to computer's base
-            distPrev = (capable.myTilePos - intel.GetComputerBaseLoc()).sqrMagnitude;
-            distCurr = (destination.myCoords - intel.GetComputerBaseLoc()).sqrMagnitude;
+
+            distPrev = GridHelper.CalcTilesBetweenGridCoords(capable.myTilePos, intel.GetComputerBaseLoc());
+            distCurr = GridHelper.CalcTilesBetweenGridCoords(destination.myCoords, intel.GetComputerBaseLoc());
             if (distCurr >= distPrev)
             {
                 smart += AWAY_FROM_HOME;
             }
 
-            //Compare distance to player's base
-            distPrev = (capable.myTilePos - intel.GetPlayerBaseLoc()).sqrMagnitude;
-            distCurr = (destination.myCoords - intel.GetPlayerBaseLoc()).sqrMagnitude;
+            distPrev = GridHelper.CalcTilesBetweenGridCoords(capable.myTilePos, intel.GetPlayerBaseLoc());
+            distCurr = GridHelper.CalcTilesBetweenGridCoords(destination.myCoords, intel.GetPlayerBaseLoc());
             if (distCurr <= distPrev)
             {
                 smart += CLOSER_TO_ENEMY_BASE;

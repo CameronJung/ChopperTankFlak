@@ -28,6 +28,7 @@ public class HexOverlay : MonoBehaviour
     public int distanceFrom = -1;
 
     public HexIntel intel { get; protected set; }
+    public AstarNavigable nav { get; private set; }
 
     // Start is called before the first frame update
     protected void Start()
@@ -37,6 +38,9 @@ public class HexOverlay : MonoBehaviour
         myCoords = map.WorldToCell(gameObject.transform.position);
         myTile = map.GetTile<TerrainTile>(myCoords);
         intel = new HexIntel();
+        nav = gameObject.GetComponent<AstarNavigable>();
+        nav.CalculateCoords(myCoords);
+
 
         //Initialize adjacent hexes list
         adjacent = new List<HexOverlay>();
@@ -295,6 +299,32 @@ public class HexOverlay : MonoBehaviour
 
         return allTheWay;
     }
+
+
+    public Vector3Int GetAstarCoords()
+    {
+        return nav.cubePosition;
+    }
+
+    public int HexDistTo(HexOverlay hex)
+    {
+        int distance = 0;
+
+        Vector3Int diff = (hex.GetAstarCoords() - this.GetAstarCoords());
+
+        diff.x = Mathf.Abs(diff.x);
+        diff.y = Mathf.Abs(diff.y);
+        diff.z = Mathf.Abs(diff.z);
+
+        distance = Mathf.Max(diff.x, diff.y, diff.z);
+
+        return distance;
+
+    }
+
+
+    //Astar compliance
+
 
 
     //These functions are used to change an overlay's state

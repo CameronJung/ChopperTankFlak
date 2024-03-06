@@ -155,15 +155,17 @@ public class CommandTracer : MonoBehaviour
     }
 
 
-    //This function translates the points array into a stack of orders that will be sent to the selected unit
+    //This function translates the points array into a list of orders that will be sent to the selected unit
     public void SendCommand()
     {
-        if (validTile) {
-            Stack<Order> orders = new Stack<Order>();
+        if (validTile)
+        {
+            
+            Mission mission = new Mission(commandee, map);
 
-            if(commandee.myTilePos == currTilePos)
+            if (commandee.myTilePos == currTilePos)
             {
-                orders.Push(new HoldOrder(points[0], points[0], commandee));
+                mission.AddOrder(new HoldOrder(points[0], points[0], commandee));
             }
             else
             {
@@ -176,33 +178,36 @@ public class CommandTracer : MonoBehaviour
                     {
                         if (attacks)
                         {
-                            orders.Push(new AttackOrder(points[idx - 1], points[idx], this.commandee));
+                            mission.AddOrder(new AttackOrder(points[idx - 1], points[idx], this.commandee));
                         }
-                        else 
+                        else
                         {
                             //Add an extra hold command at the end
                             if ((map.GetInstantiatedObject(map.WorldToCell(points[endPoint])).GetComponent(typeof(HexOverlay)) as HexOverlay).currState == HexState.capture)
                             {
-                                orders.Push(new HoldOrder(points[endPoint], points[endPoint], commandee));
+                                mission.AddOrder(new HoldOrder(points[endPoint], points[endPoint], commandee));
                             }
-                                
-                            orders.Push(new MoveOrder(points[endPoint - 1], points[endPoint], this.commandee));
+
+                            mission.AddOrder(new MoveOrder(points[endPoint - 1], points[endPoint], this.commandee));
                         }
-                        
+
                     }
                     else
                     {
-                        orders.Push(new MoveOrder(points[idx - 1], points[idx], this.commandee));
+                        mission.AddOrder(new MoveOrder(points[idx - 1], points[idx], this.commandee));
                     }
 
                 }
             }
 
-            
+
             endPoint = 0;
-            commandee.RecieveOrders(orders);
+            commandee.BeginMission(mission);
+            //commandee.RecieveOrders(orders);
+            
         }
     }
+
 
 
 
