@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UniversalConstants;
 
 public static class GridHelper
 {
@@ -91,6 +92,15 @@ public static class GridHelper
         distance = Mathf.Max(diff.x, diff.y, diff.z);
 
         return distance;
+    }
+
+
+    /*
+     * This method returns true if the vector parameters are at an appropriate distance to be tiles next to eachother
+     */
+    public static bool CoarseAdjacencyTest(Vector3 a, Vector3 b)
+    {
+        return (Vector3.SqrMagnitude(a - b) < HEXDISTANCESQUARED && (Vector3.SqrMagnitude(a - b) > 0.1f));
     }
 
 }

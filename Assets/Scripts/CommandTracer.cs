@@ -28,6 +28,7 @@ public class CommandTracer : MonoBehaviour
 
     //indicates if the tile hovered over displays a valid move for the commandee
     private bool validTile = false;
+    private bool prevValidity = false;
     
     private Unit commandee = null;
     private Vector3[] points;
@@ -69,23 +70,68 @@ public class CommandTracer : MonoBehaviour
             HexOverlay currHex = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>();
             if (currHex.currState > 0)
             {
-                //Determine if the hex represents a valid move
-                //A hex is invalid if it is occupied by another allied unit
-                validTile = currHex.currState == HexState.attackable || currHex.GetOccupiedBy() == null 
-                    || currHex.currState == HexState.hold || currHex.currState == HexState.capture;
+                prevValidity = validTile;
+                validTile = currHex.currState == HexState.attackable || currHex.GetOccupiedBy() == null
+                        || currHex.currState == HexState.hold || currHex.currState == HexState.capture;
 
 
                 liner.enabled = true;
-                liner.positionCount = currHex.distanceFrom + 1;
 
-                points[currHex.distanceFrom] = map.GetCellCenterWorld(currTilePos);
-                if (!validateLine(currHex.distanceFrom))
+
+                /*
+                //Special Handeling of attack orders
+                //Since an Attack order doesn't have a movement cost it can exceed the unit's mobility and the
+                //distance property won't neccesarily be sequential
+                */
+                if (currHex.currState == HexState.attackable)
                 {
-                    points = currHex.MakePathToHere(commandee, points);
+                    if(prevTilePos == null)
+                    {
+                        Debug.Log("previous Tile position is null for some reason");
+                    }
 
+                    
+
+                    //If the previous tile was not valid to attack from than set the previous to a valid one
+                    if (!prevValidity)
+                    {
+                        prevTilePos = currHex.FindValidNeighbor();
+
+                    }
+                    HexOverlay prevHex = map.GetInstantiatedObject(prevTilePos).GetComponent<HexOverlay>();
+                    
+                    liner.positionCount = prevHex.distanceFrom + 2;
+                    //input the position of the unit we attack
+                    points[prevHex.distanceFrom + 1] = map.GetCellCenterWorld(currTilePos);
+                    //input the position we want to attack from
+                    points[prevHex.distanceFrom] = map.GetCellCenterWorld(prevTilePos);
+
+                    if (!validateLine(prevHex.distanceFrom + 1))
+                    {
+                        points = currHex.MakePathToHere(commandee, points, prevHex.distanceFrom + 1);
+
+                    }
+                    liner.SetPositions(points);
+                    endPoint = prevHex.distanceFrom + 1;
                 }
-                liner.SetPositions(points);
-                endPoint = currHex.distanceFrom;
+                else
+                {
+                    //Determine if the hex represents a valid move
+                    //A hex is invalid if it is occupied by another allied unit
+                    
+                    liner.positionCount = currHex.distanceFrom + 1;
+
+                    points[currHex.distanceFrom] = map.GetCellCenterWorld(currTilePos);
+                    if (!validateLine(currHex.distanceFrom))
+                    {
+                        points = currHex.MakePathToHere(commandee, points, currHex.distanceFrom);
+
+                    }
+                    liner.SetPositions(points);
+                    endPoint = currHex.distanceFrom;
+                }
+
+                
             }
             else
             {
@@ -126,6 +172,9 @@ public class CommandTracer : MonoBehaviour
         
     }
 
+
+
+    //This method checks the current path in positions to see if it is valid
     private bool validateLine(int endDist)
     {
         bool valid = true;
@@ -133,7 +182,7 @@ public class CommandTracer : MonoBehaviour
 
         for(int idx = endDist; idx > 0; idx--)
         {
-            valid = valid && (Vector3.SqrMagnitude(points[idx - 1] - points[idx]) < HEXDISTANCESQUARED);
+            valid = valid && GridHelper.CoarseAdjacencyTest(points[idx], points[idx-1]);
             HexOverlay hex = map.GetInstantiatedObject(map.WorldToCell(points[idx])).GetComponent<HexOverlay>();
 
             if (prevWasAttack && valid)
@@ -202,6 +251,9 @@ public class CommandTracer : MonoBehaviour
 
 
             endPoint = 0;
+
+            
+
             commandee.BeginMission(mission);
             //commandee.RecieveOrders(orders);
             
@@ -217,7 +269,31 @@ public class CommandTracer : MonoBehaviour
     public void SpoofSendCommand(Vector3Int fakeMouseTile)
     {
         prevTilePos = new Vector3Int(0, 0, -100);
+        HexOverlay lie = map.GetInstantiatedObject(fakeMouseTile).GetComponent<HexOverlay>();
+
+        if(lie.currState == HexState.attackable)
+        {
+            prevTilePos = lie.FindValidNeighbor();
+        }
+
+
+
         HandleMouseAtTile(fakeMouseTile);
+        /*
+        if (!validateLine(endPoint))
+        {
+
+            string lineData = "";
+
+            for(int i = 0; i < points.Length; i++)
+            {
+                lineData += map.WorldToCell(points[i]) + " -> ";
+            }
+
+            Debug.Log("!Error! command was sent with invalid line: " + lineData);
+        }
+        */
+
         SendCommand();
     }
 }

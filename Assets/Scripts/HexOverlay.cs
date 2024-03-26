@@ -34,7 +34,7 @@ public class HexOverlay : MonoBehaviour
     protected void Start()
     {
         
-        Tilemap map = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<Tilemap>();
+        map = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<Tilemap>();
         myCoords = map.WorldToCell(gameObject.transform.position);
         myTile = map.GetTile<TerrainTile>(myCoords);
         intel = new HexIntel();
@@ -105,6 +105,14 @@ public class HexOverlay : MonoBehaviour
     {
         return myTile.CanUnitPass(me);
     }
+
+
+    //Returns if the given unit is able to be on this tile
+    public bool CanIBeOn(Unit me)
+    {
+        return myTile.CanUnitPass(me) && occupiedBy == null;
+    }
+
 
     protected void CanBeAttackedBy(Unit unit)
     {
@@ -242,24 +250,56 @@ public class HexOverlay : MonoBehaviour
 
 
     //ABSTRACTION
-    public Vector3[] MakePathToHere(Unit unit, Vector3[] path)
+    public Vector3[] MakePathToHere(Unit unit, Vector3[] path, int numberOfOrders)
     {
         Vector3[] validPath = (Vector3[])path.Clone();
 
         bool isAttack = this.currState == HexState.attackable;
+        bool givenValidAttackPosition = false;
 
-        foreach (HexOverlay hex in adjacent)
+
+        //If the mission is to attack and there are more than 1 order than distanceFrom needn't be sequential
+        //Further, the tile to attack from has likely been selected already
+        if (isAttack && numberOfOrders >= 2)
         {
-            if (hex.distanceFrom == this.distanceFrom - 1 &&
-                (hex.currState == HexState.reachable || hex.currState == HexState.hold))
+
+            //Debug.Log("Length is: " + validPath.Length);
+            //Debug.Log("Number of orders is: " + numberOfOrders);
+
+            //check if the tile in the path is valid, if it is determine a path from that position
+            HexOverlay prev = map.GetInstantiatedObject(map.WorldToCell(validPath[numberOfOrders -1])).GetComponent<HexOverlay>();
+            if (adjacent.Contains(prev) && prev.CanIBeOn(unit) && prev.currState == HexState.reachable)
             {
-                if(!(isAttack && hex.occupiedBy != null ))
-                if (hex.ContinuePath(unit, ref validPath))
+                //This is the only opportunity to make this variable true
+                givenValidAttackPosition = prev.ContinuePath(unit, ref validPath);
+            }
+            
+            
+        }
+        
+        //If a path from the second last point can not be determined draw a new path
+        if(!givenValidAttackPosition)
+        {
+            foreach (HexOverlay hex in adjacent)
+            {
+
+                if (hex.distanceFrom == this.distanceFrom - 1 &&
+                    (hex.currState == HexState.reachable || hex.currState == HexState.hold))
                 {
-                    validPath[this.distanceFrom] = gameObject.transform.position;
+                    if (!(isAttack && hex.occupiedBy != null))
+                        if (hex.ContinuePath(unit, ref validPath))
+                        {
+                            validPath[this.distanceFrom] = gameObject.transform.position;
+                        }
                 }
+
             }
         }
+        else
+        {
+            validPath[numberOfOrders] = gameObject.transform.position;
+        }
+        
         
         return validPath;
     }
@@ -283,7 +323,6 @@ public class HexOverlay : MonoBehaviour
                     if(hex.ContinuePath(unit, ref path))
                     {
                         path[this.distanceFrom] = gameObject.transform.position;
-                        //Debug.Log("Found a path through: " + this.myCoords);
                         //Return immediately we don't need to look at anything else
                         allTheWay = true;
                     }
@@ -324,6 +363,29 @@ public class HexOverlay : MonoBehaviour
 
 
     //Astar compliance
+
+    /*
+     * This method returns a neigboring tile that is accessible to the selected unit
+     */
+    public Vector3Int FindValidNeighbor()
+    {
+
+        //CURRENT ISSUE WHEN THE AI ORDERS A STALEMATE BOTH UNITS ARE ON THE SAME TILE
+        Vector3Int neighbor = new Vector3Int();
+
+        foreach (HexOverlay hex in adjacent)
+        {
+            if(hex.currState == HexState.reachable)
+            {
+                neighbor = hex.myCoords;
+            }
+        }
+
+
+        return neighbor;
+    }
+
+
 
 
 

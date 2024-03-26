@@ -33,7 +33,8 @@ public class AstarNavigable : MonoBehaviour
 
         cubePosition.x = -(cubePosition.y + cubePosition.z);
 
-        debugText.text = cubePosition.ToString();
+        //debugText.text = cubePosition.ToString();
+        debugText.text = gridCoords.ToString();
     }
 
     public void Awake()

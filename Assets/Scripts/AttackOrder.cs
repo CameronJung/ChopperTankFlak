@@ -30,4 +30,9 @@ public class AttackOrder : Order
     {
         return recipient.ExecuteAttackOrder(origin, destination);
     }
+
+    public override string ToString()
+    {
+        return "Attack Order";
+    }
 }

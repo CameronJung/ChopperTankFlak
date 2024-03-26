@@ -68,6 +68,23 @@ public class Mission
         return (orders.Count == 0);
     }
 
+    public bool IsAttack()
+    {
+        return orders.Last.Value.Value is AttackOrder;
+    }
+
+    public override string ToString()
+    {
+        string description = "The mission is: ";
+
+        foreach(LinkedListNode<Order> node in orders)
+        {
+            description += map.WorldToCell(node.Value.destination) + " " + node.Value.ToString() + " -> ";
+        }
+
+        return description;
+    }
+
 
 
 }
