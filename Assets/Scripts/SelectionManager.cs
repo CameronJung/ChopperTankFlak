@@ -264,7 +264,8 @@ public class SelectionManager : MonoBehaviour
         {
             viable = false;
 
-            if (hex.CanIpass(selectedUnit))
+            //if (hex.CanIpass(selectedUnit))
+            if(hex.RepresentsPossibleMoveTo(selectedUnit))
             {
                 Unit occupier = hex.GetOccupiedBy();
                 if (occupier != null)

@@ -9,25 +9,28 @@ using UnityEngine.Tilemaps;
 public class Mission
 {
     private Unit agent;
-    private LinkedList<LinkedListNode<Order>> orders;
+    private LinkedList<Order> Orders;
 
     private Tilemap map;
     
     public Mission(Unit unit, Tilemap tilemap)
     {
-        orders = new LinkedList<LinkedListNode<Order>>();
+        Orders = new LinkedList<Order>();
         agent = unit;
         map = tilemap;
+
+        
+        
     }
 
 
     //Returns the grid coordinate the agent will be in when the mission is complete
     public Vector3 GetFinalPosition()
     {
-        Vector3 finalPosition = orders.Last.Value.Value.destination;
-        if(orders.Last.Value.Value is AttackOrder || orders.Last.Value.Value is HoldOrder)
+        Vector3 finalPosition = Orders.Last.Value.destination;
+        if(Orders.Last.Value is AttackOrder || Orders.Last.Value is HoldOrder)
         {
-            finalPosition = orders.Last.Previous.Value.Value.origin;
+            finalPosition = Orders.Last.Previous.Value.origin;
         }
 
         return finalPosition;
@@ -40,10 +43,10 @@ public class Mission
         //This method should not return null
         Order next = null;
 
-        if(orders.Count > 0)
+        if(Orders.Count > 0)
         {
-            next = orders.First.Value.Value;
-            orders.RemoveFirst();
+            next = Orders.First.Value;
+            Orders.RemoveFirst();
         }
         else
         {
@@ -59,27 +62,48 @@ public class Mission
 
     public void AddOrder(Order order)
     {
-        orders.AddFirst(new LinkedListNode<Order>(order));
+        bool isValid = true;
+        if(Orders.Count >= 1)
+        {
+            if (Orders.Last.Value is AttackOrder)
+            {
+                //No order within the same mission should ever have a destination to a tile it attacks
+                //This is an admittedly lazy means of solving a very frustrating bug
+                //if no solution is found make a bug report for it
+                isValid = (Orders.Last.Value.destination != order.destination);
+            }
+        }
+        
+
+        if (isValid)
+        {
+            Orders.AddFirst(new LinkedListNode<Order>(order));
+        }
+        else
+        {
+            Debug.Log("An erroneous order was ignored while constructing a mission");
+        }
+        
     }
 
 
     public bool IsComplete()
     {
-        return (orders.Count == 0);
+        return (Orders.Count == 0);
     }
 
     public bool IsAttack()
     {
-        return orders.Last.Value.Value is AttackOrder;
+        return Orders.Last.Value is AttackOrder;
     }
 
     public override string ToString()
     {
         string description = "The mission is: ";
 
-        foreach(LinkedListNode<Order> node in orders)
+        foreach(Order node in Orders)
         {
-            description += map.WorldToCell(node.Value.destination) + " " + node.Value.ToString() + " -> ";
+            description += map.WorldToCell(node.destination) + " " + node.ToString() + " -> ";
         }
 
         return description;

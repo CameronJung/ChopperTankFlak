@@ -34,6 +34,7 @@ public class CommandTracer : MonoBehaviour
     private Vector3[] points;
     //This is the index of the last order
     private int endPoint = 0;
+    private int prevEnd = 0;
     
 
     // Start is called before the first frame update
@@ -77,12 +78,10 @@ public class CommandTracer : MonoBehaviour
 
                 liner.enabled = true;
 
-
                 /*
                 //Special Handeling of attack orders
                 //Since an Attack order doesn't have a movement cost it can exceed the unit's mobility and the
                 //distance property won't neccesarily be sequential
-                */
                 if (currHex.currState == HexState.attackable)
                 {
                     if(prevTilePos == null)
@@ -90,15 +89,16 @@ public class CommandTracer : MonoBehaviour
                         Debug.Log("previous Tile position is null for some reason");
                     }
 
-                    
 
+                    HexOverlay prevHex = map.GetInstantiatedObject(prevTilePos).GetComponent<HexOverlay>();
                     //If the previous tile was not valid to attack from than set the previous to a valid one
-                    if (!prevValidity)
+                    if (!prevValidity || !prevHex.CanIBeOn(commandee))
                     {
                         prevTilePos = currHex.FindValidNeighbor();
+                        prevHex = map.GetInstantiatedObject(prevTilePos).GetComponent<HexOverlay>();
 
                     }
-                    HexOverlay prevHex = map.GetInstantiatedObject(prevTilePos).GetComponent<HexOverlay>();
+                    
                     
                     liner.positionCount = prevHex.distanceFrom + 2;
                     //input the position of the unit we attack
@@ -106,8 +106,10 @@ public class CommandTracer : MonoBehaviour
                     //input the position we want to attack from
                     points[prevHex.distanceFrom] = map.GetCellCenterWorld(prevTilePos);
 
-                    if (!validateLine(prevHex.distanceFrom + 1))
+                    if (!CheckLineValidity(prevHex.distanceFrom + 1))
                     {
+                        Debug.Log("Line needs to be replotted, for " + (prevHex.distanceFrom + 1) +" orders");
+                        Debug.Log("Line was invalid and had to be recalculated, the tile is : " + currHex.distanceFrom + " hexes away.");
                         points = currHex.MakePathToHere(commandee, points, prevHex.distanceFrom + 1);
 
                     }
@@ -122,16 +124,56 @@ public class CommandTracer : MonoBehaviour
                     liner.positionCount = currHex.distanceFrom + 1;
 
                     points[currHex.distanceFrom] = map.GetCellCenterWorld(currTilePos);
-                    if (!validateLine(currHex.distanceFrom))
+                    if (!CheckLineValidity(currHex.distanceFrom))
                     {
+                        Debug.Log("Line was invalid and had to be recalculated, the tile is : " + currHex.distanceFrom + " hexes away.");
                         points = currHex.MakePathToHere(commandee, points, currHex.distanceFrom);
 
                     }
                     liner.SetPositions(points);
                     endPoint = currHex.distanceFrom;
                 }
+                */
+
+
 
                 
+                prevEnd = endPoint;
+
+                if (currHex.currState == HexState.attackable)
+                {
+                    if (prevEnd + 1 < points.Length)
+                    {
+                        //If we are attacking and there is room for the additional tile than we try putting it after the previous endpoint
+                        points[prevEnd +1] = currHex.transform.position;
+                        endPoint = prevEnd + 1;
+                    }
+                    else
+                    {
+                        //if there is no room than we replace the previous endpoint position and push the prevEndpoint back
+                        points[prevEnd] = currHex.transform.position;
+
+                    }
+                }
+                else
+                {
+                    points[currHex.distanceFrom] = map.GetCellCenterWorld(currTilePos);
+                    endPoint = currHex.distanceFrom;
+                }
+                liner.positionCount = endPoint + 1;
+
+
+
+                liner.SetPositions(points);
+                
+                //endPoint = currHex.distanceFrom;
+
+                if (!CheckLineValidity(endPoint))
+                {
+                    RedrawLine();
+                    liner.positionCount = endPoint + 1;
+                }
+                liner.SetPositions(points);
             }
             else
             {
@@ -175,7 +217,7 @@ public class CommandTracer : MonoBehaviour
 
 
     //This method checks the current path in positions to see if it is valid
-    private bool validateLine(int endDist)
+    private bool CheckLineValidity(int endDist)
     {
         bool valid = true;
         bool prevWasAttack = false;
@@ -188,7 +230,7 @@ public class CommandTracer : MonoBehaviour
             if (prevWasAttack && valid)
             {
                 //If the previous tile was an attack then that means the unit stops at this tile and thus needs to be empty
-                valid = valid && hex.GetOccupiedBy() == null;
+                valid = valid && (hex.GetOccupiedBy() == null || hex.GetOccupiedBy() == commandee);
             }
 
             if(idx < endDist && valid)
@@ -204,13 +246,133 @@ public class CommandTracer : MonoBehaviour
     }
 
 
+
+
+
+    /*
+     * SalvageLine
+     * 
+     * this method will attempt to place the currtile into the points array such that it will preserve as much of the line as possible
+     */
+    private void SalvageLine(HexOverlay noobHex, HexOverlay oldeHex)
+    {
+        if(noobHex.currState == HexState.attackable)
+        {
+            if(prevEnd + 1 < points.Length)
+            {
+                //If we are attacking and there is room for the additional tile than we try putting it after the previous endpoint
+            }
+        }
+
+
+
+    }
+
+
+
+
+    /*
+     * This method redraws the line from the from the commandee's position to the currently selected tile
+     * !NOTE! both the currTile and endPoint values must be correct for this method to work
+     * 
+     * PSEUDO CODE GLOSSARY
+     * 
+     * CURR TILE IDX: the index of the curr tile's
+     * ATTACK POSITION: the tile that commandee will be on when it attacks the target on the current tile
+     * DIRECT DESTINATION: the tile that a path of tiles with sequential distanceFrom values will be drawn to
+     * DIRECT DESTINATION DISTANCE: The distance from value of the direct destination
+     */
+    private void RedrawLine()
+    {
+        // PSEUDO CODE
+        // 
+        //  Record the curr tile as the direct destination
+        HexOverlay currTile = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>();
+        HexOverlay directDestination = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>();
+        int currTileIdx = endPoint;
+        int directDestinationIdx = directDestination.distanceFrom;
+        
+        // IF (The proposed mission is to attack)
+        if (directDestination.currState == HexState.attackable)
+        {
+
+
+            //set the tile before the curr tile as the attack position
+            HexOverlay attackPosition = map.GetInstantiatedObject(map.WorldToCell(points[currTileIdx - 1])).GetComponent<HexOverlay>();
+
+            //IF(The tile before the curr Tile is NOT a valid position to attack from)
+            if (!(attackPosition.CanIBeOn(commandee) && attackPosition.currState != HexState.unreachable
+                && CoarseAdjacencyTest(points[currTileIdx], points[currTileIdx - 1])))
+            {
+                //Find a valid attack position adjacent to the curr tile
+                attackPosition = currTile.FindValidNeighborFor(commandee);
+                
+            }
+
+
+            //place the new attack position in its appropriate spot in the array
+            points[attackPosition.distanceFrom] = attackPosition.gameObject.transform.position;
+
+            //place the curr tile in the position after the attack position
+            points[attackPosition.distanceFrom + 1] = currTile.gameObject.transform.position;
+            //record the curr tile distance
+            currTileIdx = attackPosition.distanceFrom + 1;
+
+            //AT THIS POINT THE POSITION BEFORE THE CURRENT TILE IS A VALID ATTACK POSITION
+
+            //set the direct destination as the attack position
+            directDestination = attackPosition;
+            //update the direct destination distance
+            directDestinationIdx = attackPosition.distanceFrom;
+            
+        }
+
+        // make a recursive call to plot a direct path from the direct destination to the commandee's position
+        Debug.Log("Redrawing line from index: " + directDestinationIdx);
+        points = directDestination.MakeDirectPathToHere(points, directDestinationIdx, commandee);
+        endPoint = currTileIdx;
+
+        // assert that the line is valid to the curr tile distance
+        bool success = CheckLineValidity(currTileIdx);
+        if (!success)
+        {
+            
+            string nubPath = map.WorldToCell(points[0]).ToString();
+
+
+            for (int idx = 0; idx < points.Length; idx++)
+            {
+                
+                nubPath += " -> " + map.WorldToCell(points[idx]);
+            }
+
+            Debug.LogWarning("The line redraw method made this invalid line: " + nubPath);
+        }
+    }
+
+
+
+
     //This function translates the points array into a list of orders that will be sent to the selected unit
     public void SendCommand()
     {
         if (validTile)
         {
-            
+            if (!CheckLineValidity(endPoint))
+            {
+
+                string lineData = "";
+
+                for (int i = 0; i < points.Length; i++)
+                {
+                    lineData += map.WorldToCell(points[i]) + " -> ";
+                }
+
+                Debug.Log("!Error! command was sent with invalid line: " + lineData);
+            }
             Mission mission = new Mission(commandee, map);
+
+
 
             if (commandee.myTilePos == currTilePos)
             {
@@ -279,20 +441,9 @@ public class CommandTracer : MonoBehaviour
 
 
         HandleMouseAtTile(fakeMouseTile);
-        /*
-        if (!validateLine(endPoint))
-        {
-
-            string lineData = "";
-
-            for(int i = 0; i < points.Length; i++)
-            {
-                lineData += map.WorldToCell(points[i]) + " -> ";
-            }
-
-            Debug.Log("!Error! command was sent with invalid line: " + lineData);
-        }
-        */
+        
+        
+        
 
         SendCommand();
     }

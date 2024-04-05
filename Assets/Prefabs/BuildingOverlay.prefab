@@ -426,7 +426,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TextLocation: {fileID: 0}
-  debugText: {fileID: 5980650262146266238}
+  DebugText: {fileID: 5980650262146266238}
   cubePosition: {x: 0, y: 0, z: 0}
 --- !u!1 &5515714732165874320
 GameObject:
