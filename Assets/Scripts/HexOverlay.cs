@@ -129,7 +129,7 @@ public class HexOverlay : MonoBehaviour
 
         if(this.occupiedBy != null)
         {
-            valid = valid && this.occupiedBy.GetAllegiance() != unit.GetAllegiance();
+            valid = valid && this.occupiedBy.GetAllegiance() != unit.GetAllegiance() || unit == this.occupiedBy ;
         }
 
         return valid;
@@ -435,7 +435,7 @@ public class HexOverlay : MonoBehaviour
                 }
             }
         }
-
+        /*
         Debug.Assert(pathComplete, "A complete path was not found");
         string oldPath = map.WorldToCell(path[0]).ToString();
         string nubPath = map.WorldToCell(validPath[0]).ToString();
@@ -449,7 +449,7 @@ public class HexOverlay : MonoBehaviour
 
         Debug.Log("Path was changed from: " + oldPath);
         Debug.Log("Path was changed To:   " + nubPath);
-
+        */
         return validPath;
 
     }

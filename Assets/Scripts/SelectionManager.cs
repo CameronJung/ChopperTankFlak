@@ -83,7 +83,7 @@ public class SelectionManager : MonoBehaviour
 
 
     /*
-     * handleAISelection
+     * HandleAISelection
      * 
      * This method handles selections made by the AI it differs from handleNewSelection in that it does not make
      * visible changes to the UI or game board.

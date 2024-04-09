@@ -145,7 +145,7 @@ public class Directive
 
             distPrev = GridHelper.CalcTilesBetweenGridCoords(capable.myTilePos, intel.GetComputerBaseLoc());
             distCurr = GridHelper.CalcTilesBetweenGridCoords(destination.myCoords, intel.GetComputerBaseLoc());
-            if (distCurr >= distPrev)
+            if (distCurr > distPrev)
             {
                 smart += AWAY_FROM_HOME;
             }
@@ -164,6 +164,7 @@ public class Directive
             if (capable.GetUnitType() == UnitType.InfantrySquad && destination.myCoords == intel.GetPlayerBaseLoc())
             {
                 smart += INFANTRY_CAPTURES_BASE;
+                Debug.Log("AI evaluated capture directive");
             }
         }
 

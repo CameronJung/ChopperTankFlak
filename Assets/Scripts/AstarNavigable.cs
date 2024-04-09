@@ -76,32 +76,53 @@ public class AstarNavigable : MonoBehaviour
     public int MeasureTrueDistance(Unit unit, HexOverlay target)
     {
         LinkedList<HexOverlay> path = new LinkedList<HexOverlay>();
-        this.HValue = 0;
+        this.HValue = OnHex.HexDistTo(target);
         this.GValue = 0;
         path.AddLast(OnHex);
+        List<HexOverlay> visited = new List<HexOverlay>();
+        visited.Add(this.OnHex);
 
-        int steps = 1;
+        int steps = 0;
+
+        this.ContinueMeasuring(unit, target, ref path, ref visited, steps + 1);
 
         
+        
 
+        /*
         HexOverlay next = this.GetAdjacentLowestH(target, unit, ref path);
         if(next != null)
         {
-            next.nav.ContinueMeasuring(unit, target, ref path, steps);
+            next.nav.ContinueMeasuring(unit, target, ref path, ref visited, steps +1);
+
+
         }
         else
         {
             //This part of the code shouldn't execute
+            Debug.Log("!Error! Somehow ended up with no neigbors");
         }
-        
-
+        */
         return path.Count;
     }
 
-    public int ContinueMeasuring(Unit unit, HexOverlay target, ref LinkedList<HexOverlay> path, int steps)
+    public int ContinueMeasuring(Unit unit, HexOverlay target, ref LinkedList<HexOverlay> path, ref List<HexOverlay> visited, int steps)
     {
+        visited.Add(OnHex);
         GValue = steps;
         HValue = OnHex.HexDistTo(target);
+
+
+        foreach (HexOverlay hex in OnHex.adjacent)
+        {
+            if (!(visited.Contains(hex)))
+            {
+                if (!(path.Contains(hex)))
+                {
+
+                }
+            }
+        }
 
         return steps;
     }
@@ -149,8 +170,10 @@ public class AstarNavigable : MonoBehaviour
         }
 
         return neighbor;
-
     }
+
+
+
 
 
 
