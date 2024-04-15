@@ -141,6 +141,12 @@ public abstract class Unit : MonoBehaviour, ISelectable
     }
 
 
+    public HexOverlay GetOccupiedHex()
+    {
+        return map.GetInstantiatedObject(myTilePos).GetComponent(typeof(HexOverlay)) as HexOverlay;
+    }
+
+
     //INHERITANCE
     //Called during start, this method will change the unit to match its team's colour
     protected void PaintUnit()

@@ -441,9 +441,10 @@ public class CommandTracer : MonoBehaviour
 
 
         HandleMouseAtTile(fakeMouseTile);
+
+
         
-        
-        
+
 
         SendCommand();
     }

@@ -136,6 +136,12 @@ public class HexOverlay : MonoBehaviour
     }
 
 
+    public bool CheckTerrainFor(Unit me)
+    {
+        return myTile.CanUnitPass(me);
+    }
+
+
     //Returns if the given unit is able to be on this tile
     public bool CanIBeOn(Unit me)
     {

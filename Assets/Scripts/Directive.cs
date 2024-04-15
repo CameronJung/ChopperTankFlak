@@ -125,16 +125,22 @@ public class Directive
     private int ConsiderGeography()
     {
         int smart = 0;
-
+        bool distant = false;
         if(capable.GetMobility() == destination.distanceFrom)
         {
             smart += MOVES_MAXIMUM;
+            distant = true;
         }
 
-        int distPrev = (destination.myCoords - capable.prevTilePos).sqrMagnitude;
-        int distCurr = (destination.myCoords - capable.myTilePos).sqrMagnitude;
 
-        if (distCurr >= distPrev)
+        
+        int distDest = GridHelper.CalcTilesBetweenGridCoords(capable.prevTilePos, destination.myCoords);
+
+        
+        int distCurr = GridHelper.CalcTilesBetweenGridCoords(capable.prevTilePos, capable.myTilePos);
+
+        
+        if (distCurr < distDest)
         {
             smart += MARCH_ON;
         }
@@ -142,24 +148,32 @@ public class Directive
         if (intel != null)
         {
             //compare distance to computer's base
-
+            /*
             distPrev = GridHelper.CalcTilesBetweenGridCoords(capable.myTilePos, intel.GetComputerBaseLoc());
             distCurr = GridHelper.CalcTilesBetweenGridCoords(destination.myCoords, intel.GetComputerBaseLoc());
             if (distCurr > distPrev)
             {
                 smart += AWAY_FROM_HOME;
             }
+            */
 
-            distPrev = GridHelper.CalcTilesBetweenGridCoords(capable.myTilePos, intel.GetPlayerBaseLoc());
-            distCurr = GridHelper.CalcTilesBetweenGridCoords(destination.myCoords, intel.GetPlayerBaseLoc());
-            if (distCurr <= distPrev)
+            //The measure true distance function is expensive so only perform it when the distance travelled is significant
+            if (distant)
             {
-                smart += CLOSER_TO_ENEMY_BASE;
-                if (capable.GetUnitType() == UnitType.InfantrySquad)
+                //The distance from the destination to the end goal (currently the player's base)
+                distDest = destination.nav.MeasureTrueDistance(capable, intel.GetPlayerBaseLoc());
+                //The distance from the capable unit's position to the end goal
+                distCurr = capable.GetOccupiedHex().nav.MeasureTrueDistance(capable, intel.GetPlayerBaseLoc());
+                if (distCurr > distDest)
                 {
-                    smart += INFANTRY_CLOSER_TO_ENEMY_BASE;
+                    smart += CLOSER_TO_ENEMY_BASE;
+                    if (capable.GetUnitType() == UnitType.InfantrySquad)
+                    {
+                        smart += INFANTRY_CLOSER_TO_ENEMY_BASE;
+                    }
                 }
             }
+            
 
             if (capable.GetUnitType() == UnitType.InfantrySquad && destination.myCoords == intel.GetPlayerBaseLoc())
             {
@@ -198,6 +212,7 @@ public class Directive
 
     public Vector3Int getDestinationCoords()
     {
+
         return this.destination.myCoords;
     }
 
