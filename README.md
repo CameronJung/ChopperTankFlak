@@ -2,9 +2,13 @@
 A simple rock-paper-scissors strategy game built in the Unity engine.
 
 
-Current Version: 1.2.0
+Current Version: 1.3.0
 
 Update Log:
+
+V 1.3.0
+  - The player now has the ability to choose where to attack from
+  - The AI now moves its units such that it considers the entire map
 
 V 1.2.0
  - aesthetics overhaul
