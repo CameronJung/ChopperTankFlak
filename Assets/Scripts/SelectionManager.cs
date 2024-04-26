@@ -15,11 +15,13 @@ public class SelectionManager : MonoBehaviour
 
     private List<HexOverlay> affectedHexes;
     private Vector3Int selectedPos = new Vector3Int();
+    private List<Directive> Directives;
+    private AStarMeasurement Ruler;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        Ruler = gameObject.GetComponent<AStarMeasurement>();
     }
 
     // Update is called once per frame
@@ -83,7 +85,7 @@ public class SelectionManager : MonoBehaviour
 
 
     /*
-     * handleAISelection
+     * HandleAISelection
      * 
      * This method handles selections made by the AI it differs from handleNewSelection in that it does not make
      * visible changes to the UI or game board.
@@ -254,17 +256,26 @@ public class SelectionManager : MonoBehaviour
 
     //Returns a list of directives the selected unit can move to
     //this is mostly used by the AI
-    public List<Directive> GetSmartestMoves(AIIntelHandler knowledge)
+    public IEnumerator GetSmartestMoves(AIIntelHandler knowledge)
     {
+        
         Debug.Assert(selectedUnit != null, "There is no unit selected");
-        List<Directive> possibilities = new List<Directive>();
+        Directives = new List<Directive>();
+
+        
+        yield return Ruler.BeginMeasurement(selectedUnit, knowledge.GetPlayerBaseLoc());
+        int unitDistance = Ruler.GetMeasuredDistance();
+        int destDistance = -1;
+
+        Debug.Assert(unitDistance > 0, "Ruler was not finished measuring distance for Unit");
 
         bool viable;
         foreach (HexOverlay hex in affectedHexes)
         {
             viable = false;
 
-            if (hex.CanIpass(selectedUnit))
+            //if (hex.CanIpass(selectedUnit))
+            if(hex.RepresentsPossibleMoveTo(selectedUnit))
             {
                 Unit occupier = hex.GetOccupiedBy();
                 if (occupier != null)
@@ -284,21 +295,37 @@ public class SelectionManager : MonoBehaviour
             {
                 Directive noob = new Directive(selectedUnit, hex, knowledge);
 
-                if(possibilities.Count > 0) { 
+                if(hex.distanceFrom == selectedUnit.GetMobility())
+                {
+                    yield return Ruler.BeginMeasurement(selectedUnit, knowledge.GetPlayerBaseLoc(), hex.myCoords);
+                    destDistance = Ruler.GetMeasuredDistance();
+                }
+                else
+                {
+                    destDistance = -1;
+                }
+
+                
+                
+                //hex.nav.MeasureTrueDistance(selectedUnit, knowledge.GetPlayerBaseLoc());
+
+                noob.SetDistances(unitDistance, destDistance);
+
+                if(Directives.Count > 0) { 
 
                     //Maintain possibilities as a list of the best possible moves
-                    if(noob.getSmartness() >= possibilities[0].getSmartness())
+                    if(noob.getSmartness() >= Directives[0].getSmartness())
                     {
-                        if(noob.getSmartness() > possibilities[0].getSmartness())
+                        if(noob.getSmartness() > Directives[0].getSmartness())
                         {
-                            possibilities.Clear();
+                            Directives.Clear();
                         }
-                        possibilities.Add(noob);
+                        Directives.Add(noob);
                     }
                 }
                 else
                 {
-                    possibilities.Add(noob);
+                    Directives.Add(noob);
                 }
                 
             }
@@ -306,7 +333,19 @@ public class SelectionManager : MonoBehaviour
         }
 
 
-        return possibilities;
+        //return possibilities;
+    }
+
+
+    public List<Directive> GetDirectives()
+    {
+        if(Directives == null)
+        {
+            //This shouldn't happen but if it does return an empty list
+            Debug.Log("Tried to get directives that didn't exist");
+            this.Directives = new List<Directive>();
+        }
+        return this.Directives;
     }
 
 }

@@ -33,6 +33,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
     [SerializeField] private string unitName;
     [TextArea][SerializeField] private string unitDescription;
 
+
+    protected Mission currMission;
     
 
     protected Tilemap map;
@@ -139,6 +141,12 @@ public abstract class Unit : MonoBehaviour, ISelectable
     }
 
 
+    public HexOverlay GetOccupiedHex()
+    {
+        return map.GetInstantiatedObject(myTilePos).GetComponent(typeof(HexOverlay)) as HexOverlay;
+    }
+
+
     //INHERITANCE
     //Called during start, this method will change the unit to match its team's colour
     protected void PaintUnit()
@@ -188,17 +196,12 @@ public abstract class Unit : MonoBehaviour, ISelectable
         }
     }
 
-    /**/
     
-    /*
-    //The parameter conspicuous indicates if the changes to the gameboard's state should be shown
-    public List<HexOverlay> OnSelected(bool conspicuous = true)
+    public void BeginMission(Mission newMission)
     {
-        return map.GetInstantiatedObject(this.myTilePos).GetComponent<HexOverlay>().BeginExploration(this, this.allegiance == manager.WhosTurn() && myState == UnitState.ready);
-        
+        this.currMission = newMission;
     }
 
-    /**/
 
     public void RecieveOrders(Stack<Order> commands)
     {
@@ -329,55 +332,68 @@ public abstract class Unit : MonoBehaviour, ISelectable
         this.retaliation = true;
 
         AttackOrder retaliation = new AttackOrder(transform.position, assailant.gameObject.transform.position, this);
-        this.orders.Push(retaliation);
-    }
 
+        //New Lines are below
+
+        Mission retaliate = new Mission(this, map);
+        retaliate.AddOrder(retaliation);
+        this.BeginMission(retaliate);
+        //Old code below
+
+        //this.orders.Push(retaliation);
+    }
 
 
     //INHERITANCE
     protected void FollowOrders()
     {
-        
-        if (orders.Count > 0 || currOrder != null)
+        if (currMission != null || currOrder != null)
         {
-            if (!executingOrders)
+            if (!currMission.IsComplete() || currOrder != null)
             {
-                
-                manager.ReportActionStarted();
+                if (!executingOrders)
+                {
 
-                executingOrders = true;
-                actionReported = false;
-                availSprite.SetActive(false);
+                    manager.ReportActionStarted();
+
+                    executingOrders = true;
+                    actionReported = false;
+                    availSprite.SetActive(false);
+                }
+
+
+                //There are orders to follow
+                if (currOrder == null)
+                {
+                    currOrder = currMission.ReceiveOrder();
+                    execution = currOrder.Execute();
+                    StartCoroutine(execution);
+                }
+
+                if (orderComplete)
+                {
+                    currOrder = null;
+                    orderComplete = false;
+                }
+
             }
-
-            
-            //There are orders to follow
-            if(currOrder == null)
+            else if (executingOrders && !waitingForResponse)
             {
-                currOrder = orders.Pop();
-                execution = currOrder.Execute();
-                StartCoroutine(execution);
-            }
-            
-            if (orderComplete)
-            {
-                currOrder = null;
-                orderComplete = false;
-            }
-            
-        }
-        else if (executingOrders && !waitingForResponse)
-        {
-            actionReported = true;
-            executingOrders = false;
-            FinalizeMovement();
-            FinalizeAction();
+                actionReported = true;
+                executingOrders = false;
+                FinalizeMovement();
+                FinalizeAction();
 
-            //We delay reporting the action as complete if we are expecting a response from another unit
-            manager.ReportActionComplete(this);
-            
+                //We delay reporting the action as complete if we are expecting a response from another unit
+                manager.ReportActionComplete(this);
+
+            }
         }
     }
+
+
+
+
 
     //This method updates this units data to reflect changes made when an action was performed
     protected void FinalizeAction()

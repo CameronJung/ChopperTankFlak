@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UniversalConstants;
 using static AITacticalValues;
+using static GridHelper;
 
 //The directive class is a representation of a move that a unit could make
 public class Directive
@@ -23,6 +24,8 @@ public class Directive
 
     private AIIntelHandler intel;
 
+    private int CapableDistance = -1;
+    private int DestinationDistance = -1;
 
     //Constructors
     public Directive(Unit unit, HexOverlay hex, AIIntelHandler knowledge)
@@ -46,7 +49,7 @@ public class Directive
     /*
      * THINKTHROUGH
      * 
-     * This method sets the smartness value of this directive by making various considerations
+     * This method sets/Updates the smartness value of this directive by making various considerations
      * */
     private void ThinkThrough() 
     {
@@ -55,7 +58,12 @@ public class Directive
         {
             smartness += ConsiderMatchup();
         }
-        smartness += ConsiderGeography();
+
+        //Do not consider geography in a combat situation
+        if (!capable.GetOccupiedHex().intel.IsUnitThreatened(capable))
+        {
+            smartness += ConsiderGeography();
+        }
         smartness += ConsiderThreats();
         
     }
@@ -124,45 +132,49 @@ public class Directive
     private int ConsiderGeography()
     {
         int smart = 0;
-
+        bool distant = false;
         if(capable.GetMobility() == destination.distanceFrom)
         {
             smart += MOVES_MAXIMUM;
+            distant = true;
         }
 
-        int distPrev = (destination.myCoords - capable.prevTilePos).sqrMagnitude;
-        int distCurr = (destination.myCoords - capable.myTilePos).sqrMagnitude;
 
-        if (distCurr >= distPrev)
+        
+        int distDest = GridHelper.CalcTilesBetweenGridCoords(capable.prevTilePos, destination.myCoords);
+
+        
+        int distCurr = GridHelper.CalcTilesBetweenGridCoords(capable.prevTilePos, capable.myTilePos);
+
+        
+        if (distCurr < distDest)
         {
             smart += MARCH_ON;
         }
 
         if (intel != null)
         {
-            //compare distance to computer's base
-            distPrev = (capable.myTilePos - intel.GetComputerBaseLoc()).sqrMagnitude;
-            distCurr = (destination.myCoords - intel.GetComputerBaseLoc()).sqrMagnitude;
-            if (distCurr >= distPrev)
-            {
-                smart += AWAY_FROM_HOME;
-            }
+            
 
-            //Compare distance to player's base
-            distPrev = (capable.myTilePos - intel.GetPlayerBaseLoc()).sqrMagnitude;
-            distCurr = (destination.myCoords - intel.GetPlayerBaseLoc()).sqrMagnitude;
-            if (distCurr <= distPrev)
+            //The measure true distance function is expensive so only perform it when the distance travelled is significant
+            if (distant)
             {
-                smart += CLOSER_TO_ENEMY_BASE;
-                if (capable.GetUnitType() == UnitType.InfantrySquad)
+                
+                if (CapableDistance > DestinationDistance)
                 {
-                    smart += INFANTRY_CLOSER_TO_ENEMY_BASE;
+                    smart += CLOSER_TO_ENEMY_BASE;
+                    if (capable.GetUnitType() == UnitType.InfantrySquad)
+                    {
+                        smart += INFANTRY_CLOSER_TO_ENEMY_BASE;
+                    }
                 }
             }
+            
 
             if (capable.GetUnitType() == UnitType.InfantrySquad && destination.myCoords == intel.GetPlayerBaseLoc())
             {
                 smart += INFANTRY_CAPTURES_BASE;
+                Debug.Log("AI evaluated capture directive");
             }
         }
 
@@ -196,6 +208,7 @@ public class Directive
 
     public Vector3Int getDestinationCoords()
     {
+
         return this.destination.myCoords;
     }
 
@@ -208,4 +221,15 @@ public class Directive
     {
         return destination.GetOccupiedBy();
     }
+
+
+
+    public void SetDistances(int currDist, int destDist)
+    {
+        this.CapableDistance = currDist;
+        this.DestinationDistance = destDist;
+
+        this.ThinkThrough();
+    }
+
 }

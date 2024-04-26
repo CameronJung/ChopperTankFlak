@@ -18,4 +18,9 @@ public class HoldOrder : Order
     {
         return recipient.ExecuteHoldOrder();
     }
+
+    public override string ToString()
+    {
+        return "Hold Order";
+    }
 }

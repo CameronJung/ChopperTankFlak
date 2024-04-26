@@ -34,7 +34,7 @@ MonoBehaviour:
   m_InstancedGameObject: {fileID: 3792858981746037694, guid: 707813d77795d5d42b54b44530c53660, type: 3}
   m_Flags: 1
   m_ColliderType: 1
-  traverseArray: 01010001
+  traverseArray: 01010101
   description: This is your base of operations, If the enemy captures it the battle
     is lost.
   title: Headquarters

@@ -22,20 +22,8 @@ public class TerrainTile : Tile, ISelectable
 
     public bool CanUnitPass(Unit unit)
     {
-        //if (this.occupiedBy != null)
-        //{
-        //    //Check if the units are on the same team
-        //    if(unit.GetAllegiance() != occupiedBy.GetAllegiance())
-        //    {
-        //        //Units of different teams cannot pass eachother
-        //        return false;
-        //    }    
-        //}
         
         return traverseArray[(int)unit.GetUnitType()];
-        
-        
-        //return traversablleBy.GetValueOrDefault(unit.GetUnitType());
     }
 
     public string GetDescription()

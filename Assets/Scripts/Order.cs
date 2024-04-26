@@ -34,4 +34,6 @@ public abstract class Order
 
     //This method will control the unit provided and make it perform the action
     public abstract IEnumerator Execute();
+
+    public abstract override string ToString();
 }

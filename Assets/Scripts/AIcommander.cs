@@ -18,6 +18,9 @@ public class AIcommander : MonoBehaviour
     private List<HexOverlay> possibilities;
     private List<Directive> bestMoves;
     private AIIntelHandler intel;
+    private Tilemap Map;
+
+    
 
     //The higher this value is the less likely the AI is to follow through with unfavorable
     //engagements
@@ -29,6 +32,8 @@ public class AIcommander : MonoBehaviour
     {
         caution = Random.Range(MINCAUTION, MAXCAUTION +1);
         intel = gameObject.GetComponent<AIIntelHandler>();
+        Map = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<Tilemap>();
+        
     }
 
     // Update is called once per frame
@@ -106,7 +111,9 @@ public class AIcommander : MonoBehaviour
 
                     //Only keep the best moves for consideration
 
-                    moves = MaintainBest(moves, selector.GetSmartestMoves(intel));
+                    yield return StartCoroutine(selector.GetSmartestMoves(intel));
+                    
+                    moves = MaintainBest(moves, selector.GetDirectives()) ;
 
                     Debug.Assert(moves.Count > 0, "!ERROR! the AI selected a "
                         + unmoved[idx].GetTitle() + " with no possible moves it was in the "

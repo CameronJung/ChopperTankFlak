@@ -29,4 +29,9 @@ public class MoveOrder : Order
     {
         return recipient.ExecuteMoveOrder(origin, destination);
     }
+
+    public override string ToString()
+    {
+        return "Move Order";
+    }
 }
