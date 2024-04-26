@@ -46,6 +46,10 @@ public class AstarNavigable : MonoBehaviour
 
         //DebugText.text = cubePosition.ToString();
         DebugText.text = gridCoords.ToString();
+
+#if UNITY_WEBGL
+        DebugText.gameObject.SetActive(false);
+#endif
     }
 
     public void Awake()
@@ -68,302 +72,15 @@ public class AstarNavigable : MonoBehaviour
         
     }
 
-    /*
-     * MeasureTrueDistance
-     * 
-     * This Method returns the number of tiles it will take "unit" to get to "target" from this position
-     */
-    public int MeasureTrueDistance(Unit unit, HexOverlay target)
+    
+    
+
+    public void ChangeDebugTextTo(string words)
     {
-        LinkedList<HexOverlay> path = new LinkedList<HexOverlay>();
-        this.HValue = OnHex.HexDistTo(target);
-        this.GValue = 0;
-        List<HexOverlay> closedList = new List<HexOverlay>();
-        List<HexOverlay> openList = new List<HexOverlay>();
-        List<HexOverlay> possibilities = new List<HexOverlay>();
-        openList.Add(this.OnHex);
-        this.OnHex.nav.UpdateNavigationParameters(0, target);
-
-        int steps = 0;
-        float started = Time.realtimeSinceStartup;
-        bool reached = false;
-        int maxLoops = 10000;
-        int iterations = 0;
-
-        HexOverlay chosen = null;
-        Debug.Log(" measuring distance from: " + this.OnHex.myCoords + " To " + target.myCoords);
-
-        //this.ContinueMeasuring(unit, target, ref path, ref openList, ref closedList, steps + 1);
-        do
-        {
-            possibilities.Clear();
-
-            chosen = null;
-            int lowestF = int.MaxValue;
-
-
-
-
-            // Take a tile from the openList
-            foreach(HexOverlay hex in openList) 
-            {
-
-                //If we find the target choose it outright and stop looking
-                if (hex == target)
-                {
-                    chosen = hex;
-                    reached = true;
-                }
-                else if (!reached) 
-                {
-                    if (!(closedList.Contains(hex)))
-                    {
-
-                        possibilities.Add(hex);
-                        if (hex.nav.GetFValue() <= lowestF)
-                        {
-                            if (hex.nav.GetFValue() == lowestF)
-                            {
-                                if (chosen != null)
-                                {
-                                    if (chosen.nav.GValue < hex.nav.GValue)
-                                    {
-                                        chosen = hex;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                chosen = hex;
-                                lowestF = hex.nav.GetFValue();
-                            }
-                        }
-                    }
-                }
-                
-            }
-
-            if(!reached)
-            {
-                // Add chosen tile to closed list
-                closedList.Add(chosen);
-                possibilities.Remove(chosen);
-                Debug.Assert(chosen != null, "Chosen Hex was somehow null at: " + iterations + " iteration");
-                // For every walkable tile adjacent to the chosen tile:
-                foreach(HexOverlay hex in chosen.adjacent)
-                {
-                    //  If adjacent tile is in closed list, ignore it
-                    if(!closedList.Contains(hex) && hex.CheckTerrainFor(unit))
-                    {
-                        //  If adjacent tile is not in the open list, add it to the open list
-                        if (!(openList.Contains(hex)))
-                        {
-                            openList.Add(hex);
-                            hex.nav.UpdateNavigationParameters(chosen.nav.GValue, target);
-                        }
-                        else
-                        {
-                            //  If adjacent tile is already in the open list - update its g value should the chosen tile be a faster route to it
-                            hex.nav.UpdateNavigationParameters(chosen.nav.GValue, target);
-                        }
-
-                    }
-
-                }
-
-                //
-            }
-
-
-
-
-            iterations++;
-        }
-        while ((possibilities.Count > 0 || !reached) && (iterations < maxLoops));
-
-        //At this point either the target has been found and is in the variable "chosen" or every tile has been inspected without finding the target
-
-        Debug.Assert(possibilities.Count == 0 || chosen == target, "The Algorithm has failed");
-
-        if(chosen == target)
-        {
-            //The algorithm found the target now assemble a path
-            while(chosen.nav != this)
-            {
-                
-                int lowestG = int.MaxValue;
-                foreach (HexOverlay hex in chosen.adjacent)
-                {
-                    if(hex.nav.GValue < lowestG)
-                    {
-                        lowestG = hex.nav.GValue;
-                        chosen = hex;
-                    }
-                }
-                path.AddFirst(chosen);
-            }
-        }
-        else
-        {
-            Debug.Log("A* algorithm failed to find a path for " + unit.GetUnitType()+ " " + unit.gameObject.name);
-        }
-
-
-        Debug.Log("Calculation took: " + (Time.realtimeSinceStartup - started) + " time to measure a distance of " + path.Count + " tiles away.");
-        foreach(HexOverlay hex in openList)
-        {
-            hex.nav.Reset();
-        }
-        return path.Count;
+#if UNITY_WEBGL
+        DebugText.text = words;
+#endif
     }
-
-
-
-    public int MeasureTrueDistance(Unit unit, Vector3Int goal)
-    {
-        LinkedList<HexOverlay> path = new LinkedList<HexOverlay>();
-        HexOverlay target = Map.GetInstantiatedObject(goal).GetComponent(typeof(HexOverlay)) as HexOverlay;
-        this.HValue = OnHex.HexDistTo(target);
-        this.GValue = 0;
-        List<HexOverlay> closedList = new List<HexOverlay>();
-        List<HexOverlay> openList = new List<HexOverlay>();
-        List<HexOverlay> possibilities = new List<HexOverlay>();
-        openList.Add(this.OnHex);
-        this.OnHex.nav.UpdateNavigationParameters(0, target);
-
-        int steps = 0;
-        float started = Time.realtimeSinceStartup;
-        bool reached = false;
-        int maxLoops = 10000;
-        int iterations = 0;
-
-        HexOverlay chosen = null;
-        Debug.Log(" measuring distance from: " + this.OnHex.myCoords + " To " + target.myCoords);
-
-        //this.ContinueMeasuring(unit, target, ref path, ref openList, ref closedList, steps + 1);
-        do
-        {
-            possibilities.Clear();
-
-            chosen = null;
-            int lowestF = int.MaxValue;
-
-
-
-
-            // Take a tile from the openList
-            foreach (HexOverlay hex in openList)
-            {
-
-                //If we find the target choose it outright and stop looking
-                if (hex == target)
-                {
-                    chosen = hex;
-                    reached = true;
-                }
-                else if (!reached)
-                {
-                    if (!(closedList.Contains(hex)))
-                    {
-
-                        possibilities.Add(hex);
-                        if (hex.nav.GetFValue() <= lowestF)
-                        {
-                            if (hex.nav.GetFValue() == lowestF)
-                            {
-                                if (chosen != null)
-                                {
-                                    if (chosen.nav.GValue < hex.nav.GValue)
-                                    {
-                                        chosen = hex;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                chosen = hex;
-                                lowestF = hex.nav.GetFValue();
-                            }
-                        }
-                    }
-                }
-
-            }
-
-            if (!reached)
-            {
-                // Add chosen tile to closed list
-                closedList.Add(chosen);
-                possibilities.Remove(chosen);
-                Debug.Assert(chosen != null, "Chosen Hex was somehow null at: " + iterations + " iteration");
-                // For every walkable tile adjacent to the chosen tile:
-                foreach (HexOverlay hex in chosen.adjacent)
-                {
-                    //  If adjacent tile is in closed list, ignore it
-                    if (!closedList.Contains(hex) && hex.CheckTerrainFor(unit))
-                    {
-                        //  If adjacent tile is not in the open list, add it to the open list
-                        if (!(openList.Contains(hex)))
-                        {
-                            openList.Add(hex);
-                            hex.nav.UpdateNavigationParameters(chosen.nav.GValue, target);
-                        }
-                        else
-                        {
-                            //  If adjacent tile is already in the open list - update its g value should the chosen tile be a faster route to it
-                            hex.nav.UpdateNavigationParameters(chosen.nav.GValue, target);
-                        }
-
-                    }
-
-                }
-
-                //
-            }
-
-
-
-
-            iterations++;
-        }
-        while ((possibilities.Count > 0 || !reached) && (iterations < maxLoops));
-
-        //At this point either the target has been found and is in the variable "chosen" or every tile has been inspected without finding the target
-
-        Debug.Assert(possibilities.Count == 0 || chosen == target, "The Algorithm has failed");
-
-        if (chosen == target)
-        {
-            //The algorithm found the target now assemble a path
-            while (chosen.nav != this)
-            {
-
-                int lowestG = int.MaxValue;
-                foreach (HexOverlay hex in chosen.adjacent)
-                {
-                    if (hex.nav.GValue < lowestG)
-                    {
-                        lowestG = hex.nav.GValue;
-                        chosen = hex;
-                    }
-                }
-                path.AddFirst(chosen);
-            }
-        }
-        else
-        {
-            Debug.Log("A* algorithm failed to find a path for " + unit.GetUnitType() + " " + unit.gameObject.name);
-        }
-
-
-        Debug.Log("Calculation took: " + (Time.realtimeSinceStartup - started) + " time to measure a distance of " + path.Count + " tiles away.");
-        foreach (HexOverlay hex in openList)
-        {
-            hex.nav.Reset();
-        }
-        return path.Count;
-    }
-
 
 
     public void UpdateNavigationParameters(int steps, HexOverlay target)
@@ -382,6 +99,11 @@ public class AstarNavigable : MonoBehaviour
     {
         GValue = int.MaxValue;
         HValue = int.MaxValue;
+
+
+#if UNITY_WEBGL
+        DebugText.text = (OnHex.myCoords).ToString();
+#endif
     }
 
     public int GetFValue()

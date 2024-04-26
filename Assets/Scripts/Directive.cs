@@ -24,6 +24,8 @@ public class Directive
 
     private AIIntelHandler intel;
 
+    private int CapableDistance = -1;
+    private int DestinationDistance = -1;
 
     //Constructors
     public Directive(Unit unit, HexOverlay hex, AIIntelHandler knowledge)
@@ -47,7 +49,7 @@ public class Directive
     /*
      * THINKTHROUGH
      * 
-     * This method sets the smartness value of this directive by making various considerations
+     * This method sets/Updates the smartness value of this directive by making various considerations
      * */
     private void ThinkThrough() 
     {
@@ -56,7 +58,12 @@ public class Directive
         {
             smartness += ConsiderMatchup();
         }
-        smartness += ConsiderGeography();
+
+        //Do not consider geography in a combat situation
+        if (!capable.GetOccupiedHex().intel.IsUnitThreatened(capable))
+        {
+            smartness += ConsiderGeography();
+        }
         smartness += ConsiderThreats();
         
     }
@@ -147,24 +154,13 @@ public class Directive
 
         if (intel != null)
         {
-            //compare distance to computer's base
-            /*
-            distPrev = GridHelper.CalcTilesBetweenGridCoords(capable.myTilePos, intel.GetComputerBaseLoc());
-            distCurr = GridHelper.CalcTilesBetweenGridCoords(destination.myCoords, intel.GetComputerBaseLoc());
-            if (distCurr > distPrev)
-            {
-                smart += AWAY_FROM_HOME;
-            }
-            */
+            
 
             //The measure true distance function is expensive so only perform it when the distance travelled is significant
             if (distant)
             {
-                //The distance from the destination to the end goal (currently the player's base)
-                distDest = destination.nav.MeasureTrueDistance(capable, intel.GetPlayerBaseLoc());
-                //The distance from the capable unit's position to the end goal
-                distCurr = capable.GetOccupiedHex().nav.MeasureTrueDistance(capable, intel.GetPlayerBaseLoc());
-                if (distCurr > distDest)
+                
+                if (CapableDistance > DestinationDistance)
                 {
                     smart += CLOSER_TO_ENEMY_BASE;
                     if (capable.GetUnitType() == UnitType.InfantrySquad)
@@ -225,4 +221,15 @@ public class Directive
     {
         return destination.GetOccupiedBy();
     }
+
+
+
+    public void SetDistances(int currDist, int destDist)
+    {
+        this.CapableDistance = currDist;
+        this.DestinationDistance = destDist;
+
+        this.ThinkThrough();
+    }
+
 }

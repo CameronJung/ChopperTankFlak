@@ -74,4 +74,37 @@ public class HexIntel
     }
 
 
+
+    /*
+     * This method returns true if the enemy has the potential to destroy the Unit "unit" should it be on this space next turn
+     * Currently this does not account for a unit be destroyed by its weakness during stalemate
+     */
+    public bool IsUnitThreatened(Unit unit)
+    {
+        bool danger = false;
+
+
+        if(unit.GetUnitType() == UnitType.InfantrySquad)
+        {
+            danger = Threats.ContainsValue(true);
+        }
+        else
+        {
+            if (unit.GetUnitType() == UnitType.Helicopter && Threats[UnitType.Flak] ||
+               unit.GetUnitType() == UnitType.Tank && Threats[UnitType.Helicopter] ||
+               unit.GetUnitType() == UnitType.Flak && Threats[UnitType.Tank])
+            {
+                danger = true;
+            }
+            else if (Threats[unit.GetUnitType()])
+            {
+                danger = Threats[UnitType.InfantrySquad];
+            }
+        }
+
+
+        return danger;
+    }
+
+
 }

@@ -78,62 +78,7 @@ public class CommandTracer : MonoBehaviour
 
                 liner.enabled = true;
 
-                /*
-                //Special Handeling of attack orders
-                //Since an Attack order doesn't have a movement cost it can exceed the unit's mobility and the
-                //distance property won't neccesarily be sequential
-                if (currHex.currState == HexState.attackable)
-                {
-                    if(prevTilePos == null)
-                    {
-                        Debug.Log("previous Tile position is null for some reason");
-                    }
-
-
-                    HexOverlay prevHex = map.GetInstantiatedObject(prevTilePos).GetComponent<HexOverlay>();
-                    //If the previous tile was not valid to attack from than set the previous to a valid one
-                    if (!prevValidity || !prevHex.CanIBeOn(commandee))
-                    {
-                        prevTilePos = currHex.FindValidNeighbor();
-                        prevHex = map.GetInstantiatedObject(prevTilePos).GetComponent<HexOverlay>();
-
-                    }
-                    
-                    
-                    liner.positionCount = prevHex.distanceFrom + 2;
-                    //input the position of the unit we attack
-                    points[prevHex.distanceFrom + 1] = map.GetCellCenterWorld(currTilePos);
-                    //input the position we want to attack from
-                    points[prevHex.distanceFrom] = map.GetCellCenterWorld(prevTilePos);
-
-                    if (!CheckLineValidity(prevHex.distanceFrom + 1))
-                    {
-                        Debug.Log("Line needs to be replotted, for " + (prevHex.distanceFrom + 1) +" orders");
-                        Debug.Log("Line was invalid and had to be recalculated, the tile is : " + currHex.distanceFrom + " hexes away.");
-                        points = currHex.MakePathToHere(commandee, points, prevHex.distanceFrom + 1);
-
-                    }
-                    liner.SetPositions(points);
-                    endPoint = prevHex.distanceFrom + 1;
-                }
-                else
-                {
-                    //Determine if the hex represents a valid move
-                    //A hex is invalid if it is occupied by another allied unit
-                    
-                    liner.positionCount = currHex.distanceFrom + 1;
-
-                    points[currHex.distanceFrom] = map.GetCellCenterWorld(currTilePos);
-                    if (!CheckLineValidity(currHex.distanceFrom))
-                    {
-                        Debug.Log("Line was invalid and had to be recalculated, the tile is : " + currHex.distanceFrom + " hexes away.");
-                        points = currHex.MakePathToHere(commandee, points, currHex.distanceFrom);
-
-                    }
-                    liner.SetPositions(points);
-                    endPoint = currHex.distanceFrom;
-                }
-                */
+                
 
 
 
@@ -284,8 +229,7 @@ public class CommandTracer : MonoBehaviour
      */
     private void RedrawLine()
     {
-        // PSEUDO CODE
-        // 
+        
         //  Record the curr tile as the direct destination
         HexOverlay currTile = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>();
         HexOverlay directDestination = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>();
@@ -328,7 +272,6 @@ public class CommandTracer : MonoBehaviour
         }
 
         // make a recursive call to plot a direct path from the direct destination to the commandee's position
-        Debug.Log("Redrawing line from index: " + directDestinationIdx);
         points = directDestination.MakeDirectPathToHere(points, directDestinationIdx, commandee);
         endPoint = currTileIdx;
 
@@ -417,7 +360,6 @@ public class CommandTracer : MonoBehaviour
             
 
             commandee.BeginMission(mission);
-            //commandee.RecieveOrders(orders);
             
         }
     }

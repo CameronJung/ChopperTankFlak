@@ -69,4 +69,49 @@ public static class UniversalConstants : object
     };
 
 
+
+    /*
+     * 
+     * This method returns the unit type that the specified "unit" is weak to
+     * In the case of infantry which are vulnerable to all units the infantry type is returned
+     * 
+     * !NOTE! if a unit type is not found than the type of "unit" will be returned, this shouldn't happen though
+     * because all unit types are accounted for
+     * 
+     */
+    public static UnitType GetWeaknessOf(Unit unit)
+    {
+        UnitType unitIs = unit.GetUnitType();
+        UnitType weakness = unit.GetUnitType();
+        
+        if(unitIs == UnitType.Helicopter) { weakness = UnitType.Flak; }
+        if(unitIs == UnitType.Tank) { weakness = UnitType.Helicopter; }
+        if (unitIs == UnitType.Flak) { weakness = UnitType.Flak; }
+
+        return weakness;
+    }
+
+
+    /*
+     * 
+     * This method returns the unit type that the specified "unit" is strong against
+     * In the case of infantry which are vulnerable to all units the infantry type is returned
+     * 
+     * !NOTE! if a unit type is not found than the type of "unit" will be returned, this shouldn't happen though
+     * because all unit types are accounted for
+     * 
+     */
+    public static UnitType GetStrengthOf(Unit unit)
+    {
+        UnitType unitIs = unit.GetUnitType();
+        UnitType weakness = unit.GetUnitType();
+
+        if (unitIs == UnitType.Helicopter) { weakness = UnitType.Tank; }
+        if (unitIs == UnitType.Tank) { weakness = UnitType.Flak; }
+        if (unitIs == UnitType.Flak) { weakness = UnitType.Helicopter; }
+
+        return weakness;
+    }
+
+
 }
