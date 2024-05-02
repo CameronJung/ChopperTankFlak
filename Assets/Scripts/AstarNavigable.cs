@@ -18,6 +18,8 @@ public class AstarNavigable : MonoBehaviour
     
     private Tilemap Map;
 
+
+
     //The HexOverlay that this navigable object is associated with.
     public HexOverlay OnHex { get; private set; }
 
