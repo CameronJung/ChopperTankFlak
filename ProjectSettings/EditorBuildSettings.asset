@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Levels/Argument.unity
     guid: 117cb6678a5cb984c99985d45f146e17
+  - enabled: 1
+    path: Assets/Scenes/Levels/Flyswatter.unity
+    guid: 5a419b508ebefa04d8d08c7bf4181885
   m_configObjects: {}

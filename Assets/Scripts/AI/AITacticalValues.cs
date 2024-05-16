@@ -22,10 +22,10 @@ public static class AITacticalValues
     public const int OPPORTUNITY = +2;
 
     //Movement values
-    public const int MARCH_ON = 1;
+    public const int MARCH_ON = 0;
     public const int MOVES_MAXIMUM = 1;
     public const int AWAY_FROM_HOME = 1;
-    public const int CLOSER_TO_ENEMY_BASE = 1;
+    public const int CLOSER_TO_ENEMY_BASE = 2;
     public const int INFANTRY_CLOSER_TO_ENEMY_BASE = 1;
     public const int INFANTRY_CAPTURES_BASE = 15;
 
