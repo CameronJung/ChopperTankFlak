@@ -20,12 +20,9 @@ public class LoadLevelButton : MonoBehaviour
     void Start()
     {
         MyButton = gameObject.GetComponent<Button>();
-        if(MyButton != null)
+        if(MyButton == null)
         {
-            MyButton.interactable = ChosenLevel != null;
-        }
-        else
-        {
+            
             Debug.LogError("A LoadLevelButton is in a GameObject without a button component");
             gameObject.SetActive(false);
         }
@@ -44,6 +41,11 @@ public class LoadLevelButton : MonoBehaviour
         {
             SceneManager.LoadScene(ChosenLevel.GetLevelID());
         }
+    }
+
+    public bool HasLevel()
+    {
+        return ChosenLevel != null;
     }
 
 

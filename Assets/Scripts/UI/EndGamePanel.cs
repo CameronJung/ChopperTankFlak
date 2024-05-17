@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.UI;
 
 public class EndGamePanel : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class EndGamePanel : MonoBehaviour
     [SerializeField] private TextMeshProUGUI defeatText;
     [SerializeField] private AudioClip celebrationNoise;
     [SerializeField] private AudioClip saddnessNoise;
+    [SerializeField] private Button NextLevelButton;
     private AudioSource noiseMaker;
 
     private void Awake()
@@ -42,6 +44,21 @@ public class EndGamePanel : MonoBehaviour
         else
         {
             noiseMaker.PlayOneShot(saddnessNoise);
+            
+        }
+
+        
+
+        if (NextLevelButton.GetComponent<LoadLevelButton>().HasLevel())
+        {
+            Debug.Log("Next level button has a level");
+            NextLevelButton.interactable = victorious;
+            Debug.Assert(NextLevelButton.interactable == victorious, "interactability was not set properly");
+        }
+        else
+        {
+            Debug.Log("Next level button does not has a level"); 
+            NextLevelButton.gameObject.SetActive(false);
         }
         
     }
