@@ -29,4 +29,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Levels/Bottleneck.unity
     guid: bebd1265e4e7e39458d39e2576247133
+  - enabled: 1
+    path: Assets/Scenes/Levels/Castle.unity
+    guid: 171af9179d4c0dd4dabc039899d0ac88
   m_configObjects: {}
