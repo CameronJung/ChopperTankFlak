@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0db5a84b2050c1340843bac39388519a, type: 3}
-  m_Name: OperationFlyswatter
+  m_Name: Lvl_Flyswatter
   m_EditorClassIdentifier: 
   LevelName: 'Operation: Flyswatter'
   Description: It appears that elements of the enemy's 3rd mechanized cavalry division

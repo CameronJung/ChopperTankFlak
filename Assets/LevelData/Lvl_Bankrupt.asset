@@ -10,8 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0db5a84b2050c1340843bac39388519a, type: 3}
-  m_Name: OperationCastle
+  m_Name: Lvl_Bankrupt
   m_EditorClassIdentifier: 
-  LevelName: 
-  Description: 
-  SceneID: 
+  LevelName: 'Operation: Bankrupt'
+  Description: A battle in a long canyon. You will be facing an enemy with equal
+    forces on unremarkable terrain. Victory will depend on your wit as a commander.
+  SceneID: MainGame

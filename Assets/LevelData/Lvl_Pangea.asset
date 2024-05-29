@@ -10,9 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0db5a84b2050c1340843bac39388519a, type: 3}
-  m_Name: OperationPreSelectedChoice
+  m_Name: Lvl_Pangea
   m_EditorClassIdentifier: 
-  LevelName: 'Operation: Bankrupt'
-  Description: A battle in a long canyon. You will be facing an enemy with equal
-    forces on unremarkable terrain. Victory will depend on your wit as a commander.
-  SceneID: MainGame
+  LevelName: 'Operation: Pangea'
+  Description: 'A large number of of forces have met in a sprawling valley. This
+    may end up being one of the biggest battles of the war.
+
+    (!NOTE! this level
+    currently experiences performance issues, the enemy''s turn will take quite a
+    while to complete)'
+  SceneID: Pangea
