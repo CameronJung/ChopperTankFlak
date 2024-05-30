@@ -2,9 +2,22 @@
 A simple rock-paper-scissors strategy game built in the Unity engine.
 
 
-Current Version: 1.3.0
+Current Version: 1.4.1
 
 Update Log:
+
+V 1.4.1 (hotfix)
+ - Fixed an issue related to UI scaling on the title menu
+
+V 1.4.0
+ - Levels Update
+ - Added 5 more levels to the game
+ - Added Canyons, a new terrain type that only permits ground units
+ - Added Gultches, a new terrain type that only permits tanks
+ - Added level selection to the title menu
+ - Added a next level button to the end of game panel
+ - Made the AI more aggressive
+ - Fixed a bug that made the AI avoid positions a player's unit could ever reach
 
 V 1.3.0
   - The player now has the ability to choose where to attack from
