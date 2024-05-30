@@ -60,10 +60,10 @@ public class Directive
         }
 
         //Do not consider geography in a combat situation
-        if (!capable.GetOccupiedHex().intel.IsUnitThreatened(capable))
-        {
+        //if (!capable.GetOccupiedHex().intel.IsUnitThreatened(capable))
+        //{
             smartness += ConsiderGeography();
-        }
+        //}
         smartness += ConsiderThreats();
         
     }
@@ -133,14 +133,14 @@ public class Directive
     {
         int smart = 0;
         bool distant = false;
-        if(capable.GetMobility() == destination.distanceFrom)
+
+        if (capable.GetMobility() == destination.distanceFrom)
         {
             smart += MOVES_MAXIMUM;
             distant = true;
         }
 
 
-        
         int distDest = GridHelper.CalcTilesBetweenGridCoords(capable.prevTilePos, destination.myCoords);
 
         
@@ -155,6 +155,8 @@ public class Directive
         if (intel != null)
         {
             
+
+
 
             //The measure true distance function is expensive so only perform it when the distance travelled is significant
             if (distant)
@@ -197,6 +199,19 @@ public class Directive
 
         return smart;
     }
+
+
+    override public string ToString()
+    {
+        string info = "Move for " + capable.GetUnitType();
+        info += " at position " + capable.myTilePos;
+        info += " unit moves to " + destination.myCoords;
+        info += " Move has a smartness of: " + smartness;
+        info += " Unit threatened? " + capable.GetOccupiedHex().intel.IsUnitThreatened(capable);
+
+        return info;
+    }
+
 
 
     /*          ACCESSORS           */

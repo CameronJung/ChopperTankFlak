@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0db5a84b2050c1340843bac39388519a, type: 3}
+  m_Name: Lvl_Flyswatter
+  m_EditorClassIdentifier: 
+  LevelName: 'Operation: Flyswatter'
+  Description: It appears that elements of the enemy's 3rd mechanized cavalry division
+    have snuck through the lines and are trying to capture one of our bases. To make
+    matters worse, the enemy unit is mostly composed of attack helicopters. Meanwhile,
+    the units we could muster are mostly tanks. However, the terrain not only favours
+    our forces, but would also makes an excellent place for an ambush.
+  SceneID: Flyswatter

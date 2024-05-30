@@ -18,6 +18,8 @@ public class AstarNavigable : MonoBehaviour
     
     private Tilemap Map;
 
+
+
     //The HexOverlay that this navigable object is associated with.
     public HexOverlay OnHex { get; private set; }
 
@@ -47,9 +49,7 @@ public class AstarNavigable : MonoBehaviour
         //DebugText.text = cubePosition.ToString();
         DebugText.text = gridCoords.ToString();
 
-#if UNITY_WEBGL
-        DebugText.gameObject.SetActive(false);
-#endif
+        DebugText.gameObject.SetActive(Application.isEditor);
     }
 
     public void Awake()
@@ -77,9 +77,10 @@ public class AstarNavigable : MonoBehaviour
 
     public void ChangeDebugTextTo(string words)
     {
-#if UNITY_WEBGL
-        DebugText.text = words;
-#endif
+        if (Application.isEditor)
+        {
+            DebugText.text = words;
+        }
     }
 
 
@@ -100,10 +101,11 @@ public class AstarNavigable : MonoBehaviour
         GValue = int.MaxValue;
         HValue = int.MaxValue;
 
-
-#if UNITY_WEBGL
-        DebugText.text = (OnHex.myCoords).ToString();
-#endif
+        if (Application.isEditor)
+        {
+            DebugText.text = (OnHex.myCoords).ToString();
+        }
+        
     }
 
     public int GetFValue()

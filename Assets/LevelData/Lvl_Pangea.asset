@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0db5a84b2050c1340843bac39388519a, type: 3}
+  m_Name: Lvl_Pangea
+  m_EditorClassIdentifier: 
+  LevelName: 'Operation: Pangea'
+  Description: 'A large number of of forces have met in a sprawling valley. This
+    may end up being one of the biggest battles of the war.
+
+    (!NOTE! this level
+    currently experiences performance issues, the enemy''s turn will take quite a
+    while to complete)'
+  SceneID: Pangea

@@ -63,9 +63,9 @@ public class HexIntel
             {
                 danger += MORTAL_DANGER;
             }
-            else
+            else if(Threats[UniversalConstants.GetStrengthOf(unit)] && !Threats[unit.GetUnitType()])
             {
-                //If there is no imminent threat than there is an opportunity to advance
+                //If there is a threat from a unit we are strong against than hunt it down
                 danger += OPPORTUNITY;
             }
         }

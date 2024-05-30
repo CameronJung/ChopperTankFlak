@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/TitleScreen.unity
     guid: b81d10d5bb585c244b9da5290ffef37a
   - enabled: 1
-    path: Assets/Scenes/MainGame.unity
+    path: Assets/Scenes/Levels/MainGame.unity
     guid: 46fce5fcbadfa1b46a3b0ce37637bacf
   - enabled: 1
     path: Assets/Scenes/Instructions.unity
@@ -17,4 +17,19 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Credits.unity
     guid: 06003fa3d898db14a8fec217f7aab961
+  - enabled: 1
+    path: Assets/Scenes/Levels/Argument.unity
+    guid: 117cb6678a5cb984c99985d45f146e17
+  - enabled: 1
+    path: Assets/Scenes/Levels/Flyswatter.unity
+    guid: 5a419b508ebefa04d8d08c7bf4181885
+  - enabled: 1
+    path: Assets/Scenes/Levels/Pangea.unity
+    guid: 6ba49e0152aa58b458b06be10ac6cc2c
+  - enabled: 1
+    path: Assets/Scenes/Levels/Bottleneck.unity
+    guid: bebd1265e4e7e39458d39e2576247133
+  - enabled: 1
+    path: Assets/Scenes/Levels/Castle.unity
+    guid: 171af9179d4c0dd4dabc039899d0ac88
   m_configObjects: {}

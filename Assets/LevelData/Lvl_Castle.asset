@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0db5a84b2050c1340843bac39388519a, type: 3}
+  m_Name: Lvl_Castle
+  m_EditorClassIdentifier: 
+  LevelName: 'Operation: Castle'
+  Description: Welcome to the front lines, Commander. Thanks to your efforts we have
+    been able to stabalize the line and mount a proper defense. The enemy has assembled
+    a significant amount of forces near this base, we expect an attack soon. Unfortunately,
+    we have been unable to match the enemy's numbers. However, if you manage to route
+    this attack we may be able to turn the momentum of this war.
+  SceneID: Castle

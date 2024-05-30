@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0db5a84b2050c1340843bac39388519a, type: 3}
+  m_Name: Lvl_Bottleneck
+  m_EditorClassIdentifier: 
+  LevelName: 'Operation: Bottleneck'
+  Description: The northern and southern sections of Cardonis Valley are connected
+    by a narrow passage through a small marsh. The fighting to gain control of this
+    chokepoint has been intense. It seems that both sides have decided to send in
+    heavy armour in an attempt to end the stalemate.
+  SceneID: Bottleneck

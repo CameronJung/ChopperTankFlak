@@ -145,6 +145,9 @@ public class AIcommander : MonoBehaviour
             if(moves.Count > 0)
             {
                 Directive choice = RandomDirective(moves);
+
+                Debug.Log("Chosen move was: " + choice.ToString());
+
                 selector.HandleAISelection(choice.GetUnit().myTilePos);
 
                 yield return null;
@@ -177,11 +180,11 @@ public class AIcommander : MonoBehaviour
                 Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
             }
 
-            
-            
 
+
+            intel.WipeOldData();
             moves.Clear();
-        }
+        }//All units have been moved
 
 
 

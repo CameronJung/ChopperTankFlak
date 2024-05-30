@@ -14,6 +14,23 @@ public class TitleMenuManager : MonoBehaviour
     [SerializeField] private float speed = 64f;
     [SerializeField] private Camera cam;
 
+
+    [SerializeField] private RectTransform PanelsTarget;
+    [SerializeField] private RectTransform ListHidingSpot;
+    [SerializeField] private RectTransform DescHidingSpot;
+
+
+    [SerializeField] private RectTransform ListPanel;
+    [SerializeField] private RectTransform DescPanel;
+
+    [SerializeField] private float PanelBuffer = 10.0f;
+    [SerializeField] private float PanelSpeed = 0.5f;
+
+    private const float CLOSE_ENOUGH = 1.0f;
+    private bool PanelsStill = true;
+
+
+
     private Vector3 direction;
     private Vector3 origin;
     private Vector2 movableSpace;
@@ -28,6 +45,9 @@ public class TitleMenuManager : MonoBehaviour
         direction.Normalize();
         movableSpace = new Vector2((BACKGROUNDRESOLUTION.x - Screen.width) * 0.5f - speed, (BACKGROUNDRESOLUTION.y - Screen.height) * 0.5f - speed);
         origin = Background.position;
+
+        ListPanel.position = ListHidingSpot.position;
+        DescPanel.position = DescHidingSpot.position;
 
     }
 
@@ -80,4 +100,139 @@ public class TitleMenuManager : MonoBehaviour
 #endif
         Application.Quit();
     }
+
+
+    public void DisplayLevelSelect()
+    {
+        
+        if (PanelsStill)
+        {
+            PanelsStill = false;
+            StartCoroutine(BringInLevelPanels());
+        }
+        
+    }
+
+
+    public void HideLevelSelect()
+    {
+        
+        if (PanelsStill)
+        {
+            PanelsStill = false;
+            StartCoroutine(ShooAwayLevelPanels());
+        }
+        
+    }
+
+    private IEnumerator BringInLevelPanels()
+    {
+
+        float listDist = Mathf.Abs(PanelsTarget.position.x - ListPanel.position.x - PanelBuffer);
+        float descDist = Mathf.Abs(PanelsTarget.position.x - DescPanel.position.x + PanelBuffer);
+        float listPrev = ListPanel.position.x;
+        float descPrev = DescPanel.position.x;
+
+
+        bool listMoving = true;
+        bool descMoving = true;
+
+        while (listMoving || descMoving)
+        {
+
+            listDist = Mathf.Abs(PanelsTarget.position.x - ListPanel.position.x - PanelBuffer);
+
+
+            //Once the remaining distance
+            if(listDist > Mathf.Max(Mathf.Abs(ListPanel.position.x - listPrev), CLOSE_ENOUGH) && listMoving)
+            {
+                listPrev = ListPanel.position.x;
+                ListPanel.position = Vector2.Lerp(ListPanel.position, PanelsTarget.position - new Vector3(PanelBuffer, 0f, 0f),
+                    PanelSpeed * Time.deltaTime);
+            }
+            else
+            {
+                listMoving = false;
+            }
+
+
+            descDist = Mathf.Abs(PanelsTarget.position.x - DescPanel.position.x + PanelBuffer);
+
+            if (descDist > Mathf.Max(Mathf.Abs(DescPanel.position.x - descPrev), CLOSE_ENOUGH) && descMoving)
+            {
+                descPrev = DescPanel.position.x;
+                DescPanel.position = Vector2.Lerp(DescPanel.position, PanelsTarget.position + new Vector3(PanelBuffer, 0f, 0f),
+                    PanelSpeed * Time.deltaTime);
+            }
+            else
+            {
+                descMoving = false;
+            }
+
+
+            yield return null;
+        }
+
+
+        ListPanel.position = PanelsTarget.position - new Vector3(PanelBuffer, 0.0f);
+        DescPanel.position = PanelsTarget.position + new Vector3(PanelBuffer, 0.0f);
+        PanelsStill = true;
+    }
+
+
+
+    private IEnumerator ShooAwayLevelPanels()
+    {
+
+        float listDist = Mathf.Abs(ListHidingSpot.position.x - ListPanel.position.x - PanelBuffer);
+        float descDist = Mathf.Abs(DescHidingSpot.position.x - DescPanel.position.x + PanelBuffer);
+        float listPrev = ListPanel.position.x;
+        float descPrev = DescPanel.position.x;
+
+
+        bool listMoving = true;
+        bool descMoving = true;
+
+        while (listMoving || descMoving)
+        {
+
+            listDist = Mathf.Abs(ListHidingSpot.position.x - ListPanel.position.x - PanelBuffer);
+
+            if (listDist > Mathf.Max(Mathf.Abs(ListPanel.position.x - listPrev), CLOSE_ENOUGH) && listMoving)
+            {
+                listPrev = ListPanel.position.x;
+                ListPanel.position = Vector2.Lerp(ListPanel.position, ListHidingSpot.position - new Vector3(PanelBuffer, 0f, 0f),
+                    PanelSpeed * Time.deltaTime);
+            }
+            else
+            {
+                listMoving = false;
+            }
+
+
+            descDist = Mathf.Abs(DescHidingSpot.position.x - DescPanel.position.x + PanelBuffer);
+
+            if (descDist > Mathf.Max(Mathf.Abs(DescPanel.position.x - descPrev), CLOSE_ENOUGH) && descMoving)
+            {
+                descPrev = DescPanel.position.x;
+                DescPanel.position = Vector2.Lerp(DescPanel.position, DescHidingSpot.position + new Vector3(PanelBuffer, 0f, 0f),
+                    PanelSpeed * Time.deltaTime);
+            }
+            else
+            {
+                descMoving = false;
+            }
+
+
+
+
+            yield return null;
+        }
+
+
+        ListPanel.position = ListHidingSpot.position - new Vector3(PanelBuffer, 0.0f);
+        DescPanel.position = DescHidingSpot.position + new Vector3(PanelBuffer, 0.0f);
+        PanelsStill = true;
+    }
+
 }
