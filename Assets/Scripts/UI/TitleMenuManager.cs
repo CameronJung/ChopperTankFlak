@@ -46,6 +46,9 @@ public class TitleMenuManager : MonoBehaviour
         movableSpace = new Vector2((BACKGROUNDRESOLUTION.x - Screen.width) * 0.5f - speed, (BACKGROUNDRESOLUTION.y - Screen.height) * 0.5f - speed);
         origin = Background.position;
 
+        ListPanel.position = ListHidingSpot.position;
+        DescPanel.position = DescHidingSpot.position;
+
     }
 
     // Update is called once per frame
