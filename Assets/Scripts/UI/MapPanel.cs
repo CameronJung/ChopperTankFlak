@@ -20,6 +20,7 @@ public class MapPanel : MonoBehaviour
 
     //The playable area of the game board
     [SerializeField] private Vector2Int mapSize = Vector2Int.zero;
+    [SerializeField] private RectTransform Deadzone;
 
     [SerializeField] private float scrollSpeed = 1.25f;
 
@@ -29,6 +30,7 @@ public class MapPanel : MonoBehaviour
 
     private Vector2 mapDimensions;
 
+    private Rect MapFrameRect;
 
     private Vector2 mapPos;
 
@@ -37,14 +39,26 @@ public class MapPanel : MonoBehaviour
 
     private float movableWidth;
 
+    private bool Maus = false;
+
+    private RectTransform MapTransform;
+
+    private Vector3 ViewScale;
+
     void Start()
     {
-        
+
+        MapFrameRect = gameObject.GetComponent<RectTransform>().rect;
+        MapTransform = gameObject.GetComponent<RectTransform>();
+
         mapDimensions = new Vector2(mapSize.x * HEXWIDTH, mapSize.y * HEXHEIGHT);
         cam = camObject.GetComponent<Camera>();
         mapRect = cam.pixelRect;
         mapCentreRect = new Rect(mapRect.xMin + BORDER, mapRect.yMin + BORDER, mapRect.width - 2 * BORDER, mapRect.height - 2 * BORDER);
-        mapCentre = new Vector2(mapRect.xMin + 0.5f * cam.pixelWidth, mapRect.yMin + 0.5f * cam.pixelHeight);
+        mapCentre = Deadzone.TransformPoint(Deadzone.position);
+
+        //ViewScale = new Vector3((float)cam.pixelWidth/ (float)Screen.width, (float)cam.pixelHeight/ (float)Screen.height);
+        ViewScale = new Vector3(1f / 64f, 1f / 64f);
 
         movableWidth = Mathf.Max((mapDimensions.x - cam.pixelWidth / PIXDISTX * HEXWIDTH) * 0.5f, 0.0f);
         moveableHeight = Mathf.Max((mapDimensions.y - cam.pixelHeight / PIXDISTY * HEXHEIGHT) * 0.5f, 0.0f);
@@ -53,56 +67,113 @@ public class MapPanel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.mousePresent)
+        
+    }
+
+
+
+    public void MouseAtPosition(Vector3 mausPos)
+    {
+        //Each frame get the mouse position
+        Vector2 mousePos = new Vector2(mausPos.x, mausPos.y);
+
+        //mousePos = cam.ScreenToViewportPoint(mousePos);
+        //mousePos.x = mousePos.x * cam.scaledPixelWidth;
+        //mousePos.y = mousePos.y * cam.scaledPixelHeight;
+
+
+        //bool inside = mapRect.Contains(mousePos);// && !mapCentreRect.Contains(mousePos);
+        bool inside = (RectTransformUtility.RectangleContainsScreenPoint(MapTransform, mousePos)
+            & !RectTransformUtility.RectangleContainsScreenPoint(Deadzone, mousePos));
+
+        Vector2 direction = mousePos - mapCentre;
+
+        if (inside)
         {
-            //Each frame get the mouse position
-            Vector2 mousePos = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-
-            mousePos = cam.ScreenToViewportPoint(mousePos);
-            mousePos.x = mousePos.x * cam.pixelWidth;
-            mousePos.y = mousePos.y * cam.pixelHeight;
-
-
-            bool inside = mapRect.Contains(mousePos) && !mapCentreRect.Contains(mousePos);
-
-            Vector2 direction = mousePos - mapCentre;
-
-            if (inside)
+            if (!Maus)
             {
                 
-                if(Mathf.Abs(direction.x) < cam.pixelWidth * 0.5f - BORDER)
-                {
-                    direction.x = 0.0f;
-                }
-                else
-                {
-                    direction.x = Mathf.Sign(direction.x);
-                }
-                if (Mathf.Abs(direction.y) < cam.pixelHeight * 0.5f -BORDER)
-                {
-                    direction.y = 0.0f;
-                }
-                else
-                {
-                    direction.y = Mathf.Sign(direction.y);
-                }
-
-                
-
-                //direction = direction.normalized;
-                Vector3 change = new Vector3(direction.x, direction.y);
-
-                change *= Time.deltaTime * scrollSpeed;
-
-                //Clamp values between movable space
-
-                camObject.transform.position = new Vector3(Mathf.Clamp(camObject.transform.position.x + change.x, -movableWidth, movableWidth),
-                    Mathf.Clamp(camObject.transform.position.y + change.y, -moveableHeight, moveableHeight),
-                    camObject.transform.position.z);
-                
+                Maus = true;
             }
 
 
+            if (Mathf.Abs(direction.x) < Deadzone.rect.width * 0.5f - BORDER)
+            {
+                direction.x = 0.0f;
+            }
+            else
+            {
+                direction.x = Mathf.Sign(direction.x);
+            }
+
+            if (Mathf.Abs(direction.y) < Deadzone.rect.height * 0.5f - BORDER)
+            {
+                direction.y = 0.0f;
+            }
+            else
+            {
+                direction.y = Mathf.Sign(direction.y);
+            }
+
+
+
+            //direction = direction.normalized;
+            Vector3 change = new Vector3(direction.x, direction.y);
+
+            change *= Time.deltaTime * scrollSpeed;
+
+            //Clamp values between movable space
+
+            PanMapBy(change);
+
+        }
+        else
+        {
+            Maus = false;
         }
     }
+
+
+
+
+    /*
+     * IsPointOnMap
+     * 
+     * this simple method returns a boolean value representing if the provided point described in the parameter is in the map panel
+     */
+    public bool IsPointOnMap(Vector2 point)
+    {
+        
+        return RectTransformUtility.RectangleContainsScreenPoint(MapTransform, point);
+    }
+
+
+    /*
+     * PanMapBy
+     * 
+     * This method will move the camera within the bounds of the map
+     * 
+     */
+    public void PanMapBy(Vector3 change)
+    {
+        change = 
+
+        camObject.transform.position = new Vector3(Mathf.Clamp(camObject.transform.position.x + change.x, -movableWidth, movableWidth),
+                Mathf.Clamp(camObject.transform.position.y + change.y, -moveableHeight, moveableHeight),
+                camObject.transform.position.z);
+    }
+
+
+
+    /*
+     * PanMapByDrag
+     * 
+     * This method handles the panning of the map by touch input
+     * 
+     */
+    public void PanMapByDrag(Vector3 change)
+    {
+        PanMapBy(Vector3.Scale(change, ViewScale) * -1f);
+    }
+
 }
