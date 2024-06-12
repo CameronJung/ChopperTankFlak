@@ -24,6 +24,8 @@ public class ClickHandler : MonoBehaviour
     private int Touches = 0;
     //The number of touches in the map panel that need to be tracked
     private int NumberMapTouches = 0;
+    private bool SelectedThisTouch = true;
+
 
 
     private Dictionary<int, Touch> TrackedMapTouches;
@@ -61,55 +63,17 @@ public class ClickHandler : MonoBehaviour
 
         if (!blocked)
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-
-
-                Vector3 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
-                Vector3Int tilePos = gameBoard.WorldToCell(mousePos);
-                tilePos.z = 0;
-
-                if (commander.drawing)
-                {
-                    commander.SendCommand();
-                }
-
-                selecter.HandleNewSelection(tilePos);
-
-            }
-            else if (Input.GetMouseButtonDown(1))
-            {
-                selecter.HandleDeselect();
-
-            }
+            
 
             if(Input.touchCount > 0)
             {
                 RealMaus = false;
-                /*
-                if (Input.touchCount != Touches)
-                {
-                    Touches = Input.touchCount;
-                    Debug.Log("There are " + Touches + " point(s) of contact.");
-
-                    NumberMapTouches = 0;
-                    foreach (Touch touch in Input.touches)
-                    {
-                        if (mapPanel.IsPointOnMap(touch.position))
-                        {
-                            NumberMapTouches += 1;
-                            TrackedMapTouches.Add(touch.fingerId, touch);
-                            TouchIDs.Add(touch.fingerId);
-
-                        }
-                        Debug.Log("A touch was at: " + touch.position);
-                    }
-                    Debug.Log(NumberMapTouches + " touch(es) are on the map");
-                }
-                */
+                
 
                 TrackedMapTouches.Clear();
                 TouchIDs.Clear();
+                NumberMapTouches = 0;
+
 
                 foreach (Touch touch in Input.touches)
                 {
@@ -120,36 +84,41 @@ public class ClickHandler : MonoBehaviour
                         TouchIDs.Add(touch.fingerId);
 
                     }
-                    //Debug.Log("A touch was at: " + touch.position);
+                    
                 }
 
-                /*
-                foreach (int id in TouchIDs)
+                if(TrackedMapTouches.Count == 1)
                 {
-                    switch (TrackedMapTouches[id].phase)
+                    Touch touch = TrackedMapTouches[TouchIDs[0]];
+                    Vector3 touchPos = cam.ScreenToWorldPoint(touch.position);
+                    touchPos.z = 0;
+                    Vector3Int touchedTile = gameBoard.WorldToCell(touchPos);
+                    //Debug.Log("A touch was at: " + touchPos);
+                    switch (touch.phase)
                     {
+                        case TouchPhase.Began:
+                            if(!(commander.drawing && IsTileActive(touchedTile)))
+                            {
+                                selecter.HandleNewSelection(touchedTile);
+                                SelectedThisTouch = commander.drawing;
+                            }
+                            
+                            break;
                         case TouchPhase.Ended:
+                            if (commander.drawing && !SelectedThisTouch)
+                            {
+                                commander.SendCommand();
+                                selecter.HandleNewSelection(touchedTile);
+                            }
+                            SelectedThisTouch = false;
 
-                            TrackedMapTouches.Remove(id);
-                            TouchIDs.Remove(id);
                             break;
                         case TouchPhase.Canceled:
-                            TrackedMapTouches.Remove(id);
-                            TouchIDs.Remove(id);
+                            selecter.HandleDeselect();
+                            SelectedThisTouch = false;
                             break;
                     }
                 }
-                */
-
-                //When there is 1 touch{
-                
-                //If a unit is selected{
-
-                //}If no unit is selected{
-
-
-
-                //}
 
                 //When there are 2 touches{
                 //Deselect
@@ -182,6 +151,31 @@ public class ClickHandler : MonoBehaviour
                 {
                     //If there are no touches than the mouse detected is an actual mouse not touches
                     mapPanel.MouseAtPosition(Input.mousePosition);
+                }
+
+                if (mapPanel.IsPointOnMap(Input.mousePosition))
+                {
+                    if (Input.GetMouseButtonDown(0))
+                    {
+
+
+                        Vector3 mousePos = cam.ScreenToWorldPoint(Input.mousePosition);
+                        Vector3Int tilePos = gameBoard.WorldToCell(mousePos);
+                        tilePos.z = 0;
+
+                        if (commander.drawing)
+                        {
+                            commander.SendCommand();
+                        }
+
+                        selecter.HandleNewSelection(tilePos);
+
+                    }
+                    else if (Input.GetMouseButtonDown(1))
+                    {
+                        selecter.HandleDeselect();
+
+                    }
                 }
             }
 
@@ -227,4 +221,17 @@ public class ClickHandler : MonoBehaviour
         }
         
     }
+
+
+    public bool IsTileActive(Vector3Int tilePos)
+    {
+        bool active = false;
+
+        HexOverlay hex = map.GetInstantiatedObject(tilePos).GetComponent<HexOverlay>();
+        active = hex.IsHexReachable();
+
+        return active;
+    }
+
+
 }

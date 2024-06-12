@@ -573,6 +573,10 @@ public class HexOverlay : MonoBehaviour
     }
 
     
+    public bool IsHexReachable()
+    {
+        return this.currState != HexState.unreachable;
+    }
 
 
 
