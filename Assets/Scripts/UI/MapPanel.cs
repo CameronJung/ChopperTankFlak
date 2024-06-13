@@ -54,6 +54,8 @@ public class MapPanel : MonoBehaviour
         mapDimensions = new Vector2(mapSize.x * HEXWIDTH, mapSize.y * HEXHEIGHT);
         cam = camObject.GetComponent<Camera>();
         mapRect = cam.pixelRect;
+        cam.orthographicSize = (mapSize.y+1) * 0.5f;
+        Debug.Log("Unscaled: "+cam.pixelWidth+", "+cam.pixelHeight+" Scaled:"+ cam.scaledPixelWidth + ", " + cam.scaledPixelHeight);
         mapCentreRect = new Rect(mapRect.xMin + BORDER, mapRect.yMin + BORDER, mapRect.width - 2 * BORDER, mapRect.height - 2 * BORDER);
         mapCentre = Deadzone.TransformPoint(Deadzone.position);
 

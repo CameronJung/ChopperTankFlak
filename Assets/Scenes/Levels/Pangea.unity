@@ -13881,6 +13881,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6758698451446460446, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1031768488}
+    - target: {fileID: 6758698451446460446, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: PauseGame
+      objectReference: {fileID: 0}
     - target: {fileID: 6758698451446460447, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -13917,6 +13925,14 @@ PrefabInstance:
       propertyPath: mapSize.y
       value: 24
       objectReference: {fileID: 0}
+    - target: {fileID: 6758698451545385881, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1031768488}
+    - target: {fileID: 6758698451545385881, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: UnpauseGame
+      objectReference: {fileID: 0}
     - target: {fileID: 6758698452005028379, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -13964,6 +13980,14 @@ PrefabInstance:
     - target: {fileID: 6758698452024537270, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6758698452113983964, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1031768488}
+    - target: {fileID: 6758698452113983964, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: PlayerEndTurn
       objectReference: {fileID: 0}
     - target: {fileID: 6758698452113983965, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: m_AnchorMax.y
