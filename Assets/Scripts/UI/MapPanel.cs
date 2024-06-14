@@ -33,6 +33,8 @@ public class MapPanel : MonoBehaviour
     private Rect MapFrameRect;
 
     private Vector2 mapPos;
+    private Vector2 MapWorldSize;
+    private Vector2 MapViewSize;
 
     //The distance the camera can move without going over the edge of the map
     private float moveableHeight;
@@ -51,19 +53,40 @@ public class MapPanel : MonoBehaviour
         MapFrameRect = gameObject.GetComponent<RectTransform>().rect;
         MapTransform = gameObject.GetComponent<RectTransform>();
 
+        //The real world size of the map
+        MapWorldSize = new Vector2(UniversalConstants.HEXWIDTHWORLDUNITS * mapSize.x, UniversalConstants.HEXHEIGHTWORLDUNITS * mapSize.y);
+
+        
+
         mapDimensions = new Vector2(mapSize.x * HEXWIDTH, mapSize.y * HEXHEIGHT);
         cam = camObject.GetComponent<Camera>();
+
+        MapViewSize = new Vector2(cam.orthographicSize * cam.aspect * 2, cam.orthographicSize * 2);
+
+
+        Debug.Log("World Size: " + MapWorldSize + " View:" + MapViewSize);
+        if (MapViewSize.x > MapWorldSize.x)
+        {
+            cam.orthographicSize = (MapWorldSize.x)/(cam.aspect*2.0f);
+            MapViewSize = new Vector2(cam.orthographicSize * cam.aspect * 2, cam.orthographicSize * 2);
+            Debug.Log("World Size: " + MapWorldSize + "Changed View:" + MapViewSize);
+        }
+
         mapRect = cam.pixelRect;
-        cam.orthographicSize = (mapSize.y+1) * 0.5f;
-        Debug.Log("Unscaled: "+cam.pixelWidth+", "+cam.pixelHeight+" Scaled:"+ cam.scaledPixelWidth + ", " + cam.scaledPixelHeight);
+        
+        
         mapCentreRect = new Rect(mapRect.xMin + BORDER, mapRect.yMin + BORDER, mapRect.width - 2 * BORDER, mapRect.height - 2 * BORDER);
         mapCentre = Deadzone.TransformPoint(Deadzone.position);
 
         //ViewScale = new Vector3((float)cam.pixelWidth/ (float)Screen.width, (float)cam.pixelHeight/ (float)Screen.height);
         ViewScale = new Vector3(1f / 64f, 1f / 64f);
 
+        movableWidth = Mathf.Max((mapDimensions.x - MapViewSize.x) * 0.5f, 0.0f);
+        moveableHeight = Mathf.Max((mapDimensions.y - MapViewSize.y) * 0.5f, 0.0f);
+        /*
         movableWidth = Mathf.Max((mapDimensions.x - cam.pixelWidth / PIXDISTX * HEXWIDTH) * 0.5f, 0.0f);
         moveableHeight = Mathf.Max((mapDimensions.y - cam.pixelHeight / PIXDISTY * HEXHEIGHT) * 0.5f, 0.0f);
+        /**/
     }
 
     // Update is called once per frame

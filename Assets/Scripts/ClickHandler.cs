@@ -50,7 +50,6 @@ public class ClickHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Is touch supported? " + Input.touchSupported);
         TrackedMapTouches = new Dictionary<int, Touch>();
         TouchIDs = new List<int>();
     }
@@ -61,48 +60,49 @@ public class ClickHandler : MonoBehaviour
         
         
 
-        if (!blocked)
-        {
+        
             
 
-            if(Input.touchCount > 0)
-            {
-                RealMaus = false;
+        if(Input.touchCount > 0)
+        {
+            RealMaus = false;
                 
 
-                TrackedMapTouches.Clear();
-                TouchIDs.Clear();
-                NumberMapTouches = 0;
+            TrackedMapTouches.Clear();
+            TouchIDs.Clear();
+            NumberMapTouches = 0;
 
 
-                foreach (Touch touch in Input.touches)
+            foreach (Touch touch in Input.touches)
+            {
+                if (mapPanel.IsPointOnMap(touch.position))
                 {
-                    if (mapPanel.IsPointOnMap(touch.position))
-                    {
-                        NumberMapTouches += 1;
-                        TrackedMapTouches[touch.fingerId] = touch;
-                        TouchIDs.Add(touch.fingerId);
+                    NumberMapTouches += 1;
+                    TrackedMapTouches[touch.fingerId] = touch;
+                    TouchIDs.Add(touch.fingerId);
 
-                    }
-                    
                 }
+                    
+            }
 
-                if(TrackedMapTouches.Count == 1)
+            if (!blocked)
+            {
+                if (TrackedMapTouches.Count == 1)
                 {
                     Touch touch = TrackedMapTouches[TouchIDs[0]];
                     Vector3 touchPos = cam.ScreenToWorldPoint(touch.position);
                     touchPos.z = 0;
                     Vector3Int touchedTile = gameBoard.WorldToCell(touchPos);
-                    //Debug.Log("A touch was at: " + touchPos);
+                    
                     switch (touch.phase)
                     {
                         case TouchPhase.Began:
-                            if(!(commander.drawing && IsTileActive(touchedTile)))
+                            if (!(commander.drawing && IsTileActive(touchedTile)))
                             {
                                 selecter.HandleNewSelection(touchedTile);
                                 SelectedThisTouch = commander.drawing;
                             }
-                            
+
                             break;
                         case TouchPhase.Ended:
                             if (commander.drawing && !SelectedThisTouch)
@@ -119,41 +119,44 @@ public class ClickHandler : MonoBehaviour
                             break;
                     }
                 }
+            }
+            //When there are 2 touches{
+            //Deselect
 
-                //When there are 2 touches{
-                //Deselect
-
-                if(TrackedMapTouches.Count == 2)
+            if(TrackedMapTouches.Count == 2)
+            {
+                if (!blocked)
                 {
                     selecter.HandleDeselect();
-
-                    //When we start panning the map around initialize the previous point
-                    if ( TrackedMapTouches[TouchIDs[0]].phase == TouchPhase.Began || TrackedMapTouches[TouchIDs[1]].phase == TouchPhase.Began)
-                    {
-                        PrevDragPoint = ComputeDragPoint(TrackedMapTouches[TouchIDs[0]], TrackedMapTouches[TouchIDs[1]]);
-                    }
-                    
-                    MapDragPoint = ComputeDragPoint(TrackedMapTouches[TouchIDs[0]], TrackedMapTouches[TouchIDs[1]]);
-
-                    mapPanel.PanMapByDrag(MapDragPoint - PrevDragPoint);
-
-                    PrevDragPoint = MapDragPoint;
                 }
-
-                //}
-
-            }
-            else
-            {
-
-                Touches = 0;
-                if (IsMouseReal())
+                //When we start panning the map around initialize the previous point
+                if ( TrackedMapTouches[TouchIDs[0]].phase == TouchPhase.Began || TrackedMapTouches[TouchIDs[1]].phase == TouchPhase.Began)
                 {
-                    //If there are no touches than the mouse detected is an actual mouse not touches
-                    mapPanel.MouseAtPosition(Input.mousePosition);
+                    PrevDragPoint = ComputeDragPoint(TrackedMapTouches[TouchIDs[0]], TrackedMapTouches[TouchIDs[1]]);
                 }
+                    
+                MapDragPoint = ComputeDragPoint(TrackedMapTouches[TouchIDs[0]], TrackedMapTouches[TouchIDs[1]]);
 
-                if (mapPanel.IsPointOnMap(Input.mousePosition))
+                mapPanel.PanMapByDrag(MapDragPoint - PrevDragPoint);
+
+                PrevDragPoint = MapDragPoint;
+            }
+
+
+        }
+        else
+        {
+
+            Touches = 0;
+            if (IsMouseReal())
+            {
+                //If there are no touches than the mouse detected is an actual mouse not touches
+                mapPanel.MouseAtPosition(Input.mousePosition);
+            }
+
+            if (mapPanel.IsPointOnMap(Input.mousePosition))
+            {
+                if (!blocked)
                 {
                     if (Input.GetMouseButtonDown(0))
                     {
@@ -174,12 +177,12 @@ public class ClickHandler : MonoBehaviour
                     else if (Input.GetMouseButtonDown(1))
                     {
                         selecter.HandleDeselect();
-
                     }
                 }
             }
-
         }
+
+        
 
         MausPosPrev = Input.mousePosition;
     }

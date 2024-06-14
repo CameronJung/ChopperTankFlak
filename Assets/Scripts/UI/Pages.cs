@@ -41,7 +41,7 @@ public class Pages : MonoBehaviour
             Debug.Log("Application is not a mobile device");
         }
 
-        //TurnToPage();
+        TurnToPage();
         
     }
 
