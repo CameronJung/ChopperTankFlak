@@ -38,7 +38,7 @@ public class TitleMenuManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-#if UNITY_WEBGL
+#if UNITY_WEBGL || UNITY_ANDROID
     exitButton.SetActive(false);
 #endif
         direction = new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0.0f);
