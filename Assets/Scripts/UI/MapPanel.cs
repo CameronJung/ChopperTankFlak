@@ -76,7 +76,7 @@ public class MapPanel : MonoBehaviour
         
         
         mapCentreRect = new Rect(mapRect.xMin + BORDER, mapRect.yMin + BORDER, mapRect.width - 2 * BORDER, mapRect.height - 2 * BORDER);
-        mapCentre = Deadzone.TransformPoint(Deadzone.position);
+        mapCentre = Deadzone.position;//Deadzone.TransformPoint(Deadzone.position);
 
         //ViewScale = new Vector3((float)cam.pixelWidth/ (float)Screen.width, (float)cam.pixelHeight/ (float)Screen.height);
         ViewScale = new Vector3(1f / 64f, 1f / 64f);
@@ -108,16 +108,18 @@ public class MapPanel : MonoBehaviour
 
 
         //bool inside = mapRect.Contains(mousePos);// && !mapCentreRect.Contains(mousePos);
-        bool inside = (RectTransformUtility.RectangleContainsScreenPoint(MapTransform, mousePos)
-            & !RectTransformUtility.RectangleContainsScreenPoint(Deadzone, mousePos));
+        bool inside = (RectTransformUtility.RectangleContainsScreenPoint(MapTransform, mausPos)
+            & !RectTransformUtility.RectangleContainsScreenPoint(Deadzone, mausPos));
 
         Vector2 direction = mousePos - mapCentre;
 
         if (inside)
         {
+            
             if (!Maus)
             {
-                
+                //This condition statement is present for testing purposes. It keeps the debug log from spamming messages
+                //Debug.Log("Direction is: " + direction + "Centre is:" + mapCentre + " Mouse is at: " + mousePos);
                 Maus = true;
             }
 
@@ -181,7 +183,7 @@ public class MapPanel : MonoBehaviour
      */
     public void PanMapBy(Vector3 change)
     {
-        change = 
+        
 
         camObject.transform.position = new Vector3(Mathf.Clamp(camObject.transform.position.x + change.x, -movableWidth, movableWidth),
                 Mathf.Clamp(camObject.transform.position.y + change.y, -moveableHeight, moveableHeight),

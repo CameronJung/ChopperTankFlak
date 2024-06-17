@@ -1057,7 +1057,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camObject: {fileID: 1463816263}
-  mapSize: {x: 15, y: 11}
+  mapSize: {x: 15, y: 12}
   Deadzone: {fileID: 1327436140}
   scrollSpeed: 1.5
 --- !u!4 &229181067 stripped
@@ -1389,8 +1389,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 137.59714, y: 0}
-  m_SizeDelta: {x: 259.19427, y: 0}
+  m_AnchoredPosition: {x: 133.30817, y: 0}
+  m_SizeDelta: {x: 250.61633, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &642421499
 MonoBehaviour:
@@ -3797,7 +3797,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 137.59714, y: 0}
+  m_AnchoredPosition: {x: 133.30817, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1356189000
