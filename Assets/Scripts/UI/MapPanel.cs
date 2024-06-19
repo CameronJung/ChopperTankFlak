@@ -64,12 +64,10 @@ public class MapPanel : MonoBehaviour
         MapViewSize = new Vector2(cam.orthographicSize * cam.aspect * 2, cam.orthographicSize * 2);
 
 
-        Debug.Log("World Size: " + MapWorldSize + " View:" + MapViewSize);
         if (MapViewSize.x > MapWorldSize.x)
         {
             cam.orthographicSize = (MapWorldSize.x)/(cam.aspect*2.0f);
             MapViewSize = new Vector2(cam.orthographicSize * cam.aspect * 2, cam.orthographicSize * 2);
-            Debug.Log("World Size: " + MapWorldSize + "Changed View:" + MapViewSize);
         }
 
         mapRect = cam.pixelRect;
