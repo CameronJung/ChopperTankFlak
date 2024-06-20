@@ -2,9 +2,15 @@
 A simple rock-paper-scissors strategy game built in the Unity engine.
 
 
-Current Version: 1.4.1
+Current Version: 1.4.2
 
 Update Log:
+
+V 1.4.2 (android)
+ - Game is now compatible with touch screen interfaces
+ - Fixed numerous issues related to UI scaling
+ - Changed android build settings to meet the requirements for API level 34 and android v14.0
+ - Chopper Tank Flak is now in internal testing on Google Play
 
 V 1.4.1 (hotfix)
  - Fixed an issue related to UI scaling on the title menu

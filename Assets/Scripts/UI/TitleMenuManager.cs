@@ -38,13 +38,18 @@ public class TitleMenuManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-#if UNITY_WEBGL
+#if UNITY_WEBGL || UNITY_ANDROID
     exitButton.SetActive(false);
 #endif
         direction = new Vector3(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f), 0.0f);
         direction.Normalize();
-        movableSpace = new Vector2((BACKGROUNDRESOLUTION.x - Screen.width) * 0.5f - speed, (BACKGROUNDRESOLUTION.y - Screen.height) * 0.5f - speed);
-        origin = Background.position;
+
+        Rect rect = gameObject.GetComponent<RectTransform>().rect;
+
+
+        movableSpace = new Vector2(Mathf.Abs(BACKGROUNDRESOLUTION.x - rect.width) * 0.5f - speed, Mathf.Abs(BACKGROUNDRESOLUTION.y - rect.height) * 0.5f - speed);
+        origin = Background.anchoredPosition3D;
+
 
         ListPanel.position = ListHidingSpot.position;
         DescPanel.position = DescHidingSpot.position;
@@ -56,8 +61,8 @@ public class TitleMenuManager : MonoBehaviour
     {
         
         Vector3 change = speed * direction * Time.deltaTime;
-        
-        Vector3 pos = Background.position + change;
+
+        Vector3 pos = Background.anchoredPosition3D + change;
 
         
 

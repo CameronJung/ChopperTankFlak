@@ -15,22 +15,23 @@ public class UIHandler : MonoBehaviour
     private void Awake()
     {
         RectTransform mytransform = gameObject.GetComponent<RectTransform>();
+        Debug.Log("Canvas is: " + mytransform.rect);
         float width = mytransform.rect.width;
         float mapWidth = width * MAPFRACTION;
 
-        mapPanel.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, mapWidth);
+        //mapPanel.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, mapWidth);
 
-        Vector2 mapPos = mapPanel.anchoredPosition;
-        mapPos.x = mapWidth * 0.5f;
-        mapPanel.anchoredPosition = mapPos;
+        //Vector2 mapPos = mapPanel.anchoredPosition;
+        //mapPos.x = mapWidth * 0.5f;
+        //mapPanel.anchoredPosition = mapPos;
 
         float menuWidth = width - mapWidth;
-        menuPanel.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, menuWidth);
+        //menuPanel.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, menuWidth);
 
-        Vector2 menuPos = menuPanel.anchoredPosition;
-        menuPos.x = mapWidth + (0.5f * menuWidth);
-        menuPanel.anchoredPosition = menuPos;
-        Canvas.ForceUpdateCanvases();
+        //Vector2 menuPos = menuPanel.anchoredPosition;
+        //menuPos.x = mapWidth + (0.5f * menuWidth);
+        //menuPanel.anchoredPosition = menuPos;
+        //Canvas.ForceUpdateCanvases();
     }
 
 

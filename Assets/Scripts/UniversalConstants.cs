@@ -15,6 +15,8 @@ public static class UniversalConstants : object
 
     //The square of the world distance between two adjacent hexes
     public const float HEXDISTANCESQUARED = 1.0f;
+    public const float HEXWIDTHWORLDUNITS = 0.8659766f;
+    public const float HEXHEIGHTWORLDUNITS = 1.0f;
 
     //Constants for unit types using enums makes code more readable
     public enum UnitType : int
