@@ -61,7 +61,7 @@ public class CommandTracer : MonoBehaviour
 
 
 
-    private void HandleMouseAtTile(Vector3Int mouseTilePos)
+    public void HandleMouseAtTile(Vector3Int mouseTilePos)
     {
         currTilePos = mouseTilePos;
 
@@ -299,6 +299,7 @@ public class CommandTracer : MonoBehaviour
     //This function translates the points array into a list of orders that will be sent to the selected unit
     public void SendCommand()
     {
+        
         if (validTile)
         {
             if (!CheckLineValidity(endPoint))
@@ -311,7 +312,6 @@ public class CommandTracer : MonoBehaviour
                     lineData += map.WorldToCell(points[i]) + " -> ";
                 }
 
-                Debug.Log("!Error! command was sent with invalid line: " + lineData);
             }
             Mission mission = new Mission(commandee, map);
 
@@ -353,15 +353,19 @@ public class CommandTracer : MonoBehaviour
 
                 }
             }
-
-
-            endPoint = 0;
+            
 
             
 
             commandee.BeginMission(mission);
             
         }
+        else
+        {
+            Debug.Log("Attempted to move " + commandee.GetUnitType() + " to invalid tile");
+        }
+
+        endPoint = 0;
     }
 
 

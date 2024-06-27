@@ -101,12 +101,26 @@ public class ClickHandler : MonoBehaviour
                             {
                                 selecter.HandleNewSelection(touchedTile);
                                 SelectedThisTouch = commander.drawing;
-                            }
 
+                                
+                            }
+                            else
+                            {
+                                commander.HandleMouseAtTile(touchedTile);
+                            }
+                            break;
+                        case TouchPhase.Stationary:
+                        case TouchPhase.Moved:
+                            if((commander.drawing && IsTileActive(touchedTile)))
+                            {
+                                commander.HandleMouseAtTile(touchedTile);
+                            }
                             break;
                         case TouchPhase.Ended:
+
                             if (commander.drawing && !SelectedThisTouch)
                             {
+
                                 commander.SendCommand();
                                 selecter.HandleNewSelection(touchedTile);
                             }
