@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1070,6 +1069,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -1453,6 +1453,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &580817664
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1595,8 +1596,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 120.03003, y: -47.85392}
-  m_SizeDelta: {x: 224.06006, y: 0}
+  m_AnchoredPosition: {x: 133.30817, y: -45.4189}
+  m_SizeDelta: {x: 250.61633, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &642421499
 MonoBehaviour:
@@ -2522,6 +2523,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -3088,6 +3090,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -3838,8 +3841,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 120.03003, y: -290.39313}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 133.30817, y: -263.60788}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1356189000
 MonoBehaviour:
@@ -4373,6 +4376,7 @@ GameObject:
   - component: {fileID: 1577763692}
   - component: {fileID: 1577763691}
   - component: {fileID: 1577763693}
+  - component: {fileID: 1577763694}
   m_Layer: 0
   m_Name: SelectionManager
   m_TagString: Untagged
@@ -4424,6 +4428,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Map: {fileID: 1620846727}
+--- !u!114 &1577763694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1577763690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba114c55d9a86a44bb3fe7abe17ca1d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1580315633
 GameObject:
   m_ObjectHideFlags: 0
@@ -6568,13 +6584,13 @@ Tilemap:
   - first: {x: -3, y: -6, z: 0}
     second:
       serializedVersion: 2
-      m_TileIndex: 20
-      m_TileSpriteIndex: 34
+      m_TileIndex: 57
+      m_TileSpriteIndex: 16
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 3
       dummyAlignment: 0
-      m_AllTileFlags: 1
+      m_AllTileFlags: 1073741825
   - first: {x: -2, y: -6, z: 0}
     second:
       serializedVersion: 2
@@ -10867,7 +10883,7 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: 60c595d0d31faa94d9b01a492c6aee96, type: 2}
   - m_RefCount: 4
     m_Data: {fileID: 11400000, guid: 4eb50c40e13c15c4ab24afbf4a359075, type: 2}
-  - m_RefCount: 5
+  - m_RefCount: 4
     m_Data: {fileID: 11400000, guid: f5eb079d0dfe1ff42a751ef18c6756fc, type: 2}
   - m_RefCount: 4
     m_Data: {fileID: 11400000, guid: 8de5b515f8632d141aa786b49d301bca, type: 2}
@@ -10941,6 +10957,8 @@ Tilemap:
     m_Data: {fileID: 11400000, guid: b989aca6b3d1994419063abff667f5c0, type: 2}
   - m_RefCount: 2
     m_Data: {fileID: 11400000, guid: 958be928343f003408d3148cd172982d, type: 2}
+  - m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: 6389dd83607101e4ca43b123111c33ba, type: 2}
   m_TileSpriteArray:
   - m_RefCount: 0
     m_Data: {fileID: 0}
@@ -10974,8 +10992,8 @@ Tilemap:
     m_Data: {fileID: 0}
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: 6932fcddd9e9c414895429fb17b4de27, type: 3}
   - m_RefCount: 2
     m_Data: {fileID: 21300000, guid: 20f0dad804ef32b469f7dbf0f8b99017, type: 3}
   - m_RefCount: 1
@@ -11010,7 +11028,7 @@ Tilemap:
     m_Data: {fileID: 21300000, guid: a57c3ba87a6289f4ea875a069066886f, type: 3}
   - m_RefCount: 5
     m_Data: {fileID: 21300000, guid: d369d7a516d7c75458e6ed63fe4aaa60, type: 3}
-  - m_RefCount: 5
+  - m_RefCount: 4
     m_Data: {fileID: 21300000, guid: f2ab2f7261f4f8546ab423562aaa4c8b, type: 3}
   - m_RefCount: 3
     m_Data: {fileID: 21300000, guid: 8c8ebb5703f7e7741be9c6be06c8f707, type: 3}
@@ -11283,6 +11301,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0

@@ -193,7 +193,7 @@ public class GameManager : MonoBehaviour
         {
             clicker.BlockClicks();
         }
-        intel.WipeOldData();
+        //intel.WipeOldData();
 
         unitMoving = true;
         numUnitsMoving++;

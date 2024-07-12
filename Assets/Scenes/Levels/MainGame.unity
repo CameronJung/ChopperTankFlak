@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -5556,6 +5555,7 @@ GameObject:
   - component: {fileID: 1577763692}
   - component: {fileID: 1577763691}
   - component: {fileID: 1577763693}
+  - component: {fileID: 1577763694}
   m_Layer: 0
   m_Name: SelectionManager
   m_TagString: Untagged
@@ -5607,6 +5607,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Map: {fileID: 1365311421}
+--- !u!114 &1577763694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1577763690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba114c55d9a86a44bb3fe7abe17ca1d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1594220365
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6636,11 +6648,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6758698450816743569, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6758698450816743569, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6758698450816743569, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: m_SizeDelta.x
@@ -6656,7 +6668,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6758698450816743569, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -45.4189
       objectReference: {fileID: 0}
     - target: {fileID: 6758698450954153917, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: music
@@ -6780,15 +6792,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6758698452251928364, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6758698452251928364, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6758698452251928364, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 6758698452251928364, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: m_SizeDelta.y
@@ -6800,7 +6812,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6758698452251928364, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -263.60788
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}

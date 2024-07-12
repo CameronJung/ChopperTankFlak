@@ -57,7 +57,7 @@ public class AIcommander : MonoBehaviour
         WaitForSeconds delay = new WaitForSeconds(1.0f);
         int unitsAvailable = military.Length;
 
-
+        float timeStarted = Time.realtimeSinceStartup;
         yield return null;
         int unmovable = 0;
 
@@ -82,7 +82,7 @@ public class AIcommander : MonoBehaviour
 
                 //Start by considering what the player might do next turn
                 Unit[] enemies = manager.GetPlayerMilitary();
-
+                intel.WipeOldData();
                 foreach(Unit enemy in enemies)
                 {
                     yield return null;
@@ -186,7 +186,7 @@ public class AIcommander : MonoBehaviour
             moves.Clear();
         }//All units have been moved
 
-
+        Debug.Log(" The commander took " + (Time.realtimeSinceStartup - timeStarted) + " seconds to perform its turn");
 
         
 
