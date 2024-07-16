@@ -85,15 +85,15 @@ public class AIcommander : MonoBehaviour
                 intel.WipeOldData();
                 foreach(Unit enemy in enemies)
                 {
-                    yield return null;
-                    yield return null;
+                    //yield return null;
+                    //yield return null;
 
                     selector.HandleAISelection(enemy.myTilePos);
 
-                    yield return null;
+                    //yield return null;
 
                     selector.PerformTacticalAnalysis();
-                    yield return null;
+                    //yield return null;
 
                     selector.HandleDeselect();
                 }
@@ -164,6 +164,7 @@ public class AIcommander : MonoBehaviour
                 //wait until the unit is moving
                 while (!manager.IsUnitMoving() && cycles < 600)
                 {
+                    //Rounding off time scale means that frames during a pause won't be counted
                     cycles += Mathf.RoundToInt(Time.timeScale);
                     Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
                     yield return null;

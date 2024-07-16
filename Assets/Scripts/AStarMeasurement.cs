@@ -36,7 +36,17 @@ public class AStarMeasurement : MonoBehaviour
     {
         this.GValues = new Dictionary<Vector3Int, int>();
         this.HValues = new Dictionary<Vector3Int, int>();
-        this.TimeBudget = 0.01f;
+        if (Application.isMobilePlatform)
+        {
+            this.TimeBudget = 0.02f;
+            //Mobile applications target 30 FPS by default so we can double the normal budget
+        }
+        else
+        {
+            //Standard FPS is 60, so we need to end the frame by 0.0167ms
+            this.TimeBudget = 0.01f;
+        }
+        
 
     }
 
@@ -300,7 +310,9 @@ public class AStarMeasurement : MonoBehaviour
             //if (iterations % 1 == 0)
             if (timeUsed >= TimeBudget)
             {
+                
                 yield return null;
+                
                 timeUsed = 0.0f;
             }
         }
@@ -309,7 +321,7 @@ public class AStarMeasurement : MonoBehaviour
         //At this point either the target has been found and is in the variable "chosen" or every tile has been inspected without finding the target
 
         Debug.Assert(openList.Count == 0 || chosen == this.Destination, "The Algorithm has failed");
-        Debug.Assert(iterations < 1950, "Took way to many iterations");
+        Debug.Assert(iterations <= maxLoops - 50, "Took way to many iterations");
         if (chosen == this.Destination)
         {
             iterations = 0;

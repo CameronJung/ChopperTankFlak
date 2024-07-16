@@ -316,6 +316,7 @@ public class SelectionManager : MonoBehaviour
                     }
                     else { 
                         timeForMeasure = Time.realtimeSinceStartup;
+                        yield return null;
                         yield return Ruler.BeginMeasurement(selectedUnit, knowledge.GetPlayerBaseLoc(), hex.myCoords);
                         destDistance = Ruler.GetMeasuredDistance();
                         Navigation.LogDistance(selectedUnit.GetUnitType(), hex.myCoords, knowledge.GetPlayerBaseLoc(), destDistance);

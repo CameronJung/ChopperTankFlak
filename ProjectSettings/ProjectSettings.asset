@@ -687,7 +687,7 @@ PlayerSettings:
   scriptingBackend:
     Android: 1
   il2cppCompilerConfiguration:
-    Android: 0
+    Android: 1
   managedStrippingLevel:
     Android: 4
     EmbeddedLinux: 1
