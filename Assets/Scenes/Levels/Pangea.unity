@@ -13768,6 +13768,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2388942874495752942, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
+      propertyPath: ChosenLevel
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2388942875458495923, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6758698450659609896, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -14812,6 +14820,7 @@ GameObject:
   - component: {fileID: 1577763692}
   - component: {fileID: 1577763691}
   - component: {fileID: 1577763693}
+  - component: {fileID: 1577763694}
   m_Layer: 0
   m_Name: SelectionManager
   m_TagString: Untagged
@@ -14863,6 +14872,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Map: {fileID: 906500265}
+--- !u!114 &1577763694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1577763690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba114c55d9a86a44bb3fe7abe17ca1d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1584834591
 PrefabInstance:
   m_ObjectHideFlags: 0

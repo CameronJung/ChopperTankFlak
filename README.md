@@ -2,11 +2,17 @@
 A simple rock-paper-scissors strategy game built in the Unity engine.
 
 
-Current Version: 1.4.3
+Current Version: 1.4.4
 
 Update Log:
 
-V 1.4.3 (android)(patch)
+
+V 1.4.4 (android v7)(patch)
+ - Significantly reduced the amount of time the AI takes to take its turn
+ - Discovered and fixed an issue that caused the AI to incorrectly evaluate the opponents options
+ - resized the app icon to fit with the icon masking on android devices
+
+V 1.4.3 (android v6)(patch)
  - Fixed an issue that caused the android build to carsh on startup
  - android version is now 6
  - added an icon

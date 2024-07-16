@@ -38,7 +38,7 @@ public class HexOverlay : MonoBehaviour
         myCoords = map.WorldToCell(gameObject.transform.position);
         gameObject.name = (myCoords.x.ToString() + "_" + myCoords.y.ToString());
         myTile = map.GetTile<TerrainTile>(myCoords);
-        intel = new HexIntel();
+        intel = new HexIntel(this);
         nav = gameObject.GetComponent<AstarNavigable>();
         nav.CalculateCoords(myCoords);
 

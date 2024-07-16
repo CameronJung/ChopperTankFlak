@@ -17,18 +17,17 @@ public class SelectionManager : MonoBehaviour
     private Vector3Int selectedPos = new Vector3Int();
     private List<Directive> Directives;
     private AStarMeasurement Ruler;
+    private GlobalNavigationData Navigation;
 
     // Start is called before the first frame update
     void Start()
     {
         Ruler = gameObject.GetComponent<AStarMeasurement>();
+        Navigation = gameObject.GetComponent<GlobalNavigationData>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
+    
 
     public void HandleNewSelection(Vector3Int tilePos, bool conspicuous = true)
     {
@@ -158,6 +157,7 @@ public class SelectionManager : MonoBehaviour
                 {
                     directives.Add(new Directive(selectedUnit, hex));
                 }
+                //hex.nav.ChangeDebugTextTo(hex.intel.GetDebugString());
             }
             selectedUnit.SetBounty(directives);
 
@@ -258,16 +258,27 @@ public class SelectionManager : MonoBehaviour
     //this is mostly used by the AI
     public IEnumerator GetSmartestMoves(AIIntelHandler knowledge)
     {
+
         
+        float timeSpentMeasuring = 0.0f;
+        
+        float timeForTurn = Time.realtimeSinceStartup;
+
         Debug.Assert(selectedUnit != null, "There is no unit selected");
         Directives = new List<Directive>();
 
-        
+        float timeForMeasure = Time.realtimeSinceStartup;
         yield return Ruler.BeginMeasurement(selectedUnit, knowledge.GetPlayerBaseLoc());
+        timeForMeasure = Time.realtimeSinceStartup - timeForMeasure;
+        timeSpentMeasuring += timeForMeasure;
+        float numberOfMeasurements = 1.0f;
         int unitDistance = Ruler.GetMeasuredDistance();
         int destDistance = -1;
 
+        
         Debug.Assert(unitDistance > 0, "Ruler was not finished measuring distance for Unit");
+        
+
 
         bool viable;
         foreach (HexOverlay hex in affectedHexes)
@@ -295,10 +306,24 @@ public class SelectionManager : MonoBehaviour
             {
                 Directive noob = new Directive(selectedUnit, hex, knowledge);
 
-                if(hex.distanceFrom == selectedUnit.GetMobility())
+                if (hex.distanceFrom == selectedUnit.GetMobility())
                 {
-                    yield return Ruler.BeginMeasurement(selectedUnit, knowledge.GetPlayerBaseLoc(), hex.myCoords);
-                    destDistance = Ruler.GetMeasuredDistance();
+
+                    if (Navigation.HasDistance(selectedUnit.GetUnitType(), hex.myCoords, knowledge.GetPlayerBaseLoc()))
+                    {
+                        //re-use distances already computed
+                        destDistance = Navigation.GetDistance(selectedUnit.GetUnitType(), hex.myCoords, knowledge.GetPlayerBaseLoc());
+                    }
+                    else { 
+                        timeForMeasure = Time.realtimeSinceStartup;
+                        yield return null;
+                        yield return Ruler.BeginMeasurement(selectedUnit, knowledge.GetPlayerBaseLoc(), hex.myCoords);
+                        destDistance = Ruler.GetMeasuredDistance();
+                        Navigation.LogDistance(selectedUnit.GetUnitType(), hex.myCoords, knowledge.GetPlayerBaseLoc(), destDistance);
+                        timeForMeasure = Time.realtimeSinceStartup - timeForMeasure;
+                        timeSpentMeasuring += timeForMeasure;
+                        numberOfMeasurements += 1.0f;
+                    }
                 }
                 else
                 {
@@ -331,8 +356,11 @@ public class SelectionManager : MonoBehaviour
             }
 
         }
-
-
+        timeForTurn = Time.realtimeSinceStartup - timeForTurn;
+        //Debug.Log("It Took " + timeForTurn + " seconds to make a move.");
+        //Debug.Log(timeSpentMeasuring + " seconds were spent measuring distances");
+        //Debug.Log("A total of " + numberOfMeasurements + " measurements were made");
+        //Debug.Log("The average measurement took " + (timeSpentMeasuring / numberOfMeasurements) + " seconds to compute");
         //return possibilities;
     }
 

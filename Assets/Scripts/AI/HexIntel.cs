@@ -7,6 +7,8 @@ using static AITacticalValues;
 public class HexIntel
 {
 
+    public readonly HexOverlay Tile;
+
     //A value of true means that the unit type is capable of attacking this hex
     private Dictionary<UnitType, bool> Threats = new Dictionary<UnitType, bool>
     {
@@ -18,21 +20,24 @@ public class HexIntel
 
     private AIIntelHandler informant;
 
-    public HexIntel()
+    public HexIntel(HexOverlay hex)
     {
         informant = GameObject.Find(AIPATH).GetComponent<AIIntelHandler>();
+        this.Tile = hex;
     }
 
     public void AffectedBy(Unit unit)
     {
         Threats[unit.GetUnitType()] = true;
+        
+        informant.ReportAffectedHex(this);
     }
 
     public void WipeIntel()
     {
-        foreach(KeyValuePair<UnitType, bool> kv in Threats)
+        for(UnitType key = UnitType.InfantrySquad; key <= UnitType.Flak; key++)
         {
-            Threats[kv.Key] = false;
+            Threats[key] = false;
         }
     }
 
@@ -104,6 +109,24 @@ public class HexIntel
 
 
         return danger;
+    }
+
+
+    //This method is used only for debugging, it returns a string that represents the current threats the tile knows about
+    public string GetDebugString()
+    {
+        string debug = "";
+
+        for (UnitType key = UnitType.InfantrySquad; key <= UnitType.Flak; key++)
+        {
+            
+            if(Threats[key])
+            {
+                debug += key + "\n";
+            }
+        }
+
+        return debug;
     }
 
 

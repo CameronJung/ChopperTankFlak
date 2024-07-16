@@ -13,10 +13,7 @@ MonoBehaviour:
   m_Name: Lvl_Pangea
   m_EditorClassIdentifier: 
   LevelName: 'Operation: Pangea'
-  Description: 'A large number of of forces have met in a sprawling valley. This
-    may end up being one of the biggest battles of the war.
-
-    (!NOTE! this level
-    currently experiences performance issues, the enemy''s turn will take quite a
-    while to complete)'
+  Description: A large number of of forces have met in a sprawling valley. This may
+    end up being one of the biggest battles of the war. Get ready commander, the
+    outcome of this battle could decide the war.
   SceneID: Pangea

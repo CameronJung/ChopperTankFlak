@@ -45,6 +45,17 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         intel = enemyCO.gameObject.GetComponent<AIIntelHandler>();
+
+        if (Application.isMobilePlatform)
+        {
+            Debug.Log("This is a mobile platform");
+        }
+        else
+        {
+            Debug.Log("This is not a mobile platform");
+        }
+        Debug.Log("Target FPS is: " + Application.targetFrameRate);
+
         BeginTurn();
     }
 
@@ -193,7 +204,7 @@ public class GameManager : MonoBehaviour
         {
             clicker.BlockClicks();
         }
-        intel.WipeOldData();
+        //intel.WipeOldData();
 
         unitMoving = true;
         numUnitsMoving++;

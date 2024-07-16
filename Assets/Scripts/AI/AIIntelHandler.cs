@@ -32,9 +32,11 @@ public class AIIntelHandler : MonoBehaviour
 
     public void WipeOldData()
     {
+        //Debug.Log("Cleared intel from: " + affectedIntel.Count + " Hexes");
         foreach (HexIntel intel in affectedIntel)
         {
             intel.WipeIntel();
+            //intel.Tile.nav.ChangeDebugTextTo(intel.GetDebugString());
         }
         affectedIntel.Clear();
     }
