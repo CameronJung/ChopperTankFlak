@@ -13888,6 +13888,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -45.4189
       objectReference: {fileID: 0}
+    - target: {fileID: 6758698450954153917, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
+      propertyPath: music
+      value: 
+      objectReference: {fileID: 2109509350}
     - target: {fileID: 6758698451446460446, guid: 71f06944586282d4ebac48ec277cc66a, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 

@@ -12205,6 +12205,10 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0.75
       objectReference: {fileID: 0}
+    - target: {fileID: 1732336247291710496, guid: 7b3f206bc20f74140aeecf3d708629f7, type: 3}
+      propertyPath: music
+      value: 
+      objectReference: {fileID: 2109509350}
     - target: {fileID: 1732336247291710500, guid: 7b3f206bc20f74140aeecf3d708629f7, type: 3}
       propertyPath: m_Name
       value: MusicVolume
