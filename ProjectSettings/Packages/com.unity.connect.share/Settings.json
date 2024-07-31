@@ -21,7 +21,7 @@
             {
                 "type": "System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 "key": "buildOutputDirList",
-                "value": "{\"m_Value\":\"C:/Users/cjung/Documents/GameDev/Unity/CTF/CTF_v1-4-1;C:/Users/cjung/Documents/GameDev/Unity/CTF/CTF_v1.4;C:/Users/cjung/Documents/GameDev/Unity/CTF/CTF_v1-3;C:/Users/cjung/Documents/GameDev/Unity/WebProjects/CTFv1point2;C:/Users/cjung/Documents/GameDev/Unity/WebProjects/CTFv1point1;C:/Users/cjung/Documents/GameDev/Unity/WebProjects/CTF;;;;\"}"
+                "value": "{\"m_Value\":\"C:/Users/cjung/Documents/GameDev/Unity/CTF/WebGLBuilds/CTF_1-4-5;C:/Users/cjung/Documents/GameDev/Unity/CTF/CTF_v1-4-1;C:/Users/cjung/Documents/GameDev/Unity/CTF/CTF_v1.4;;;;;;;\"}"
             }
         ]
     }
