@@ -2,10 +2,12 @@
 A simple rock-paper-scissors strategy game built in the Unity engine.
 
 
-Current Version: 1.4.4
+Current Version: 1.4.5
 
 Update Log:
 
+V 1.4.5 (android v8)(Hotfix)
+ - The music volume slider wasn't hooked up properly on a couple levels, these have been fixed
 
 V 1.4.4 (android v7)(patch)
  - Significantly reduced the amount of time the AI takes to take its turn
