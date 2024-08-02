@@ -273,6 +273,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &5050677019142962154
 GameObject:
   m_ObjectHideFlags: 0
@@ -499,6 +500,7 @@ MonoBehaviour:
   staleSprite: {fileID: 3313454816761865333}
   baseSprite: {fileID: 5255287528532110770}
   mobility: 5
+  Movement: 3
   deathEffect: {fileID: 3338526990042780928, guid: 74eead4cb7d6e2c428e0c70082ffc027, type: 3}
   attackSound: {fileID: 8300000, guid: 81ac649d26a9a96419b76c635591f6d8, type: 3}
   unitName: Flak Car
@@ -528,6 +530,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!82 &3943262288919921394
 AudioSource:
   m_ObjectHideFlags: 0

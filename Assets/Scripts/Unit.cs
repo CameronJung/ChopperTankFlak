@@ -22,6 +22,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     [SerializeField] protected GameObject baseSprite;
 
     [SerializeField] protected int mobility = 5;
+    [SerializeField] protected MovementType Movement;
     [SerializeField] protected GameObject deathEffect;
     protected Animator puppeteer = null;
 
@@ -144,6 +145,11 @@ public abstract class Unit : MonoBehaviour, ISelectable
     public HexOverlay GetOccupiedHex()
     {
         return map.GetInstantiatedObject(myTilePos).GetComponent(typeof(HexOverlay)) as HexOverlay;
+    }
+
+    public MovementType GetMovementType()
+    {
+        return Movement;
     }
 
 

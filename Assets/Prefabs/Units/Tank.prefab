@@ -649,6 +649,7 @@ MonoBehaviour:
   staleSprite: {fileID: 3035620316806390470}
   baseSprite: {fileID: 8954567185190465350}
   mobility: 4
+  Movement: 2
   deathEffect: {fileID: 3338526990042780928, guid: 74eead4cb7d6e2c428e0c70082ffc027, type: 3}
   attackSound: {fileID: 8300000, guid: 5ff823f546b52574a931e1d9b44290a6, type: 3}
   unitName: Battle Tank
@@ -677,6 +678,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!82 &4301243136025951791
 AudioSource:
   m_ObjectHideFlags: 0
