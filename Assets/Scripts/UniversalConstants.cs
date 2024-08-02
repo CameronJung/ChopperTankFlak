@@ -27,6 +27,14 @@ public static class UniversalConstants : object
         Flak = 3
     }
 
+    public enum MovementType: int
+    {
+        Legs = 0,
+        RotaryWings = 1,
+        Treads = 2,
+        Wheels = 3,
+    }
+
 
     public enum HexDirection : int
     {
@@ -61,6 +69,7 @@ public static class UniversalConstants : object
         retaliating = 3,
     }
 
+    
     
 
 
