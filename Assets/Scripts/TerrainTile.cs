@@ -8,22 +8,23 @@ using static UniversalConstants;
 public class TerrainTile : Tile, ISelectable 
 {
 
-    [SerializeField] private Dictionary<UnitType, bool> traversablleBy = new Dictionary<UnitType, bool>{
-        {UnitType.InfantrySquad, true },
-        {UnitType.Helicopter, true },
-        {UnitType.Tank, true },
-        {UnitType.Flak, true },
-    };
 
     [SerializeField] private bool[] traverseArray = {true, true, true, true};
 
     [TextArea][SerializeField] private string description;
     [SerializeField] private string title;
 
+
+    /*
+     * CanUnitPass
+     * 
+     * This method is a basic terrain check. It checks if the unit's movement type permits it to
+     * be on this tile without considering any other nuances
+     */
     public bool CanUnitPass(Unit unit)
     {
         
-        return traverseArray[(int)unit.GetUnitType()];
+        return traverseArray[(int)unit.GetMovementType()];
     }
 
     public string GetDescription()
