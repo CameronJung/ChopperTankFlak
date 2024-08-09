@@ -13,6 +13,8 @@ public class HexOverlay : MonoBehaviour
     [SerializeField] protected GameObject combatSprite;
     [SerializeField] protected GameObject moveSprite;
     [SerializeField] protected GameObject holdSprite;
+    [SerializeField] protected GameObject rangeSprite;
+    [SerializeField] protected GameObject snipeSprite;
 
     private TerrainTile myTile;
     private Tilemap map;
@@ -588,6 +590,8 @@ public class HexOverlay : MonoBehaviour
         moveSprite.SetActive(doShow);
         combatSprite.SetActive(false);
         holdSprite.SetActive(false);
+        rangeSprite.SetActive(false);
+        snipeSprite.SetActive(false);
         currState = HexState.reachable;
     }
 
@@ -596,6 +600,8 @@ public class HexOverlay : MonoBehaviour
         moveSprite.SetActive(false);
         combatSprite.SetActive(doShow);
         holdSprite.SetActive(false);
+        rangeSprite.SetActive(false);
+        snipeSprite.SetActive(false);
         currState = HexState.attackable;
     }
 
@@ -604,7 +610,32 @@ public class HexOverlay : MonoBehaviour
         moveSprite.SetActive(false);
         combatSprite.SetActive(false);
         holdSprite.SetActive(doShow);
+        rangeSprite.SetActive(false);
+        snipeSprite.SetActive(false);
         currState = HexState.hold;
+    }
+
+    protected virtual void MarkRange(bool doShow = true)
+    {
+
+        //units might be able to move in their attack range
+        //moveSprite.SetActive(false);
+        combatSprite.SetActive(false);
+        holdSprite.SetActive(false);
+        rangeSprite.SetActive(doShow);
+        snipeSprite.SetActive(false);
+        //there isn't any point in marking attack range with a hex state as long as the hex is still marked to be cleared
+        //currState = HexState.range;
+    }
+
+    protected virtual void MarkSnipe(bool doShow = true)
+    {
+        moveSprite.SetActive(false);
+        combatSprite.SetActive(false);
+        holdSprite.SetActive(false);
+        rangeSprite.SetActive(false);
+        snipeSprite.SetActive(doShow);
+        currState = HexState.range;
     }
 
     //reset all flags to null
@@ -615,6 +646,8 @@ public class HexOverlay : MonoBehaviour
         combatSprite.SetActive(false);
         moveSprite.SetActive(false);
         holdSprite.SetActive(false);
+        rangeSprite.SetActive(false);
+        snipeSprite.SetActive(false);
         currState = HexState.unreachable;
     }
 }

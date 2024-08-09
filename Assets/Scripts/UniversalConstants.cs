@@ -24,7 +24,8 @@ public static class UniversalConstants : object
         InfantrySquad = 0,
         Helicopter = 1,
         Tank = 2,
-        Flak = 3
+        Flak = 3,
+        Artillery = 4
     }
 
     public enum MovementType: int
@@ -59,6 +60,8 @@ public static class UniversalConstants : object
         attackable = 2,
         hold = 3,
         capture = 4,
+        range = 5,
+        snipe = 6,
     }
 
     public enum UnitState: int
@@ -86,8 +89,8 @@ public static class UniversalConstants : object
      * This method returns the unit type that the specified "unit" is weak to
      * In the case of infantry which are vulnerable to all units the infantry type is returned
      * 
-     * !NOTE! if a unit type is not found than the type of "unit" will be returned, this shouldn't happen though
-     * because all unit types are accounted for
+     * !NOTE! if a unit type is not found than the type of "unit" will be returned, this is technically true
+     * because both infantry and rocket carriers are able to defeat their own unit type
      * 
      */
     public static UnitType GetWeaknessOf(Unit unit)
@@ -108,8 +111,8 @@ public static class UniversalConstants : object
      * This method returns the unit type that the specified "unit" is strong against
      * In the case of infantry which are vulnerable to all units the infantry type is returned
      * 
-     * !NOTE! if a unit type is not found than the type of "unit" will be returned, this shouldn't happen though
-     * because all unit types are accounted for
+     * !NOTE! if a unit type is not found than the type of "unit" will be returned, this is technically true
+     * as both infantry and Rocket Carriers can defeat their own unit type
      * 
      */
     public static UnitType GetStrengthOf(Unit unit)
