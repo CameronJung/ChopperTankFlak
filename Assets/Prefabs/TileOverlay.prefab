@@ -479,7 +479,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 12
   m_Sprite: {fileID: 21300000, guid: 63922c4f94ab9ef46813f7154c9f1e0f, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.6}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -563,7 +563,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 13
   m_Sprite: {fileID: 21300000, guid: b5aabc027e7ce7d459c07285427eb73b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.49, g: 0.56, b: 0.64, a: 0.7490196}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -632,6 +632,7 @@ MonoBehaviour:
   snipeSprite: {fileID: 5022465426862709855}
   visited: 0
   distanceFrom: -1
+  rangeFrom: -1
 --- !u!114 &1184188605950455069
 MonoBehaviour:
   m_ObjectHideFlags: 0

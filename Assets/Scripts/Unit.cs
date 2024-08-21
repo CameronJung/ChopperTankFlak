@@ -9,7 +9,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
 {
     //This value acts as a failsafe for order execution
     protected const int MAXFRAMESPERACTION = 60;
-    
+
 
     [SerializeField] protected Faction allegiance = Faction.PlayerTeam;
 
@@ -32,15 +32,15 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
 
     [SerializeField] private string unitName;
-    [TextArea][SerializeField] private string unitDescription;
+    [TextArea] [SerializeField] private string unitDescription;
 
 
     protected Mission currMission;
-    
+
 
     protected Tilemap map;
     protected GameManager manager;
-    
+
 
     protected Stack<Order> orders = new Stack<Order>();
 
@@ -52,7 +52,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     protected bool executingOrders = false;
     protected bool ordersComplete = false;
     public bool actionReported { get; protected set; } = true;
-    
+
     private bool retaliation = false;
 
     protected IEnumerator execution;
@@ -62,7 +62,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
 
     protected Unit stalematedWith;
-    
+
 
     public Vector3Int myTilePos { get; protected set; }
 
@@ -73,6 +73,10 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     //This is the tactical value of destroying this unit
     public int bounty { get; protected set; } = 0;
+
+    public bool AffectorsAreCurrent { get; protected set; } = false;
+
+    protected Dictionary<int, HexAffect> Affectors = new Dictionary<int, HexAffect>();
 
 
     private void Awake()
@@ -193,7 +197,16 @@ public abstract class Unit : MonoBehaviour, ISelectable
         
         if(this.allegiance == manager.WhosTurn() && myState == UnitState.ready)
         {
-            return map.GetInstantiatedObject(this.myTilePos).GetComponent<HexOverlay>().BeginExploration(this, conspicuous);
+            List<HexOverlay> hexes = new List<HexOverlay>();
+
+            ShowEffectOnBoard( conspicuous);
+
+            foreach(HexAffect affect in Affectors.Values)
+            {
+                hexes.Add(affect.Hex);
+            }
+            return hexes;
+            //return map.GetInstantiatedObject(this.myTilePos).GetComponent<HexOverlay>().BeginExploration(this, conspicuous);
         }
         else
         {
@@ -484,6 +497,185 @@ public abstract class Unit : MonoBehaviour, ISelectable
     }
 
 
+    public void NoticeBoardChange()
+    {
+        AffectorsAreCurrent = false;
+    }
+
+
+    public void ShowEffectOnBoard(bool conspicuous)
+    {
+        if (AffectorsAreCurrent)
+        {
+            Debug.Log(this.ToString() + " is re using its known effect");
+        }
+        else
+        {
+            
+            DetermineEffectOfUnit();
+        }
+
+        foreach(HexAffect affect in Affectors.Values)
+        {
+            affect.Restore(conspicuous);
+        }
+    }
+
+
+
+    virtual protected void DetermineEffectOfUnit()
+    {
+        Affectors.Clear();
+        this.DetermineMoveOptions();
+        this.DetermineAttackOptions();
+        AffectorsAreCurrent = true;
+    }
+
+
+
+    /*
+     * This method will find the hexes that this unit can move to and create HexAffect objects for them.
+     * These objects will then be added to the dictionary of effectors for future reference
+     * 
+     * 
+     */
+    virtual protected void DetermineMoveOptions()
+    {
+        HexOverlay start = this.GetOccupiedHex();
+
+        HashSet<HexOverlay> explored = new HashSet<HexOverlay>();
+        HashSet<HexOverlay> unexplored = new HashSet<HexOverlay>();
+        HashSet<HexOverlay> discovered = new HashSet<HexOverlay>();
+        unexplored.Add(start);
+        Affectors.Add(GridHelper.HashGridCoordinates(start.myCoords), new HexAffect(this, start, HexState.hold, 0));
+
+        int itter = 0;
+
+        do
+        {
+            
+            foreach(HexOverlay hex in discovered)
+            {
+                if (hex.CanIpass(this))
+                {
+                    unexplored.Add(hex);
+                }
+            }
+
+
+            foreach(HexOverlay hex in unexplored)
+            {
+                if (discovered.Contains(hex))
+                {
+                    discovered.Remove(hex);
+                }
+
+
+                int dist = Affectors[GridHelper.HashGridCoordinates(hex.myCoords)].DistanceFrom;
+                //check the adjacent hexes
+                foreach (HexOverlay adj in hex.adjacent)
+                {
+                    if (Affectors.ContainsKey(GridHelper.HashGridCoordinates(adj.myCoords)))
+                    {
+                        Affectors[GridHelper.HashGridCoordinates(adj.myCoords)].ChangeDistance(dist + 1);
+                    }
+                    else
+                    {
+                        if (adj.CanIpass(this) && dist < this.mobility)
+                        {
+                            Affectors.Add(GridHelper.HashGridCoordinates(adj.myCoords), new HexAffect(this, adj, HexState.reachable, dist +1));
+                            discovered.Add(adj);
+                        }
+                        
+                    }
+                    
+                    
+                }
+
+                explored.Add(hex);
+            }
+
+            foreach(HexOverlay hex in explored)
+            {
+                if (unexplored.Contains(hex))
+                {
+                    unexplored.Remove(hex);
+                }
+            }
+
+
+            itter++;
+        } while (discovered.Count > 0 && itter < 100);
+
+        if(itter >= 100)
+        {
+            Debug.Log("Movement search exited through exceeding maximum itterations");
+        }
+
+    }
+
+
+
+    /*
+     * Determine Attack Options
+     * 
+     * This method will find out which hexes this unit can attack particularly in close range combat
+     * This method requires that the hexes the unit can move to are already known
+     */
+    protected virtual void DetermineAttackOptions()
+    {
+        HashSet<HexOverlay> moves = new HashSet<HexOverlay>();
+
+        foreach(HexAffect move in Affectors.Values)
+        {
+            moves.Add(move.Hex);
+        }
+
+        foreach(HexOverlay hex in moves)
+        {
+            int dist = Affectors[GridHelper.HashGridCoordinates(hex.myCoords)].DistanceFrom;
+
+
+            foreach(HexOverlay adj in hex.adjacent)
+            {
+                if(!Affectors.ContainsKey(GridHelper.HashGridCoordinates(adj.myCoords)))
+                {
+                    //If it is a tile adjacent to where we can move than it is a tile this unit can attack
+                    bool attackable = false;
+
+                    if(adj.GetOccupiedBy() != null)
+                    {
+                        attackable = adj.GetOccupiedBy().GetAllegiance() != this.GetAllegiance();
+                    }
+
+
+                    if (attackable)
+                    {
+                        Affectors.Add(GridHelper.HashGridCoordinates(adj.myCoords) ,new HexAffect(this, adj, HexState.attackable, dist + 1));
+                    }
+                    else
+                    {
+                        Affectors.Add(GridHelper.HashGridCoordinates(adj.myCoords), new HexAffect(this, adj, HexState.range, dist + 1));
+                    }
+                }
+                else
+                {
+                    HexAffect affect = Affectors[GridHelper.HashGridCoordinates(adj.myCoords)];
+
+                    if (affect.RecordedState == HexState.attackable || affect.RecordedState == HexState.range)
+                    {
+                        affect.ChangeDistance(dist + 1);
+                    }
+                }
+
+
+            }
+        }
+    }
+
+
+
+
 
 
     //Called by the unit this unit is in stalemate with
@@ -581,4 +773,6 @@ public abstract class Unit : MonoBehaviour, ISelectable
     {
         return false;
     }
+
+
 }

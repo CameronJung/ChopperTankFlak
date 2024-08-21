@@ -27,10 +27,18 @@ public class HexOverlay : MonoBehaviour
 
     //these flags are used to mark tiles that have already been visited by a recursive algorythm
     public bool visited = false;
+
+    //Distance from is the distance a unit has to travel to reach this hex, range from is the straight line distance
     public int distanceFrom = -1;
+    public int rangeFrom = -1;
+    protected bool InRange = false;
 
     public HexIntel intel { get; protected set; }
     public AstarNavigable nav { get; private set; }
+
+
+    //These are the units that could have an effect on the tile, if something changes on this hex than they must be informed
+    protected List<Unit> AffectedBy = new List<Unit>();
 
     // Start is called before the first frame update
     protected void Start()
@@ -100,6 +108,7 @@ public class HexOverlay : MonoBehaviour
     {
         hasUnit = unit != null;
         this.occupiedBy = unit;
+        this.NotifyOfBoardChange();
     }
 
     
@@ -200,7 +209,8 @@ public class HexOverlay : MonoBehaviour
         {
             //add self to list if we haven't already
             affected.Add(this);
-
+            this.rangeFrom = GridHelper.CalcTilesBetweenGridCoords(unit.myTilePos, this.myCoords);
+            this.nav.ChangeDebugTextTo(rangeFrom.ToString());
             CanBeAttackedBy(unit);
         }
 
@@ -253,6 +263,7 @@ public class HexOverlay : MonoBehaviour
                             //The unit is hostile
                             hex.MarkCombat(doShow);
                             hex.distanceFrom = travelled + 1;
+                            hex.rangeFrom = GridHelper.CalcTilesBetweenGridCoords(unit.myTilePos, hex.myCoords);
                             affected.Add(hex);
                         }
                     }
@@ -497,7 +508,52 @@ public class HexOverlay : MonoBehaviour
     }
 
 
+    /*
+     * Notify Affect Of
+     * This method is called when a HexAffect is created and sets up the affecting unit to be notified of board changes
+     */
+    public void NotifyAffectOf(Unit unit)
+    {
+        this.AffectedBy.Add(unit);
+    }
 
+    protected void NotifyOfBoardChange()
+    {
+        foreach(Unit unit in AffectedBy)
+        {
+            unit.NoticeBoardChange();
+
+        }
+
+        AffectedBy.Clear();
+    }
+
+
+    virtual protected void ChangeState(HexState state, bool doShow)
+    {
+        switch (state)
+        {
+            case HexState.reachable:
+                this.MarkMove(doShow);
+                break;
+            case HexState.hold:
+                this.MarkHold(doShow);
+                break;
+            case HexState.attackable:
+                this.MarkCombat(doShow);
+                break;
+            case HexState.range:
+                this.MarkRange(doShow);
+                break;
+            case HexState.snipe:
+                this.MarkSnipe(doShow);
+                break;
+            default:
+                this.SetBlank();
+                break;
+
+        }
+    }
 
 
 
@@ -577,9 +633,20 @@ public class HexOverlay : MonoBehaviour
     
     public bool IsHexReachable()
     {
+        //I suspect this method may need to be rewritten
         return this.currState != HexState.unreachable;
     }
 
+
+    /*Display Effect
+     * this method sends a message to the associated HexOverlay to display the moves available for this HexAffect's owner
+     */
+    public void RestoreEffect(HexAffect affect, bool conspicuous)
+    {
+        this.ChangeState(affect.RecordedState, conspicuous);
+        this.distanceFrom = affect.DistanceFrom;
+        this.rangeFrom = affect.RangeFrom;
+    }
 
 
     //These functions are used to change an overlay's state
@@ -615,6 +682,11 @@ public class HexOverlay : MonoBehaviour
         currState = HexState.hold;
     }
 
+
+    /*
+     * The attack range state works a bit differently,
+     * Since there isn't anything you can do with a hex inn range the state isn't changed so the command plotter won't be confused
+     */
     protected virtual void MarkRange(bool doShow = true)
     {
 
@@ -643,11 +715,13 @@ public class HexOverlay : MonoBehaviour
     {
         visited = false;
         distanceFrom = -1;
+        rangeFrom = -1;
         combatSprite.SetActive(false);
         moveSprite.SetActive(false);
         holdSprite.SetActive(false);
         rangeSprite.SetActive(false);
         snipeSprite.SetActive(false);
         currState = HexState.unreachable;
+        this.nav.ChangeDebugTextTo(myCoords.ToString());
     }
 }

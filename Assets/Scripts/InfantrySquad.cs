@@ -107,6 +107,15 @@ public class InfantrySquad : Unit
     }
 
 
+    protected override void DetermineMoveOptions()
+    {
+        base.DetermineMoveOptions();
+
+        foreach(HexAffect affect in Affectors.Values)
+        {
+            affect.MutateToCapture();
+        }
+    }
 
 
 }
