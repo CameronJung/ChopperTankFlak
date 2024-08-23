@@ -203,6 +203,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
             foreach(HexAffect affect in Affectors.Values)
             {
+                
+                
                 hexes.Add(affect.Hex);
             }
             return hexes;
@@ -505,13 +507,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     public void ShowEffectOnBoard(bool conspicuous)
     {
-        if (AffectorsAreCurrent)
+        if (!AffectorsAreCurrent)
         {
-            Debug.Log(this.ToString() + " is re using its known effect");
-        }
-        else
-        {
-            
             DetermineEffectOfUnit();
         }
 
@@ -522,16 +519,59 @@ public abstract class Unit : MonoBehaviour, ISelectable
     }
 
 
+    private void ClearAffectors()
+    {
+        foreach(HexAffect affect in Affectors.Values)
+        {
+            affect.Hex.NotifyUnaffectedBy(this);
+
+        }
+
+        Affectors.Clear();
+    }
+
 
     virtual protected void DetermineEffectOfUnit()
     {
-        Affectors.Clear();
-        this.DetermineMoveOptions();
-        this.DetermineAttackOptions();
+        ClearAffectors();
+        DetermineMoveOptions();
+        DetermineAttackOptions();
         AffectorsAreCurrent = true;
     }
 
 
+
+    /*
+     * Can Take Mission To
+     * 
+     * This method returns true if the Hexoverlay parameter here is one that would trigger this unit to move
+     * upon being clicked with this unit selected. In technical terms, the parameter "here" must be a valid final
+     * hex for a mission object; or in other words the goal or destination for a move
+     * 
+     * This method will return false if this unit is not "ready"
+     * This method will update this unit's affectors if they are not up to date
+     */
+    public bool CanTakeMissionTo(HexOverlay here)
+    {
+        bool can = false;
+
+        if(this.myState == UnitState.ready)
+        {
+            if (!AffectorsAreCurrent)
+            {
+                DetermineEffectOfUnit();
+            }
+
+            int key = GridHelper.HashGridCoordinates(here.myCoords);
+
+            if (Affectors.ContainsKey(key))
+            {
+                can = Affectors[key].RecordedState != HexState.unreachable;
+            }
+        }
+
+        return can;
+    }
 
     /*
      * This method will find the hexes that this unit can move to and create HexAffect objects for them.
@@ -631,45 +671,49 @@ public abstract class Unit : MonoBehaviour, ISelectable
             moves.Add(move.Hex);
         }
 
+
         foreach(HexOverlay hex in moves)
         {
             int dist = Affectors[GridHelper.HashGridCoordinates(hex.myCoords)].DistanceFrom;
 
-
-            foreach(HexOverlay adj in hex.adjacent)
+            if (hex.CanIBeOn(this))
             {
-                if(!Affectors.ContainsKey(GridHelper.HashGridCoordinates(adj.myCoords)))
+                foreach (HexOverlay adj in hex.adjacent)
                 {
-                    //If it is a tile adjacent to where we can move than it is a tile this unit can attack
-                    bool attackable = false;
-
-                    if(adj.GetOccupiedBy() != null)
+                    if (!Affectors.ContainsKey(GridHelper.HashGridCoordinates(adj.myCoords)))
                     {
-                        attackable = adj.GetOccupiedBy().GetAllegiance() != this.GetAllegiance();
-                    }
+                        //If it is a tile adjacent to where we can move than it is a tile this unit can attack
+                        bool attackable = false;
+
+                        if (adj.GetOccupiedBy() != null)
+                        {
+                            attackable = adj.GetOccupiedBy().GetAllegiance() != this.GetAllegiance();
+                        }
 
 
-                    if (attackable)
-                    {
-                        Affectors.Add(GridHelper.HashGridCoordinates(adj.myCoords) ,new HexAffect(this, adj, HexState.attackable, dist + 1));
+                        if (attackable)
+                        {
+                            Affectors.Add(GridHelper.HashGridCoordinates(adj.myCoords), new HexAffect(this, adj, HexState.attackable, dist + 1));
+                        }
+                        else
+                        {
+                            Affectors.Add(GridHelper.HashGridCoordinates(adj.myCoords), new HexAffect(this, adj, HexState.range, dist + 1));
+                        }
                     }
                     else
                     {
-                        Affectors.Add(GridHelper.HashGridCoordinates(adj.myCoords), new HexAffect(this, adj, HexState.range, dist + 1));
+                        HexAffect affect = Affectors[GridHelper.HashGridCoordinates(adj.myCoords)];
+
+                        if (affect.RecordedState == HexState.attackable || affect.RecordedState == HexState.range)
+                        {
+                            affect.ChangeDistance(dist + 1);
+                        }
                     }
+
+
                 }
-                else
-                {
-                    HexAffect affect = Affectors[GridHelper.HashGridCoordinates(adj.myCoords)];
-
-                    if (affect.RecordedState == HexState.attackable || affect.RecordedState == HexState.range)
-                    {
-                        affect.ChangeDistance(dist + 1);
-                    }
-                }
-
-
             }
+            
         }
     }
 
@@ -772,6 +816,16 @@ public abstract class Unit : MonoBehaviour, ISelectable
     public virtual bool IsCapturing()
     {
         return false;
+    }
+
+
+    public override string ToString()
+    {
+        string label = this.gameObject.name;
+
+        label += "(" + this.GetUnitType() + ") at " + this.myTilePos;
+
+        return label;
     }
 
 

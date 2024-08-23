@@ -13,12 +13,18 @@ public class HexAffect
 
     public int RangeFrom { get; private set; }
 
+    //This property is used by ranged units to note hexes where their weapon can reach in
+    //addition to some other action like movement
+    public bool WithinRange { get; private set; }
+
     public Unit Owner { get; private set; }
 
     public HexState RecordedState { get; private set; }
 
+    
 
-    public HexAffect(Unit belongsTo, HexOverlay affects, HexState state, int steps)
+
+    public HexAffect(Unit belongsTo, HexOverlay affects, HexState state, int steps, bool inRange = false)
     {
         this.Hex = affects;
         Hex.NotifyAffectOf(belongsTo);
@@ -26,6 +32,7 @@ public class HexAffect
         this.RangeFrom = GridHelper.CalcTilesBetweenGridCoords(belongsTo.myTilePos, affects.myCoords);
         this.Owner = belongsTo;
         this.RecordedState = state;
+        this.WithinRange = inRange;
     }
 
     public void Restore(bool conspicuous = true)
@@ -64,6 +71,24 @@ public class HexAffect
                     RecordedState = HexState.capture;
                 }
             }
+        }
+    }
+
+
+    /*
+     * Mutate Within Range
+     * 
+     * Should the conditions be appropriate this method will change the HexAffect to mark the HexOverlay as being within Range
+     * 
+     * Conditions:
+     *  The owner is a ranged unit
+     *  The value of range from is between the parameters min and max (inclusive)
+     */
+    public void MutateWithinRange(int min, int max)
+    {
+        if(Owner is RangedUnit)
+        {
+            this.WithinRange = this.RangeFrom >= min && this.RangeFrom <= max;
         }
     }
 

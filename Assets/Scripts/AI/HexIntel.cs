@@ -15,7 +15,9 @@ public class HexIntel
         { UnitType.InfantrySquad, false },
         {UnitType.Helicopter, false },
         {UnitType.Tank, false },
-        {UnitType.Flak, false}
+        {UnitType.Flak, false},
+        {UnitType.Artillery, false }
+
     };
 
     private AIIntelHandler informant;
@@ -117,7 +119,7 @@ public class HexIntel
     {
         string debug = "";
 
-        for (UnitType key = UnitType.InfantrySquad; key <= UnitType.Flak; key++)
+        for (UnitType key = UnitType.InfantrySquad; key <= UnitType.Artillery; key++)
         {
             
             if(Threats[key])

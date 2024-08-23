@@ -203,8 +203,7 @@ public class Directive
 
     override public string ToString()
     {
-        string info = "Move for " + capable.GetUnitType();
-        info += " at position " + capable.myTilePos;
+        string info = "Move for " + capable.ToString();
         info += " unit moves to " + destination.myCoords;
         info += " Move has a smartness of: " + smartness;
         info += " Unit threatened? " + capable.GetOccupiedHex().intel.IsUnitThreatened(capable);

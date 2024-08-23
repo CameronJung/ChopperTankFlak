@@ -73,7 +73,8 @@ public class CommandTracer : MonoBehaviour
             {
                 prevValidity = validTile;
                 validTile = currHex.currState == HexState.attackable || currHex.GetOccupiedBy() == null
-                        || currHex.currState == HexState.hold || currHex.currState == HexState.capture;
+                        || currHex.currState == HexState.hold || currHex.currState == HexState.capture ||
+                        currHex.currState == HexState.snipe;
 
 
                 liner.enabled = true;
@@ -85,19 +86,28 @@ public class CommandTracer : MonoBehaviour
                 
                 prevEnd = endPoint;
 
-                if (currHex.currState == HexState.attackable)
+                if (currHex.currState == HexState.attackable || currHex.currState == HexState.snipe)
                 {
-                    if (prevEnd + 1 < points.Length)
+                    if (currHex.currState == HexState.attackable)
                     {
-                        //If we are attacking and there is room for the additional tile than we try putting it after the previous endpoint
-                        points[prevEnd +1] = currHex.transform.position;
-                        endPoint = prevEnd + 1;
+                        if (prevEnd + 1 < points.Length)
+                        {
+                            //If we are attacking and there is room for the additional tile than we try putting it after the previous endpoint
+                            points[prevEnd + 1] = currHex.transform.position;
+                            endPoint = prevEnd + 1;
+                        }
+                        else
+                        {
+                            //if there is no room than we replace the previous endpoint position and push the prevEndpoint back
+                            points[prevEnd] = currHex.transform.position;
+
+                        }
                     }
                     else
                     {
-                        //if there is no room than we replace the previous endpoint position and push the prevEndpoint back
-                        points[prevEnd] = currHex.transform.position;
-
+                        //If the state is snipe, that means we are making a ranged attack and will fire without moving the unit hence only 2 points are needed
+                        points[1] = currHex.transform.position;
+                        endPoint = 1;
                     }
                 }
                 else
@@ -111,9 +121,8 @@ public class CommandTracer : MonoBehaviour
 
                 liner.SetPositions(points);
                 
-                //endPoint = currHex.distanceFrom;
-
-                if (!CheckLineValidity(endPoint))
+                //The line in a long ranged attack isn't supposed to be valid so don't try to fix it
+                if (!CheckLineValidity(endPoint) && currHex.currState != HexState.snipe)
                 {
                     RedrawLine();
                     liner.positionCount = endPoint + 1;
@@ -294,7 +303,10 @@ public class CommandTracer : MonoBehaviour
     }
 
 
-
+    public bool IsTileValid(Vector3Int tileCoords)
+    {
+        return false;
+    }
 
     //This function translates the points array into a list of orders that will be sent to the selected unit
     public void SendCommand()
@@ -302,7 +314,9 @@ public class CommandTracer : MonoBehaviour
         
         if (validTile)
         {
-            if (!CheckLineValidity(endPoint))
+            HexOverlay currHex = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>();
+
+            if (currHex.currState != HexState.snipe && !CheckLineValidity(endPoint))
             {
 
                 string lineData = "";
@@ -323,34 +337,44 @@ public class CommandTracer : MonoBehaviour
             }
             else
             {
-                //Check if the last order is an attack
-                bool attacks = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>().currState == HexState.attackable;
-
-                for (int idx = endPoint; idx >= 1; idx--)
+                //Check if we are performing a ranged attack
+                if(currHex.currState == HexState.snipe)
                 {
-                    if (idx == endPoint)
+                    //If so the mission is a single attack order
+                    mission.AddOrder(new AttackOrder(points[0], points[1], this.commandee));
+                }
+                else
+                {
+
+
+                    //Check if the last order is an attack
+                    bool attacks = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>().currState == HexState.attackable;
+
+                    for (int idx = endPoint; idx >= 1; idx--)
                     {
-                        if (attacks)
+                        if (idx == endPoint)
                         {
-                            mission.AddOrder(new AttackOrder(points[idx - 1], points[idx], this.commandee));
+                            if (attacks)
+                            {
+                                mission.AddOrder(new AttackOrder(points[idx - 1], points[idx], this.commandee));
+                            }
+                            else
+                            {
+                                //Add an extra hold command at the end
+                                if ((map.GetInstantiatedObject(map.WorldToCell(points[endPoint])).GetComponent(typeof(HexOverlay)) as HexOverlay).currState == HexState.capture)
+                                {
+                                    mission.AddOrder(new HoldOrder(points[endPoint], points[endPoint], commandee));
+                                }
+
+                                mission.AddOrder(new MoveOrder(points[endPoint - 1], points[endPoint], this.commandee));
+                            }
+
                         }
                         else
                         {
-                            //Add an extra hold command at the end
-                            if ((map.GetInstantiatedObject(map.WorldToCell(points[endPoint])).GetComponent(typeof(HexOverlay)) as HexOverlay).currState == HexState.capture)
-                            {
-                                mission.AddOrder(new HoldOrder(points[endPoint], points[endPoint], commandee));
-                            }
-
-                            mission.AddOrder(new MoveOrder(points[endPoint - 1], points[endPoint], this.commandee));
+                            mission.AddOrder(new MoveOrder(points[idx - 1], points[idx], this.commandee));
                         }
-
                     }
-                    else
-                    {
-                        mission.AddOrder(new MoveOrder(points[idx - 1], points[idx], this.commandee));
-                    }
-
                 }
             }
             
@@ -362,7 +386,7 @@ public class CommandTracer : MonoBehaviour
         }
         else
         {
-            Debug.Log("Attempted to move " + commandee.GetUnitType() + " to invalid tile");
+            Debug.Log("Attempted to move " + commandee.ToString() + " to invalid tile");
         }
 
         endPoint = 0;
@@ -381,16 +405,12 @@ public class CommandTracer : MonoBehaviour
 
         if(lie.currState == HexState.attackable)
         {
-            prevTilePos = lie.FindValidNeighbor();
+            prevTilePos = lie.FindValidNeighborFor(commandee).myCoords;
         }
 
 
 
         HandleMouseAtTile(fakeMouseTile);
-
-
-        
-
 
         SendCommand();
     }

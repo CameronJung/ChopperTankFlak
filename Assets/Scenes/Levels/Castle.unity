@@ -404,11 +404,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3639321720723932259, guid: c911212b64dae9c4c92179951db77758, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.026976109
+      value: -1.48
       objectReference: {fileID: 0}
     - target: {fileID: 3639321720723932259, guid: c911212b64dae9c4c92179951db77758, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -6.108485
+      value: -4.29
       objectReference: {fileID: 0}
     - target: {fileID: 3639321720723932259, guid: c911212b64dae9c4c92179951db77758, type: 3}
       propertyPath: m_LocalPosition.z
@@ -563,7 +563,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 8
-  m_Sprite: {fileID: 21300000, guid: 1ef756f37b389514a9747251090bd7f6, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b3c5d32d3f63b0044a6da28b2521d129, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -571,7 +571,7 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!4 &56070249

@@ -517,6 +517,18 @@ public class HexOverlay : MonoBehaviour
         this.AffectedBy.Add(unit);
     }
 
+    /*
+     * Notify UnaffectedBy
+     * 
+     * This method is called by a unit when it becomes aware that it's affectors are out of date
+     * Despite the name of this method this does not mean that this HexOverlay won't be immediately affected again
+     */
+    public void NotifyUnaffectedBy(Unit unit)
+    {
+        AffectedBy.Remove(unit);
+    }
+
+
     protected void NotifyOfBoardChange()
     {
         foreach(Unit unit in AffectedBy)
@@ -553,6 +565,8 @@ public class HexOverlay : MonoBehaviour
                 break;
 
         }
+
+        
     }
 
 
@@ -589,12 +603,13 @@ public class HexOverlay : MonoBehaviour
 
         foreach (HexOverlay hex in adjacent)
         {
-            if (hex.currState == HexState.reachable && hex.CanIBeOn(unit))
+            if ((hex.currState == HexState.reachable || hex.currState == HexState.hold) && hex.CanIBeOn(unit))
             {
                 neighbor = hex;
             }
         }
 
+        Debug.Assert(neighbor != null, "The FindValidNeighborFor function returned null value for the position " + this.myCoords + " with regards to the unit: " + unit.ToString());
 
         return neighbor;
     }
@@ -646,6 +661,10 @@ public class HexOverlay : MonoBehaviour
         this.ChangeState(affect.RecordedState, conspicuous);
         this.distanceFrom = affect.DistanceFrom;
         this.rangeFrom = affect.RangeFrom;
+        if (affect.WithinRange)
+        {
+            this.MarkRange(conspicuous);
+        }
     }
 
 
@@ -707,7 +726,7 @@ public class HexOverlay : MonoBehaviour
         holdSprite.SetActive(false);
         rangeSprite.SetActive(false);
         snipeSprite.SetActive(doShow);
-        currState = HexState.range;
+        currState = HexState.snipe;
     }
 
     //reset all flags to null

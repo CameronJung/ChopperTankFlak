@@ -22,11 +22,8 @@ public class RocketCarrier : RangedUnit
 
     public override void ResolveCombat(Unit other)
     {
-        //We will not expect a response if we are responding
-        if (other.myState != UnitState.stalemate && !other.waitingForResponse)
-        {
-            waitingForResponse = (other.GetUnitType() == this.GetUnitType() || other.GetUnitType() == UnitType.Helicopter);
-        }
+        //Rocket carriers do not expect a response because they always destroy their target
+        //Further Rocket Carriers are always destroyed when attacked
         other.BeEngaged(this);
     }
 
