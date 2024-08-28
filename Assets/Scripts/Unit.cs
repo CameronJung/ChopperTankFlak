@@ -87,7 +87,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
 
     // Start is called before the first frame update
-    void Start()
+    virtual public void Start()
     {
         PaintUnit();
         soundMaker = gameObject.GetComponent<AudioSource>();
@@ -448,7 +448,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
 
     //This method sets the unit as being ready to move this turn
-    public bool Revitalize()
+    virtual public bool Revitalize()
     {
         bool ready = myState != UnitState.stalemate;
         this.bounty = 0;
@@ -566,7 +566,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
             if (Affectors.ContainsKey(key))
             {
-                can = Affectors[key].RecordedState != HexState.unreachable;
+                can = !(Affectors[key].RecordedState == HexState.unreachable || (Affectors[key].RecordedState == HexState.range));
             }
         }
 
