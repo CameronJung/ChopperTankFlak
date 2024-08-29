@@ -18,6 +18,9 @@ public static class UniversalConstants : object
     public const float HEXWIDTHWORLDUNITS = 0.8659766f;
     public const float HEXHEIGHTWORLDUNITS = 1.0f;
 
+
+
+
     //Constants for unit types using enums makes code more readable
     public enum UnitType : int
     {
@@ -28,7 +31,7 @@ public static class UniversalConstants : object
         Artillery = 4
     }
 
-    public enum MovementType: int
+    public enum MovementType : int
     {
         Legs = 0,
         RotaryWings = 1,
@@ -47,13 +50,13 @@ public static class UniversalConstants : object
         DownRight = 5,
     }
 
-    public enum Faction: int
+    public enum Faction : int
     {
         ComputerTeam = 0,
         PlayerTeam = 1
     }
 
-    public enum HexState: int
+    public enum HexState : int
     {
         unreachable = 0,
         reachable = 1,
@@ -64,7 +67,7 @@ public static class UniversalConstants : object
         snipe = 6,
     }
 
-    public enum UnitState: int
+    public enum UnitState : int
     {
         tired = 0,
         ready = 1,
@@ -72,8 +75,21 @@ public static class UniversalConstants : object
         retaliating = 3,
     }
 
-    
-    
+    public enum BattleOutcome : int
+    {
+        countered = -1,
+        stalemate = 0,
+        destroyed = 1
+    }
+
+
+    private static BattleOutcome[,] Outcomes = {
+        {BattleOutcome.destroyed, BattleOutcome.countered, BattleOutcome.countered, BattleOutcome.countered, BattleOutcome.destroyed}, 
+        {BattleOutcome.destroyed, BattleOutcome.stalemate, BattleOutcome.destroyed, BattleOutcome.countered, BattleOutcome.destroyed}, 
+        {BattleOutcome.destroyed, BattleOutcome.countered, BattleOutcome.stalemate, BattleOutcome.destroyed, BattleOutcome.destroyed}, 
+        {BattleOutcome.destroyed, BattleOutcome.destroyed, BattleOutcome.countered, BattleOutcome.stalemate, BattleOutcome.destroyed}, 
+        {BattleOutcome.destroyed, BattleOutcome.destroyed, BattleOutcome.destroyed, BattleOutcome.destroyed, BattleOutcome.destroyed}
+        };
 
 
     public static Dictionary<Faction, Color> TeamColours = new Dictionary<Faction, Color>
@@ -82,7 +98,7 @@ public static class UniversalConstants : object
         {Faction.PlayerTeam, new Color(0.1f, 0.5f, 0.8f) }
     };
 
-
+    
 
     /*
      * 
@@ -127,5 +143,31 @@ public static class UniversalConstants : object
         return weakness;
     }
 
+
+
+    /*
+     * Predict Battle Result
+     * 
+     * this method returns the results of a hypothetical engagement provided the beligerant units
+     * 
+     * !Note! this method assumes that the attacker is not in stalemate
+     * 
+     */
+    public static BattleOutcome PredictBattleResult(Unit Attacker, Unit target)
+    {
+        BattleOutcome result;
+
+        if(target.myState == UnitState.stalemate)
+        {
+            result = BattleOutcome.destroyed;
+        }
+        else
+        {
+            result = Outcomes[(int)Attacker.GetUnitType(), (int)target.GetUnitType()];
+        }
+
+
+        return result;
+    }
 
 }

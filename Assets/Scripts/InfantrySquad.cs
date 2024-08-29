@@ -32,10 +32,7 @@ public class InfantrySquad : Unit
     //POLYMORPHISM
     public override void ResolveCombat(Unit other)
     {
-        if (other.myState != UnitState.stalemate)
-        {
-            waitingForResponse = (other.GetUnitType() != this.GetUnitType());
-        }
+        waitingForResponse = UniversalConstants.PredictBattleResult(this, other) != BattleOutcome.destroyed;
 
 
         other.BeEngaged(this);
