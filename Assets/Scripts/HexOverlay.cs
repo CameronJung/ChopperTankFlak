@@ -665,6 +665,13 @@ public class HexOverlay : MonoBehaviour
         {
             this.MarkRange(conspicuous);
         }
+
+        if (affect.CanAttack && affect.Owner.GetAllegiance() == Faction.PlayerTeam)
+        {
+            intel.AffectedBy(affect.Owner);
+        }
+
+        //nav.ChangeDebugTextTo(intel.GetDebugString());
     }
 
 

@@ -17,6 +17,9 @@ public class HexAffect
     //addition to some other action like movement
     public bool WithinRange { get; private set; }
 
+    //This property indicates if the uit owning this affect can attack the affected Hex
+    public bool CanAttack { get; private set; }
+
     public Unit Owner { get; private set; }
 
     public HexState RecordedState { get; private set; }
@@ -24,8 +27,9 @@ public class HexAffect
     
 
 
-    public HexAffect(Unit belongsTo, HexOverlay affects, HexState state, int steps, bool inRange = false)
+    public HexAffect(Unit belongsTo, HexOverlay affects, HexState state, int steps, bool inRange = false, bool attackable = false)
     {
+        
         this.Hex = affects;
         Hex.NotifyAffectOf(belongsTo);
         this.DistanceFrom = steps;
@@ -33,6 +37,7 @@ public class HexAffect
         this.Owner = belongsTo;
         this.RecordedState = state;
         this.WithinRange = inRange;
+        this.CanAttack = attackable;
     }
 
     public void Restore(bool conspicuous = true)
@@ -66,7 +71,7 @@ public class HexAffect
             BuildingOverlay building = (BuildingOverlay)Hex;
             if (building.CanCapture(Owner))
             {
-                if(RecordedState == HexState.reachable)
+                if(RecordedState == HexState.reachable || RecordedState == HexState.hold)
                 {
                     RecordedState = HexState.capture;
                 }
@@ -89,7 +94,19 @@ public class HexAffect
         if(Owner is RangedUnit)
         {
             this.WithinRange = this.RangeFrom >= min && this.RangeFrom <= max;
+            if (this.WithinRange)
+            {
+                this.MutateAttackable();
+            }
+            
         }
+    }
+
+
+    //Mark the hex as being able to be attacked
+    public void MutateAttackable()
+    {
+        this.CanAttack = true;
     }
 
 }

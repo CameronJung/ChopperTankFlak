@@ -145,11 +145,17 @@ public class SelectionManager : MonoBehaviour
         {
 
             List<Directive> directives = new List<Directive>();
+
+
+
+            /*
             GameObject obj = map.GetInstantiatedObject(selectedPos);
             HexOverlay hextile = obj.GetComponent(typeof(HexOverlay)) as HexOverlay;
-
-            affectedHexes = hextile.BeginExploration(selectedUnit, false);
             
+            affectedHexes = hextile.BeginExploration(selectedUnit, false);
+            */
+
+            affectedHexes = selectedUnit.TacticalAnalysis(false);
 
             foreach (HexOverlay hex in affectedHexes)
             {
@@ -157,10 +163,9 @@ public class SelectionManager : MonoBehaviour
                 {
                     directives.Add(new Directive(selectedUnit, hex));
                 }
-                //hex.nav.ChangeDebugTextTo(hex.intel.GetDebugString());
             }
             selectedUnit.SetBounty(directives);
-
+            
             HandleDeselect();
         }
     }

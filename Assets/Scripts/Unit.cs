@@ -194,12 +194,13 @@ public abstract class Unit : MonoBehaviour, ISelectable
     //The parameter conspicuous indicates if the changes to the gameboard's state should be shown
     public List<HexOverlay> OnSelected(bool conspicuous = true)
     {
-        
+
         if(this.allegiance == manager.WhosTurn() && myState == UnitState.ready)
+        //if (manager.WhosTurn() == Faction.PlayerTeam)
         {
             List<HexOverlay> hexes = new List<HexOverlay>();
 
-            ShowEffectOnBoard( conspicuous);
+            ShowEffectOnBoard( conspicuous && manager.WhosTurn() == Faction.PlayerTeam);
 
             foreach(HexAffect affect in Affectors.Values)
             {
@@ -215,6 +216,22 @@ public abstract class Unit : MonoBehaviour, ISelectable
             //return an empty list
             return new List<HexOverlay>();
         }
+    }
+
+
+    public List<HexOverlay> TacticalAnalysis(bool conspicuous)
+    {
+        List<HexOverlay> affected = new List<HexOverlay>();
+
+        
+        this.ShowEffectOnBoard(conspicuous);
+
+        foreach(HexAffect affect in Affectors.Values)
+        {
+            affected.Add(affect.Hex);
+        }
+
+        return affected;
     }
 
     
@@ -668,7 +685,9 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
         foreach(HexAffect move in Affectors.Values)
         {
+            move.MutateAttackable();
             moves.Add(move.Hex);
+            
         }
 
 
@@ -689,15 +708,15 @@ public abstract class Unit : MonoBehaviour, ISelectable
                         {
                             attackable = adj.GetOccupiedBy().GetAllegiance() != this.GetAllegiance();
                         }
-
+                        adj.intel.AffectedBy(this);
 
                         if (attackable)
                         {
-                            Affectors.Add(GridHelper.HashGridCoordinates(adj.myCoords), new HexAffect(this, adj, HexState.attackable, dist + 1));
+                            Affectors.Add(GridHelper.HashGridCoordinates(adj.myCoords), new HexAffect(this, adj, HexState.attackable, dist + 1, false, true));
                         }
                         else
                         {
-                            Affectors.Add(GridHelper.HashGridCoordinates(adj.myCoords), new HexAffect(this, adj, HexState.range, dist + 1));
+                            Affectors.Add(GridHelper.HashGridCoordinates(adj.myCoords), new HexAffect(this, adj, HexState.range, dist + 1, false, true));
                         }
                     }
                     else

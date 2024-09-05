@@ -32,11 +32,6 @@ public abstract class RangedUnit : TurretedUnit {
         
 
 
-        //foreach(HexAffect affect in this.Affectors.Values)
-        //{
-        //    affect.MutateWithinRange(this.MinimumRange, this.MaximumRange);
-        //}
-
         int step = 0;
 
         do
@@ -71,7 +66,8 @@ public abstract class RangedUnit : TurretedUnit {
                             }
                         }
 
-                        Affectors.Add(GridHelper.HashGridCoordinates(hex.myCoords), new HexAffect(this, hex, state, step, state == HexState.unreachable));
+                        Affectors.Add(GridHelper.HashGridCoordinates(hex.myCoords), new HexAffect(this, hex, state, step, state == HexState.unreachable, true));
+                        hex.intel.AffectedBy(this);
                     }
                 }
 

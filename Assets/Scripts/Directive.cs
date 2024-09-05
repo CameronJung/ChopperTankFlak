@@ -54,7 +54,7 @@ public class Directive
     private void ThinkThrough() 
     {
         smartness = 0;
-        if(directiveType == HexState.attackable)
+        if(directiveType == HexState.attackable || directiveType == HexState.snipe)
         {
             smartness += ConsiderMatchup();
         }
@@ -80,36 +80,62 @@ public class Directive
     {
         int smart = 0;
         Unit other = this.destination.GetOccupiedBy();
+        
+
+
+
         if (other != null)
         {
-            if (capable.IsWeakTo(other))
-            {
-                smart += WILL_BE_DESTROYED;
-            }
-            else
-            {
-                
-                if (capable.GetUnitType() == other.GetUnitType() && capable.GetUnitType() != UnitType.InfantrySquad)
-                {
-                    smart += STARTS_STALEMATE;
-                }
-                else
-                {
+            BattleOutcome expectation = UniversalConstants.PredictBattleResult(this.capable, other);
+
+
+            
+
+            switch (expectation){
+                case BattleOutcome.countered:
+
+                    smart += WILL_BE_DESTROYED;
+                    break;
+                case BattleOutcome.stalemate:
+
+                    smart += STARTS_STALEMATE + other.bounty;
+
+                    if (destination.FindValidNeighborFor(capable).intel.IsStalemateRisky(other))
+                    {
+                        smart += MILD_DANGER;
+                    }
+
+                    break;
+                case BattleOutcome.destroyed:
+
                     if(other.GetUnitType() == UnitType.InfantrySquad)
                     {
                         smart += DESTROYS_INFANTRY;
+                    }
+                    else if(other.GetUnitType() == UnitType.Artillery)
+                    {
+                        smart += DESTROYS_ARTILLERY;
                     }
                     else
                     {
                         smart += DESTROYS_VEHICLE;
                     }
-                    
-                }
-                smart += other.bounty;
-            }
 
+                    if(capable.GetUnitType() == UnitType.InfantrySquad)
+                    {
+                        //Prioritize destroying unirs with infantry, as this is an efficient use of firepower
+                        smart += INFANTRY_DESTROYS_UNIT;
+                    }
+
+                    smart += other.bounty;
+
+                    break;
+
+            }
+            
             if(other.myState == UniversalConstants.UnitState.stalemate)
             {
+                //Avoid leaving stalemates unresolved
                 smart += RESOLVES_STALEMATE;
 
                 if(capable.GetUnitType() == UniversalConstants.UnitType.InfantrySquad)
@@ -117,6 +143,7 @@ public class Directive
                     smart += INFANTRY_ENDS_STALEMATE;
                 }
             }
+            
         }
 
         return smart;
@@ -156,18 +183,23 @@ public class Directive
         {
             
 
-
-
-            //The measure true distance function is expensive so only perform it when the distance travelled is significant
             if (distant)
             {
                 
                 if (CapableDistance > DestinationDistance)
                 {
-                    smart += CLOSER_TO_ENEMY_BASE;
+                    
                     if (capable.GetUnitType() == UnitType.InfantrySquad)
                     {
                         smart += INFANTRY_CLOSER_TO_ENEMY_BASE;
+                    }
+                    else if(capable.GetUnitType() == UnitType.Artillery)
+                    {
+                        smart += ARTILLERY_CLOSER_TO_BASE;
+                    }
+                    else
+                    {
+                        smart += CLOSER_TO_ENEMY_BASE;
                     }
                 }
             }
@@ -176,7 +208,6 @@ public class Directive
             if (capable.GetUnitType() == UnitType.InfantrySquad && destination.myCoords == intel.GetPlayerBaseLoc())
             {
                 smart += INFANTRY_CAPTURES_BASE;
-                Debug.Log("AI evaluated capture directive");
             }
         }
 

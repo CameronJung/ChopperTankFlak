@@ -68,7 +68,7 @@ MonoBehaviour:
     weapons.
   Turret: {fileID: 4342443727045163106}
   MinimumRange: 3
-  MaximumRange: 6
+  MaximumRange: 5
   Rocket: {fileID: 4342443724964143185}
 --- !u!82 &4342443724918993904
 AudioSource:
