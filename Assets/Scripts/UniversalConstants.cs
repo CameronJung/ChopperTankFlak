@@ -18,13 +18,25 @@ public static class UniversalConstants : object
     public const float HEXWIDTHWORLDUNITS = 0.8659766f;
     public const float HEXHEIGHTWORLDUNITS = 1.0f;
 
+
+
+
     //Constants for unit types using enums makes code more readable
     public enum UnitType : int
     {
         InfantrySquad = 0,
         Helicopter = 1,
         Tank = 2,
-        Flak = 3
+        Flak = 3,
+        Artillery = 4
+    }
+
+    public enum MovementType : int
+    {
+        Legs = 0,
+        RotaryWings = 1,
+        Treads = 2,
+        Wheels = 3,
     }
 
 
@@ -38,22 +50,24 @@ public static class UniversalConstants : object
         DownRight = 5,
     }
 
-    public enum Faction: int
+    public enum Faction : int
     {
         ComputerTeam = 0,
         PlayerTeam = 1
     }
 
-    public enum HexState: int
+    public enum HexState : int
     {
         unreachable = 0,
         reachable = 1,
         attackable = 2,
         hold = 3,
         capture = 4,
+        range = 5,
+        snipe = 6,
     }
 
-    public enum UnitState: int
+    public enum UnitState : int
     {
         tired = 0,
         ready = 1,
@@ -61,7 +75,21 @@ public static class UniversalConstants : object
         retaliating = 3,
     }
 
-    
+    public enum BattleOutcome : int
+    {
+        countered = -1,
+        stalemate = 0,
+        destroyed = 1
+    }
+
+
+    private static BattleOutcome[,] Outcomes = {
+        {BattleOutcome.destroyed, BattleOutcome.countered, BattleOutcome.countered, BattleOutcome.countered, BattleOutcome.destroyed}, 
+        {BattleOutcome.destroyed, BattleOutcome.stalemate, BattleOutcome.destroyed, BattleOutcome.countered, BattleOutcome.destroyed}, 
+        {BattleOutcome.destroyed, BattleOutcome.countered, BattleOutcome.stalemate, BattleOutcome.destroyed, BattleOutcome.destroyed}, 
+        {BattleOutcome.destroyed, BattleOutcome.destroyed, BattleOutcome.countered, BattleOutcome.stalemate, BattleOutcome.destroyed}, 
+        {BattleOutcome.destroyed, BattleOutcome.destroyed, BattleOutcome.destroyed, BattleOutcome.destroyed, BattleOutcome.destroyed}
+        };
 
 
     public static Dictionary<Faction, Color> TeamColours = new Dictionary<Faction, Color>
@@ -70,15 +98,15 @@ public static class UniversalConstants : object
         {Faction.PlayerTeam, new Color(0.1f, 0.5f, 0.8f) }
     };
 
-
+    
 
     /*
      * 
      * This method returns the unit type that the specified "unit" is weak to
      * In the case of infantry which are vulnerable to all units the infantry type is returned
      * 
-     * !NOTE! if a unit type is not found than the type of "unit" will be returned, this shouldn't happen though
-     * because all unit types are accounted for
+     * !NOTE! if a unit type is not found than the type of "unit" will be returned, this is technically true
+     * because both infantry and rocket carriers are able to defeat their own unit type
      * 
      */
     public static UnitType GetWeaknessOf(Unit unit)
@@ -99,8 +127,8 @@ public static class UniversalConstants : object
      * This method returns the unit type that the specified "unit" is strong against
      * In the case of infantry which are vulnerable to all units the infantry type is returned
      * 
-     * !NOTE! if a unit type is not found than the type of "unit" will be returned, this shouldn't happen though
-     * because all unit types are accounted for
+     * !NOTE! if a unit type is not found than the type of "unit" will be returned, this is technically true
+     * as both infantry and Rocket Carriers can defeat their own unit type
      * 
      */
     public static UnitType GetStrengthOf(Unit unit)
@@ -115,5 +143,31 @@ public static class UniversalConstants : object
         return weakness;
     }
 
+
+
+    /*
+     * Predict Battle Result
+     * 
+     * this method returns the results of a hypothetical engagement provided the beligerant units
+     * 
+     * !Note! this method assumes that the attacker is not in stalemate
+     * 
+     */
+    public static BattleOutcome PredictBattleResult(Unit Attacker, Unit target)
+    {
+        BattleOutcome result;
+
+        if(target.myState == UnitState.stalemate)
+        {
+            result = BattleOutcome.destroyed;
+        }
+        else
+        {
+            result = Outcomes[(int)Attacker.GetUnitType(), (int)target.GetUnitType()];
+        }
+
+
+        return result;
+    }
 
 }

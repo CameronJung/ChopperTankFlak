@@ -55,7 +55,7 @@ public class Tank : TurretedUnit
             }
             else
             {
-                if (assailant.GetUnitType() == UnitType.Helicopter)
+                if (assailant.GetUnitType() == UnitType.Helicopter || assailant.GetUnitType() == UnitType.Artillery)
                 {
                     //Tanks are vulnerable to Helicopters
                     //manager.ReportActionComplete(this);

@@ -55,7 +55,7 @@ public class Helicopter : Unit
             }
             else
             {
-                if (assailant.GetUnitType() == UnitType.Flak)
+                if (assailant.GetUnitType() == UnitType.Flak || assailant.GetUnitType() == UnitType.Artillery)
                 {
                     //Helicopters are vulnerable to Flak
                     //manager.ReportActionComplete(this);

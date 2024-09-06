@@ -241,7 +241,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 6
   m_Sprite: {fileID: 469949076, guid: f2a60eed8ab120e4fb41d38f9eb99556, type: 3}
   m_Color: {r: 0.49, g: 0.56, b: 0.64, a: 1}
   m_FlipX: 0
@@ -412,7 +412,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 4
   m_Sprite: {fileID: 21300000, guid: 3bf9462b57c039e4b84f5621ad7a1ad8, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.1, g: 0.5, b: 0.8, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -497,7 +497,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: dcc2657ccb2012943b6d94b0e2c0c03f, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.1, g: 0.5, b: 0.8, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -649,6 +649,7 @@ MonoBehaviour:
   staleSprite: {fileID: 3035620316806390470}
   baseSprite: {fileID: 8954567185190465350}
   mobility: 4
+  Movement: 2
   deathEffect: {fileID: 3338526990042780928, guid: 74eead4cb7d6e2c428e0c70082ffc027, type: 3}
   attackSound: {fileID: 8300000, guid: 5ff823f546b52574a931e1d9b44290a6, type: 3}
   unitName: Battle Tank
@@ -677,6 +678,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!82 &4301243136025951791
 AudioSource:
   m_ObjectHideFlags: 0

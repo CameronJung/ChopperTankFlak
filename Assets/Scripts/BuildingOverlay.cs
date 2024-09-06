@@ -76,7 +76,7 @@ public class BuildingOverlay : HexOverlay
         }
     }
 
-    private bool CanCapture(Unit unit)
+    public bool CanCapture(Unit unit)
     {
         bool can = (unit.GetUnitType() == UnitType.InfantrySquad) && (unit.GetAllegiance() != owner);
         return can;
@@ -87,7 +87,15 @@ public class BuildingOverlay : HexOverlay
         security = BUILDINGCAPFRESH;
     }
 
+    protected override void ChangeState(HexState state, bool doShow)
+    {
+        base.ChangeState(state, doShow);
 
+        if(state == HexState.capture)
+        {
+            this.MarkCapture();
+        }
+    }
 
     //These functions are used to change an overlay's state
     protected override void MarkMove(bool doShow = true)
@@ -114,6 +122,8 @@ public class BuildingOverlay : HexOverlay
         combatSprite.SetActive(false);
         holdSprite.SetActive(false);
         captureSprite.SetActive(doShow);
+        rangeSprite.SetActive(false);
+        snipeSprite.SetActive(false);
         currState = HexState.capture;
     }
 

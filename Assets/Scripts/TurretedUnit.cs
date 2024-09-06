@@ -84,13 +84,46 @@ public abstract class TurretedUnit : Unit
     public override IEnumerator ExecuteAttackOrder(Vector3 origin, Vector3 destination)
     {
         Vector3 displacement = destination - origin;
+        
+
+        //Attack orders always come at the end of a stack so we should update the board ASAP
+        this.FinalizeMovement();
+
+        yield return AimTurret(displacement);
+        
+
+        HexOverlay hex = map.GetInstantiatedObject(map.WorldToCell(destination)).GetComponent<HexOverlay>();
+        Unit target = hex.GetOccupiedBy();
+
+        //Play attack animation
+        if (puppeteer != null)
+        {
+            puppeteer.SetTrigger("Attack");
+            soundMaker.PlayOneShot(attackSound);
+            yield return new WaitForSeconds(0.5f);
+        }
+
+
+        this.ResolveCombat(target);
+
+        //wait for a few frames to ensure that the other unit has had time to handle being attacked
+        for (int i = 0; i < 3; i++)
+        {
+            yield return null;
+        }
+
+        
+
+        orderComplete = true;
+    }
+
+
+    protected IEnumerator AimTurret(Vector3 displacement)
+    {
         Vector3 heading = Turret.transform.eulerAngles;
         float turnBy = Time.deltaTime * this.turnSpeed;
         float bearing = Vector3.SignedAngle(Vector3.right, displacement, Vector3.forward);
         WaitForFixedUpdate wait = new WaitForFixedUpdate();
-
-        //Attack orders always come at the end of a stack so we should update the board ASAP
-        this.FinalizeMovement();
 
 
         if (bearing < 0)
@@ -119,32 +152,6 @@ public abstract class TurretedUnit : Unit
         }
 
         Turret.transform.eulerAngles = new Vector3(0, 0, bearing);
-        HexOverlay hex = map.GetInstantiatedObject(map.WorldToCell(destination)).GetComponent<HexOverlay>();
-        Unit target = hex.GetOccupiedBy();
 
-        //Play attack animation
-        if (puppeteer != null)
-        {
-            puppeteer.SetTrigger("Attack");
-            soundMaker.PlayOneShot(attackSound);
-            yield return new WaitForSeconds(0.5f);
-        }
-
-
-        this.ResolveCombat(target);
-
-        //wait for a few frames to ensure that the other unit has had time to handle being attacked
-        for (int i = 0; i < 3; i++)
-        {
-            yield return null;
-        }
-
-        
-
-        
-
-        
-
-        orderComplete = true;
     }
 }

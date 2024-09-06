@@ -85,8 +85,7 @@ public class AIcommander : MonoBehaviour
                 intel.WipeOldData();
                 foreach(Unit enemy in enemies)
                 {
-                    //yield return null;
-                    //yield return null;
+                    
 
                     selector.HandleAISelection(enemy.myTilePos);
 

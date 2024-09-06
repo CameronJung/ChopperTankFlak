@@ -52,7 +52,7 @@ public class Flak : TurretedUnit
             }
             else
             {
-                if (assailant.GetUnitType() == UnitType.Tank)
+                if (assailant.GetUnitType() == UnitType.Tank || assailant.GetUnitType() == UnitType.Artillery)
                 {
                     //Flak Cars are vulnerable to Tanks
                     //manager.ReportActionComplete(this);

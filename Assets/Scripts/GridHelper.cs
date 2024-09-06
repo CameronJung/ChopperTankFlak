@@ -103,4 +103,13 @@ public static class GridHelper
         return (Vector3.SqrMagnitude(a - b) < HEXDISTANCESQUARED && (Vector3.SqrMagnitude(a - b) > 0.1f));
     }
 
+
+    public static int HashGridCoordinates(Vector3Int coords)
+    {
+        int hash =  (coords.x + 50) * 100 + coords.y +50;
+
+        return hash;
+
+    }
+
 }

@@ -72,7 +72,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 4
+  m_SortingOrder: 7
   m_Sprite: {fileID: 1839652246, guid: b22d12d748ae47143ab3624039c16024, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -156,7 +156,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 8
+  m_SortingOrder: 9
   m_Sprite: {fileID: 21300000, guid: 818b5b4d5f2bb2946ac916fce2e3dbf1, type: 3}
   m_Color: {r: 0.49, g: 0.56, b: 0.64, a: 0.7490196}
   m_FlipX: 0
@@ -243,9 +243,9 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 8
   m_Sprite: {fileID: 21300000, guid: b23cb89e891d9f1499f51a566131fddd, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.1, g: 0.5, b: 0.8, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -275,6 +275,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &4910570094358356591
 GameObject:
   m_ObjectHideFlags: 0
@@ -331,6 +332,7 @@ MonoBehaviour:
   staleSprite: {fileID: 4203905570461100149}
   baseSprite: {fileID: 4910570093529730395}
   mobility: 5
+  Movement: 1
   deathEffect: {fileID: 3338526990042780928, guid: 74eead4cb7d6e2c428e0c70082ffc027, type: 3}
   attackSound: {fileID: 8300000, guid: ae99d3a6fa361f040b2505712340ec4a, type: 3}
   unitName: Attack Helicopter
@@ -359,6 +361,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!82 &3129170238058390961
 AudioSource:
   m_ObjectHideFlags: 0
@@ -527,7 +530,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 6
+  m_SortingOrder: 9
   m_Sprite: {fileID: 21300000, guid: c352a24e03f0b114197f1d05f6523c32, type: 3}
   m_Color: {r: 0.49, g: 0.56, b: 0.64, a: 1}
   m_FlipX: 0
@@ -611,7 +614,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: fedfe45ddbad098428e0869cadf44df9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
