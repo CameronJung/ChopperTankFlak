@@ -20,10 +20,10 @@ public static class AITacticalValues
 
     //Threat analysis
     public const int MORTAL_DANGER = -5;
-    public const int MILD_DANGER = -2;
-    public const int OPPORTUNITY = +2;
+    public const int MILD_DANGER = -1;
+    public const int OPPORTUNITY = +3;
     //Artillery
-    public const int ARTILLERY_THREATENS_VEHICLE = -3;
+    public const int ARTILLERY_THREATENS_VEHICLE = -2;
     public const int ARTILLERY_THREATENS_INFANTRY = -1;
     public const int ARTILLERY_THREATENED = -2;
 
