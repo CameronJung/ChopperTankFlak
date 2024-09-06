@@ -2,9 +2,16 @@
 A simple rock-paper-scissors strategy game built in the Unity engine.
 
 
-Current Version: 1.4.5
+Current Version: 1.5.0
 
 Update Log:
+
+V 1.5.0 (android v8)(Major update)
+ - Added a ranged unit, the rocket carrier
+ - Added rocket carriers to: Operation Bankrupt, Operation Castle, and Operation Pangea
+ - Added instruction page for rocket carrier
+ - Adjusted AI values to make AI more reckless (neccesary for new game mechanics)
+ - increased the number of enemy units in operation castle
 
 V 1.4.5 (android v8)(Hotfix)
  - The music volume slider wasn't hooked up properly on a couple levels, these have been fixed
