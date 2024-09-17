@@ -140,7 +140,7 @@ public class HexOverlay : MonoBehaviour
 
         if(this.occupiedBy != null)
         {
-            valid = valid && this.occupiedBy.GetAllegiance() != unit.GetAllegiance() || unit == this.occupiedBy ;
+            valid = valid || this.occupiedBy.GetAllegiance() != unit.GetAllegiance() || unit == this.occupiedBy ;
         }
 
         return valid;

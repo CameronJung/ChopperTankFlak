@@ -249,6 +249,8 @@ public class CommandTracer : MonoBehaviour
         if (directDestination.currState == HexState.attackable)
         {
 
+            Debug.Log("An attack mission is being redrawn");
+
 
             //set the tile before the curr tile as the attack position
             HexOverlay attackPosition = map.GetInstantiatedObject(map.WorldToCell(points[currTileIdx - 1])).GetComponent<HexOverlay>();

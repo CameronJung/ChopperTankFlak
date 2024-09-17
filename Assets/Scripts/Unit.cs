@@ -40,6 +40,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     protected Tilemap map;
     protected GameManager manager;
+    protected MilitaryManager militaryManager;
 
 
     protected Stack<Order> orders = new Stack<Order>();
@@ -89,6 +90,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
     // Start is called before the first frame update
     virtual public void Start()
     {
+
+        
         PaintUnit();
         soundMaker = gameObject.GetComponent<AudioSource>();
         puppeteer = gameObject.GetComponent<Animator>();
@@ -125,7 +128,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
         
         HexOverlay hex = map.GetInstantiatedObject(myTilePos).GetComponent<HexOverlay>();
         hex.SetOccupiedBy(null);
-        manager.ReportDeath(this);
+        //manager.ReportDeath(this);
+        militaryManager.RemoveUnitFrom(this);
         if (!actionReported)
         {
             manager.ReportActionComplete(this);
@@ -183,6 +187,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
     protected void Enlist()
     {
         manager = GameObject.Find(MANAGERPATH).GetComponent<GameManager>();
+        militaryManager = GameObject.Find(MANAGERPATH).GetComponent<MilitaryManager>();
+        militaryManager.AddUnit(this);
         manager.ReportForDuty(this);
     }
 
@@ -733,6 +739,27 @@ public abstract class Unit : MonoBehaviour, ISelectable
                 }
             }
             
+            
+        }
+
+        //check for hexes that can't be reached because of an allied unit
+        foreach(HexOverlay hex in moves)
+        {
+            if (!hex.CanIBeOn(this))
+            {
+                if (hex.GetOccupiedBy() != null)
+                {
+                    //If a hex got into the movement, than we can move on it, but not be on it, than it must be because an allied unit is on it
+
+                    foreach (HexOverlay adj in hex.adjacent)
+                    {
+                        if (!Affectors.ContainsKey(GridHelper.HashGridCoordinates(adj.myCoords)))
+                        {
+                            Affectors.Add(GridHelper.HashGridCoordinates(adj.myCoords), new HexAffect(this, adj, HexState.unreachable, hex.distanceFrom + 1));
+                        }
+                    }
+                }
+            }
         }
     }
 

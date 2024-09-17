@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameMusicManager musicManager;
 
     [SerializeField] private GameObject pausePanel;
-
+    private MilitaryManager militaryManager;
 
 
     private AIIntelHandler intel;
@@ -41,6 +41,12 @@ public class GameManager : MonoBehaviour
     private bool battleOver = false;
 
 
+
+    private void Awake()
+    {
+        militaryManager = gameObject.GetComponent<MilitaryManager>();
+    }
+
     // Start is called before the first frame update0
     void Start()
     {
@@ -54,8 +60,11 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("This is not a mobile platform");
         }
-        Debug.Log("Target FPS is: " + Application.targetFrameRate);
 
+        
+
+        Debug.Log("Target FPS is: " + Application.targetFrameRate);
+        
         BeginTurn();
     }
 
@@ -71,6 +80,7 @@ public class GameManager : MonoBehaviour
         if(unit.GetAllegiance() == Faction.PlayerTeam)
         {
             playerUnits.Add(unit);
+            
         }
         else
         {
@@ -83,7 +93,10 @@ public class GameManager : MonoBehaviour
         turnComplete = false;
         RevitalizeTeam();
 
-        if(turn % 2 == 0)
+        Debug.Log($"The computer team has {militaryManager.CountTotalUnits(Faction.ComputerTeam)} units.");
+        Debug.Log($"The player team has {militaryManager.CountTotalUnits(Faction.PlayerTeam)} units.");
+
+        if (turn % 2 == 0)
         {
             clicker.AllowClicks();
             musicManager.PlayPlayerMusic();
@@ -91,7 +104,7 @@ public class GameManager : MonoBehaviour
         else
         {
             clicker.BlockClicks();
-            enemyCO.TakeTurn(computerUnits);
+            enemyCO.TakeTurn();
             musicManager.PlayComputerMusic();
         }
     }
@@ -113,9 +126,20 @@ public class GameManager : MonoBehaviour
         if (!battleOver)
         {
             unitsAvailable = 0;
+
+            foreach (Unit unit in militaryManager.GetListOfUnits(WhosTurn()))
+            {
+
+                if (unit.Revitalize())
+                {
+                    unitsAvailable++;
+                    numPlayerUnitsReady++;
+                }
+            }
+            /*
             if (turn % 2 == 0)
             {
-                foreach (Unit unit in playerUnits)
+                foreach (Unit unit in militaryManager.GetListOfUnits(WhosTurn()))
                 {
 
                     if (unit.Revitalize())
@@ -135,7 +159,7 @@ public class GameManager : MonoBehaviour
                         numComputerUnitsReady++;
                     }
                 }
-            }
+            }*/
         }
         
     }
@@ -147,6 +171,7 @@ public class GameManager : MonoBehaviour
     {
 
         bool gameOver = false;
+        /*
         if (casualty.GetAllegiance() == Faction.PlayerTeam)
         {
             
@@ -158,10 +183,13 @@ public class GameManager : MonoBehaviour
             computerUnits.Remove(casualty);
             gameOver = (computerUnits.Count == 0);
         }
+        */
+
+        gameOver = militaryManager.CountTotalUnits(casualty.GetAllegiance()) == 0;
 
         if (gameOver)
         {
-            HandleBattleOver(computerUnits.Count == 0);
+            HandleBattleOver(militaryManager.CountTotalUnits(Faction.ComputerTeam) == 0);
         }
 
     }

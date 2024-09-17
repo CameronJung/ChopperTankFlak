@@ -15,6 +15,7 @@ public class AIcommander : MonoBehaviour
     [SerializeField] private GameManager manager;
 
     private Unit[] military;
+    private MilitaryManager militaryManager;
     private List<HexOverlay> possibilities;
     private List<Directive> bestMoves;
     private AIIntelHandler intel;
@@ -33,7 +34,7 @@ public class AIcommander : MonoBehaviour
         caution = Random.Range(MINCAUTION, MAXCAUTION +1);
         intel = gameObject.GetComponent<AIIntelHandler>();
         Map = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<Tilemap>();
-        
+        militaryManager = GameObject.Find(UniversalConstants.MANAGERPATH).GetComponent<MilitaryManager>();
     }
 
     // Update is called once per frame
@@ -43,9 +44,10 @@ public class AIcommander : MonoBehaviour
     }
 
 
-    public void TakeTurn(List<Unit> units)
+    public void TakeTurn()
     {
-        this.military = units.ToArray();
+        //this.military = units.ToArray();
+        this.military = militaryManager.GetListOfUnits(Faction.ComputerTeam).ToArray();
         StartCoroutine(IssueDirectives());
     }
 
@@ -81,7 +83,8 @@ public class AIcommander : MonoBehaviour
 
 
                 //Start by considering what the player might do next turn
-                Unit[] enemies = manager.GetPlayerMilitary();
+                //Unit[] enemies = manager.GetPlayerMilitary();
+                Unit[] enemies = militaryManager.GetListOfUnits(Faction.PlayerTeam).ToArray();
                 intel.WipeOldData();
                 foreach(Unit enemy in enemies)
                 {
@@ -145,6 +148,8 @@ public class AIcommander : MonoBehaviour
             {
                 Directive choice = RandomDirective(moves);
 
+                
+                //Describes the move in the console
                 Debug.Log("Chosen move was: " + choice.ToString());
 
                 selector.HandleAISelection(choice.GetUnit().myTilePos);
