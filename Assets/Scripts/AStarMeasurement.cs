@@ -34,6 +34,7 @@ public class AStarMeasurement : MonoBehaviour
 
     public void Start()
     {
+
         this.GValues = new Dictionary<Vector3Int, int>();
         this.HValues = new Dictionary<Vector3Int, int>();
         if (Application.isMobilePlatform)
@@ -66,13 +67,6 @@ public class AStarMeasurement : MonoBehaviour
     }
 
 
-    public AStarMeasurement(Tilemap tilemap)
-    {
-        this.Map = tilemap;
-
-        this.GValues = new Dictionary<Vector3Int, int>();
-        this.HValues = new Dictionary<Vector3Int, int>();
-    }
 
     public Coroutine BeginMeasurement(Unit agent, Vector3Int goal)
     {

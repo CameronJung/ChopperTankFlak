@@ -20,7 +20,7 @@ public class AIcommander : MonoBehaviour
     private List<Directive> bestMoves;
     private AIIntelHandler intel;
     private Tilemap Map;
-
+    private Strategist Tactician;
     
 
     //The higher this value is the less likely the AI is to follow through with unfavorable
@@ -31,6 +31,7 @@ public class AIcommander : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Tactician = gameObject.GetComponent<Strategist>();
         caution = Random.Range(MINCAUTION, MAXCAUTION +1);
         intel = gameObject.GetComponent<AIIntelHandler>();
         Map = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<Tilemap>();
@@ -99,6 +100,9 @@ public class AIcommander : MonoBehaviour
 
                     selector.HandleDeselect();
                 }
+
+
+                //Tactician.GenerateObjectives();
 
 
                 if (unmoved[idx].myState == UnitState.ready)

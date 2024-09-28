@@ -23,7 +23,7 @@ public class SelectionManager : MonoBehaviour
     void Start()
     {
         Ruler = gameObject.GetComponent<AStarMeasurement>();
-        Navigation = gameObject.GetComponent<GlobalNavigationData>();
+        Navigation = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<GlobalNavigationData>();
     }
 
 

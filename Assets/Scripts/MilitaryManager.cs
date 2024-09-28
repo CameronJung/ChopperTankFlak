@@ -4,6 +4,12 @@ using UnityEngine;
 using static UniversalConstants;
 
 
+
+/*
+ * Military Manager
+ * This class tracks and maintains the buildings and units that belong to the factions are in battle
+ * 
+ */
 public class MilitaryManager : MonoBehaviour
 {
 
@@ -11,6 +17,12 @@ public class MilitaryManager : MonoBehaviour
     { 
         {Faction.ComputerTeam, new Military(Faction.ComputerTeam) },
         {Faction.PlayerTeam, new Military(Faction.PlayerTeam) }
+    };
+
+    private Dictionary<Faction, List<BuildingOverlay>> Buildings = new Dictionary<Faction, List<BuildingOverlay>>
+    {
+        {Faction.ComputerTeam, new List<BuildingOverlay>() },
+        {Faction.PlayerTeam, new List<BuildingOverlay>() }
     };
 
     private GameManager boss;
@@ -58,5 +70,27 @@ public class MilitaryManager : MonoBehaviour
     public List<Unit>GetListOfUnits(Faction faction)
     {
         return militaries[faction].GetListOfUnits();
+    }
+
+    public List<Unit>GetListOfReadyUnits(Faction faction)
+    {
+        return militaries[faction].GetListOfReadyUnits();
+    }
+
+
+    public void RegisterBuildingOwnership(BuildingOverlay building) 
+    {
+        Buildings[building.GetAllegiance()].Add(building);
+    }
+
+    public void ChangeBuildingOwnershipRegistration(BuildingOverlay building, Faction capturer)
+    {
+        Buildings[building.GetAllegiance()].Remove(building);
+        Buildings[capturer].Add(building);
+    }
+
+    public List<BuildingOverlay> GetListOfBuildings(Faction faction)
+    {
+        return Buildings[faction];
     }
 }

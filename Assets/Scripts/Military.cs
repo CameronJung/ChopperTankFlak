@@ -107,4 +107,20 @@ public class Military
         return units;
     }
 
+
+    public List<Unit> GetListOfReadyUnits()
+    {
+        List<Unit> ready = new List<Unit>();
+
+        foreach(Unit unit in this.units)
+        {
+            if(unit.myState == UnitState.ready)
+            {
+                ready.Add(unit);
+            }
+        }
+
+        return ready;
+    }
+
 }

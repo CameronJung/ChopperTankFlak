@@ -19,6 +19,9 @@ public static class UniversalConstants : object
     public const float HEXHEIGHTWORLDUNITS = 1.0f;
 
 
+    //This is the maximum value that an objective can have, this maximum value is assigned if
+    //completeing the objective results in victory
+    public const float MAXTACTICALIMPORTANCE = 100.0f;
 
 
     //Constants for unit types using enums makes code more readable
