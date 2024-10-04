@@ -6,7 +6,7 @@ using static UniversalConstants;
 public abstract class Objective
 {
 
-    private const float MAXIMUMTURNS = 5.0f;
+    
     
     protected List<Unit> Assignees;
 
@@ -52,21 +52,5 @@ public abstract class Objective
 
 
 
-    /*
-     * Evaluate Distance
-     * 
-     * This method evaluates how far a unit is to the goal
-     * it will return float value inversely proportional to the number of turns it will take the unit to reach the destination
-     * 
-     */
-    protected float EvaluateDistance(Unit unit, int distance)
-    {
-        float rating = 0.0f;
-
-        float turns = Mathf.Max( (distance / unit.GetMobility()), MAXIMUMTURNS);
-
-        rating = Mathf.Abs(turns - MAXIMUMTURNS);
-
-        return rating;
-    }
+    
 }

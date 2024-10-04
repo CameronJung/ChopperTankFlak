@@ -12,13 +12,13 @@ public class Strategist : MonoBehaviour
     private MilitaryManager militaryManager;
     private AIIntelHandler intelHandler;
 
-    private List<Objective> Plan;
+    private List<Objective> Objectives;
 
     public EventHandler<Unit> OnUnitDeath;
 
     public Dictionary<Unit, Objective> Assignments { get; private set; }
     private GlobalNavigationData Navigation;
-
+    private AStarMeasurement measurer;
 
 
     
@@ -32,9 +32,9 @@ public class Strategist : MonoBehaviour
         militaryManager = GameObject.Find(UniversalConstants.MANAGERPATH).GetComponent<MilitaryManager>();
         Navigation = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<GlobalNavigationData>();
 
-        Plan = new List<Objective>();
+        Objectives = new List<Objective>();
         Assignments = new Dictionary<Unit, Objective>();
-
+        measurer = gameObject.GetComponent<AStarMeasurement>();
     }
 
     // Update is called once per frame
@@ -57,9 +57,32 @@ public class Strategist : MonoBehaviour
      * this method will go through the AI's units and assign them to objectives
      * 
      */
-    public void AssignObjectives()
+    public IEnumerator AssignObjectives()
     {
+
         Assignments.Clear();
+
+        List<Unit> units = militaryManager.GetListOfUnits(Faction.ComputerTeam);
+
+        GenerateObjectives();
+
+        Dictionary<Unit, List<ObjectiveAssignment>> possibilities = new Dictionary<Unit, List<ObjectiveAssignment>>();
+
+
+        foreach(Unit unit in units)
+        {
+            possibilities.Add(unit, new List<ObjectiveAssignment>());
+
+            foreach(Objective goal in Objectives)
+            {
+                ObjectiveAssignment oa = new ObjectiveAssignment(unit, goal, measurer);
+                yield return oa.CalculateSuitability();
+                possibilities[unit].Add(oa);
+            }
+
+            possibilities[unit].Sort();
+            Assignments.Add(unit, (possibilities[unit])[0].objective);
+        }
 
         //PseudoCode
         //Get list of AI units (units)
@@ -76,21 +99,21 @@ public class Strategist : MonoBehaviour
         List<Unit> enemies = militaryManager.GetListOfUnits(Faction.PlayerTeam);
         List<BuildingOverlay> buildings = militaryManager.GetListOfBuildings(Faction.PlayerTeam);
 
-        Plan.Clear();
+        Objectives.Clear();
 
         foreach(Unit enemy in enemies)
         {
-            DestroyUnitObjective killMission = new DestroyUnitObjective(enemy);
-            Plan.Add( killMission);
+            DestroyUnitObjective killMission = new DestroyUnitObjective(enemy, enemies.Count);
+            Objectives.Add( killMission);
         }
 
         foreach (BuildingOverlay building in buildings)
         {
             CaptureBuildingObjective captureMission = new CaptureBuildingObjective(building);
-            Plan.Add(captureMission);
+            Objectives.Add(captureMission);
         }
 
-        Debug.Log("The tactician has found " + Plan.Count + " Objective(s) to pursue");
+        //Debug.Log("The tactician has found " + Objectives.Count + " Objective(s) to pursue");
     }
 
 

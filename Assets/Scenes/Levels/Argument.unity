@@ -7948,6 +7948,7 @@ GameObject:
   - component: {fileID: 1917969240}
   - component: {fileID: 1917969241}
   - component: {fileID: 1917969242}
+  - component: {fileID: 1917969243}
   m_Layer: 0
   m_Name: EnemyCommander
   m_TagString: Untagged
@@ -8011,6 +8012,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 842880824307ef54aa31b3bbf86a89f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1917969243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1917969237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caee38fc7335d404a8be782eecbd830a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Map: {fileID: 1365311421}
 --- !u!1 &1948474142
 GameObject:
   m_ObjectHideFlags: 0

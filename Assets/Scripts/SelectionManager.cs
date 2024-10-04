@@ -12,6 +12,7 @@ public class SelectionManager : MonoBehaviour
 
     public Unit selectedUnit { get; private set; }
 
+    private Strategist Tactician;
 
     private List<HexOverlay> affectedHexes;
     private Vector3Int selectedPos = new Vector3Int();
@@ -26,7 +27,10 @@ public class SelectionManager : MonoBehaviour
         Navigation = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<GlobalNavigationData>();
     }
 
-
+    public void RememberStrategist(Strategist strat)
+    {
+        Tactician = strat;
+    }
     
 
     public void HandleNewSelection(Vector3Int tilePos, bool conspicuous = true)
@@ -312,20 +316,22 @@ public class SelectionManager : MonoBehaviour
             {
                 Directive noob = new Directive(selectedUnit, hex, knowledge);
 
+                Vector3Int tacticalGoal = Tactician.GetDestinationOfUnit(selectedUnit);
+
                 if (hex.distanceFrom == selectedUnit.GetMobility())
                 {
 
-                    if (Navigation.HasDistance(selectedUnit.GetUnitType(), hex.myCoords, knowledge.GetPlayerBaseLoc()))
+                    if (Navigation.HasDistance(selectedUnit.GetUnitType(), hex.myCoords, tacticalGoal))
                     {
                         //re-use distances already computed
-                        destDistance = Navigation.GetDistance(selectedUnit.GetUnitType(), hex.myCoords, knowledge.GetPlayerBaseLoc());
+                        destDistance = Navigation.GetDistance(selectedUnit.GetUnitType(), hex.myCoords, tacticalGoal);
                     }
                     else { 
                         timeForMeasure = Time.realtimeSinceStartup;
                         yield return null;
-                        yield return Ruler.BeginMeasurement(selectedUnit, knowledge.GetPlayerBaseLoc(), hex.myCoords);
+                        yield return Ruler.BeginMeasurement(selectedUnit, tacticalGoal, hex.myCoords);
                         destDistance = Ruler.GetMeasuredDistance();
-                        Navigation.LogDistance(selectedUnit.GetUnitType(), hex.myCoords, knowledge.GetPlayerBaseLoc(), destDistance);
+                        Navigation.LogDistance(selectedUnit.GetUnitType(), hex.myCoords, tacticalGoal, destDistance);
                         timeForMeasure = Time.realtimeSinceStartup - timeForMeasure;
                         timeSpentMeasuring += timeForMeasure;
                         numberOfMeasurements += 1.0f;

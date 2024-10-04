@@ -36,6 +36,7 @@ public class AIcommander : MonoBehaviour
         intel = gameObject.GetComponent<AIIntelHandler>();
         Map = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<Tilemap>();
         militaryManager = GameObject.Find(UniversalConstants.MANAGERPATH).GetComponent<MilitaryManager>();
+        selector.RememberStrategist(Tactician);
     }
 
     // Update is called once per frame
@@ -83,6 +84,8 @@ public class AIcommander : MonoBehaviour
                 selector.HandleDeselect();
 
 
+                
+
                 //Start by considering what the player might do next turn
                 //Unit[] enemies = manager.GetPlayerMilitary();
                 Unit[] enemies = militaryManager.GetListOfUnits(Faction.PlayerTeam).ToArray();
@@ -103,7 +106,7 @@ public class AIcommander : MonoBehaviour
 
 
                 //Tactician.GenerateObjectives();
-
+                yield return Tactician.AssignObjectives();
 
                 if (unmoved[idx].myState == UnitState.ready)
                 {

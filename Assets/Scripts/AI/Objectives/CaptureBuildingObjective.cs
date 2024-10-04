@@ -46,6 +46,6 @@ public class CaptureBuildingObjective : Objective
 
     public override float EvaluateSuitablitity(Unit unit)
     {
-        throw new System.NotImplementedException();
+        return UnitTypeSuitability[unit.GetUnitType()];
     }
 }
