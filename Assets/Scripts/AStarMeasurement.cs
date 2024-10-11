@@ -317,7 +317,7 @@ public class AStarMeasurement : MonoBehaviour
                 {
 
                     yield return null;
-
+                    Debug.Log("measurement needed another frame");
                     timeUsed = 0.0f;
                 }
             }
@@ -351,6 +351,7 @@ public class AStarMeasurement : MonoBehaviour
             else
             {
                 Debug.Log("A* algorithm failed to find a path for " + Agent.GetUnitType() + " " + Agent.gameObject.name);
+                //this.Distance = -1;
             }
 
             this.Distance = path.Count;

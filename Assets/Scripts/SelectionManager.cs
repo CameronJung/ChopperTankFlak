@@ -276,8 +276,10 @@ public class SelectionManager : MonoBehaviour
         Debug.Assert(selectedUnit != null, "There is no unit selected");
         Directives = new List<Directive>();
 
+        Vector3Int tacticalGoal = Tactician.GetDestinationOfUnit(selectedUnit);
+
         float timeForMeasure = Time.realtimeSinceStartup;
-        yield return Ruler.BeginMeasurement(selectedUnit, knowledge.GetPlayerBaseLoc());
+        yield return Ruler.BeginMeasurement(selectedUnit, tacticalGoal);
         timeForMeasure = Time.realtimeSinceStartup - timeForMeasure;
         timeSpentMeasuring += timeForMeasure;
         float numberOfMeasurements = 1.0f;
@@ -316,7 +318,7 @@ public class SelectionManager : MonoBehaviour
             {
                 Directive noob = new Directive(selectedUnit, hex, knowledge);
 
-                Vector3Int tacticalGoal = Tactician.GetDestinationOfUnit(selectedUnit);
+                
 
                 if (hex.distanceFrom == selectedUnit.GetMobility())
                 {
@@ -328,7 +330,7 @@ public class SelectionManager : MonoBehaviour
                     }
                     else { 
                         timeForMeasure = Time.realtimeSinceStartup;
-                        yield return null;
+                        //yield return null;
                         yield return Ruler.BeginMeasurement(selectedUnit, tacticalGoal, hex.myCoords);
                         destDistance = Ruler.GetMeasuredDistance();
                         Navigation.LogDistance(selectedUnit.GetUnitType(), hex.myCoords, tacticalGoal, destDistance);

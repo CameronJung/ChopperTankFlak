@@ -42,13 +42,13 @@ public class ObjectiveAssignment : IComparable<ObjectiveAssignment>
 
     public int CompareTo( ObjectiveAssignment other)
     {
-        int comparison = -1;
+        int comparison = 1;
 
         if(other.suitability <= this.suitability)
         {
             if(other.suitability < this.suitability)
             {
-                comparison = 1;
+                comparison = -1;
             }
             else
             {

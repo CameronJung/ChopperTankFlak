@@ -50,7 +50,15 @@ public abstract class Objective
 
 
 
+    /*
+     * Evaluate Unit Suitability
+     * 
+     * This method returns a float value representing if the "candidate" unit is capable of completing this objective
+     * 
+     */
+    public abstract float EvaluateUnitViability(Unit candidate);
 
 
+    override public abstract string ToString();
     
 }

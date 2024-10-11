@@ -114,7 +114,7 @@ public class AIcommander : MonoBehaviour
 
 
 
-                    yield return null;
+                    //yield return null;
 
                     selector.HandleAISelection(unmoved[idx].myTilePos);
 
@@ -157,12 +157,13 @@ public class AIcommander : MonoBehaviour
 
                 
                 //Describes the move in the console
-                Debug.Log("Chosen move was: " + choice.ToString());
+                Debug.Log("Chosen move was: " + choice.ToString() + " The unit was assigned: " + Tactician.Assignments[choice.GetUnit()]);
 
                 selector.HandleAISelection(choice.GetUnit().myTilePos);
 
-                yield return null;
-                yield return null;
+
+                //yield return null;
+                //yield return null;
 
                 commander.SpoofSendCommand(choice.getDestinationCoords());
                 selector.HandleDeselect();

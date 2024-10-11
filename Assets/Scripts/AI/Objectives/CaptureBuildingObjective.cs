@@ -48,4 +48,15 @@ public class CaptureBuildingObjective : Objective
     {
         return UnitTypeSuitability[unit.GetUnitType()];
     }
+
+    public override float EvaluateUnitViability(Unit candidate)
+    {
+        return UnitTypeSuitability[candidate.GetUnitType()];
+    }
+
+
+    public override string ToString()
+    {
+        return "To capture building at " + this.Target.myCoords;
+    }
 }

@@ -19,7 +19,7 @@ public class DestroyUnitObjective : Objective
     public override float EvaluateSuitablitity(Unit unit)
     {
         float rating = ((float)PredictBattleResult(unit, target) + 1.0f) * 0.5f;
-
+        rating += this.EvaluateUnitViability(unit) * target.bounty;
         if(unit is RangedUnit)
         {
             //devalue ranged units since they are effective on everything
@@ -27,6 +27,12 @@ public class DestroyUnitObjective : Objective
         }
 
         return rating;
+    }
+
+
+    public override float EvaluateUnitViability(Unit candidate)
+    {
+        return ((float)PredictBattleResult(candidate, target));
     }
 
     public override Vector3Int GetGoalDestination()
@@ -37,5 +43,10 @@ public class DestroyUnitObjective : Objective
     public override float EvaluateViability()
     {
         throw new System.NotImplementedException();
+    }
+
+    public override string ToString()
+    {
+        return "To Destroy " + target.ToString();
     }
 }

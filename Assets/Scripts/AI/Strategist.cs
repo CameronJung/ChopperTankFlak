@@ -62,7 +62,7 @@ public class Strategist : MonoBehaviour
 
         Assignments.Clear();
 
-        List<Unit> units = militaryManager.GetListOfUnits(Faction.ComputerTeam);
+        List<Unit> units = militaryManager.GetListOfReadyUnits(Faction.ComputerTeam);
 
         GenerateObjectives();
 
@@ -75,9 +75,13 @@ public class Strategist : MonoBehaviour
 
             foreach(Objective goal in Objectives)
             {
-                ObjectiveAssignment oa = new ObjectiveAssignment(unit, goal, measurer);
-                yield return oa.CalculateSuitability();
-                possibilities[unit].Add(oa);
+                if(goal.EvaluateUnitViability(unit) > 0.0f)
+                {
+                    ObjectiveAssignment oa = new ObjectiveAssignment(unit, goal, measurer);
+                    yield return oa.CalculateSuitability();
+                    possibilities[unit].Add(oa);
+                }
+                
             }
 
             possibilities[unit].Sort();
