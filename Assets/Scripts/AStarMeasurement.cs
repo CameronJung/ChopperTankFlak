@@ -22,6 +22,9 @@ public class AStarMeasurement : MonoBehaviour
     private HexOverlay Origin;
     private Unit Agent;
     private float TimeBudget;
+
+    private float TimeSpentThisFrame;
+
     private GlobalNavigationData NavigationData;
 
     public bool Complete { get; private set; }
@@ -37,15 +40,17 @@ public class AStarMeasurement : MonoBehaviour
 
         this.GValues = new Dictionary<Vector3Int, int>();
         this.HValues = new Dictionary<Vector3Int, int>();
+
+        //Currently these time budget is a at half value because the game has two measurement components in its setup
         if (Application.isMobilePlatform)
         {
-            this.TimeBudget = 0.02f;
+            this.TimeBudget = 0.01f;
             //Mobile applications target 30 FPS by default so we can double the normal budget
         }
         else
         {
             //Standard FPS is 60, so we need to end the frame by 0.0167ms
-            this.TimeBudget = 0.01f;
+            this.TimeBudget = 0.005f;
         }
 
         NavigationData = GameObject.Find(MAPPATH).GetComponent<GlobalNavigationData>();
@@ -199,7 +204,6 @@ public class AStarMeasurement : MonoBehaviour
             float itterStart = 0.0f;
 
 
-
             HexOverlay chosen = null;
             //Debug.Log(" measuring distance from: " + Origin.myCoords + " To " + Destination.myCoords + " using a Coroutine");
 
@@ -312,14 +316,16 @@ public class AStarMeasurement : MonoBehaviour
 
 
                 timeUsed += Time.realtimeSinceStartup - itterStart;
+                TimeSpentThisFrame += Time.realtimeSinceStartup - itterStart;
                 iterations++;
                 //if (iterations % 1 == 0)
-                if (timeUsed >= TimeBudget)
+                if (TimeSpentThisFrame >= TimeBudget)
                 {
 
                     yield return null;
-                    Debug.Log("measurement needed another frame");
+                    //Debug.Log("measurement needed another frame");
                     timeUsed = 0.0f;
+                    TimeSpentThisFrame = 0.0f;
                 }
             }
             while ((openList.Count > 0 && !reached) && (iterations < maxLoops));
@@ -348,6 +354,9 @@ public class AStarMeasurement : MonoBehaviour
                     path.AddFirst(chosen);
                     iterations++;
                 }
+
+                NavigationData.LogDistance(Agent.GetUnitType(), Origin.myCoords, Destination.myCoords, path.Count);
+
             }
             else
             {
