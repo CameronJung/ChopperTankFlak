@@ -21,6 +21,7 @@ public abstract class Objective
 
 
 
+
     protected void InitializeObjective()
     {
         MilitaryMan = GameObject.Find(UniversalConstants.MANAGERPATH).GetComponent<MilitaryManager>();

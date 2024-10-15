@@ -16,7 +16,7 @@ public class Strategist : MonoBehaviour
 
     public EventHandler<Unit> OnUnitDeath;
 
-    public Dictionary<Unit, Objective> Assignments { get; private set; }
+    public Dictionary<Unit, ObjectiveAssignment> Assignments { get; private set; }
     private GlobalNavigationData Navigation;
     private AStarMeasurement measurer;
 
@@ -33,7 +33,7 @@ public class Strategist : MonoBehaviour
         Navigation = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<GlobalNavigationData>();
 
         Objectives = new List<Objective>();
-        Assignments = new Dictionary<Unit, Objective>();
+        Assignments = new Dictionary<Unit, ObjectiveAssignment>();
         measurer = gameObject.GetComponent<AStarMeasurement>();
     }
 
@@ -85,7 +85,8 @@ public class Strategist : MonoBehaviour
             }
 
             possibilities[unit].Sort();
-            Assignments.Add(unit, (possibilities[unit])[0].objective);
+            Assignments.Add(unit, (possibilities[unit])[0]);
+
         }
 
         //PseudoCode
@@ -127,7 +128,7 @@ public class Strategist : MonoBehaviour
 
         if (Assignments.ContainsKey(unit))
         {
-            destination = Assignments[unit].GetGoalDestination();
+            destination = Assignments[unit].objective.GetGoalDestination();
         }
         else
         {

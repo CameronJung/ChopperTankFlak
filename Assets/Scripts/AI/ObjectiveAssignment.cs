@@ -31,7 +31,7 @@ public class ObjectiveAssignment : IComparable<ObjectiveAssignment>
         float fitness = 0.0f;
         yield return ruler.BeginMeasurement(assignee, objective.GetGoalDestination());
         float distRating = EvaluateDistance(ruler.GetMeasuredDistance());
-        fitness = distRating * this.objective.EvaluateSuitablitity(assignee) * this.objective.TacticalImportance;
+        fitness = distRating * (this.objective.EvaluateSuitablitity(assignee) + this.objective.TacticalImportance);
 
 
         suitability = fitness;
@@ -76,5 +76,11 @@ public class ObjectiveAssignment : IComparable<ObjectiveAssignment>
         rating = Mathf.Abs(turns - MAXIMUMTURNS);
 
         return rating;
+    }
+
+
+    public override string ToString()
+    {
+        return objective.ToString() + " S=(" + this.suitability + ")";
     }
 }

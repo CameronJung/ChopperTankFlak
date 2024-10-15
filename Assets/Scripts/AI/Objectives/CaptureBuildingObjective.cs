@@ -23,6 +23,7 @@ public class CaptureBuildingObjective : Objective
     {
         base.InitializeObjective();
         Target = building;
+        TacticalImportance = MAXTACTICALIMPORTANCE;
     }
 
 
@@ -46,6 +47,10 @@ public class CaptureBuildingObjective : Objective
 
     public override float EvaluateSuitablitity(Unit unit)
     {
+        float viability = this.EvaluateUnitViability(unit);
+        
+        
+        
         return UnitTypeSuitability[unit.GetUnitType()];
     }
 

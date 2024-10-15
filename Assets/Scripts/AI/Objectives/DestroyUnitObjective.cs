@@ -13,13 +13,12 @@ public class DestroyUnitObjective : Objective
         base.InitializeObjective();
         target = enemy;
         //Currently there are only headquarters, if more building types are added this will need to be changed
-        TacticalImportance = MAXTACTICALIMPORTANCE / numUnits;
+        TacticalImportance = MAXTACTICALIMPORTANCE / numUnits + target.bounty;
     }
 
     public override float EvaluateSuitablitity(Unit unit)
     {
         float rating = ((float)PredictBattleResult(unit, target) + 1.0f) * 0.5f;
-        rating += this.EvaluateUnitViability(unit) * target.bounty;
         if(unit is RangedUnit)
         {
             //devalue ranged units since they are effective on everything
