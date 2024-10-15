@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.Events;
+using System;
 using static UniversalConstants;
 using static AITacticalValues;
 
@@ -79,6 +80,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
     public bool AffectorsAreCurrent { get; protected set; } = false;
 
     protected Dictionary<int, HexAffect> Affectors = new Dictionary<int, HexAffect>();
+    public Dictionary<BattleOutcome, int> PossibleAttacks { get; protected set; } = new Dictionary<BattleOutcome, int>();
 
 
     private void Awake()
@@ -91,7 +93,10 @@ public abstract class Unit : MonoBehaviour, ISelectable
     // Start is called before the first frame update
     virtual public void Start()
     {
-
+        foreach(BattleOutcome outcome in Enum.GetValues(typeof(BattleOutcome)))
+        {
+            PossibleAttacks.Add(outcome, 0);
+        }
         
         PaintUnit();
         soundMaker = gameObject.GetComponent<AudioSource>();
@@ -690,6 +695,9 @@ public abstract class Unit : MonoBehaviour, ISelectable
     {
         HashSet<HexOverlay> moves = new HashSet<HexOverlay>();
 
+        ResetPossibleAttacks();
+
+
         foreach(HexAffect move in Affectors.Values)
         {
             move.MutateAttackable();
@@ -720,6 +728,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
                         if (attackable)
                         {
                             Affectors.Add(GridHelper.HashGridCoordinates(adj.myCoords), new HexAffect(this, adj, HexState.attackable, dist + 1, false, true));
+                            PossibleAttacks[PredictBattleResult(this, adj.GetOccupiedBy())]++;
                         }
                         else
                         {
@@ -765,7 +774,31 @@ public abstract class Unit : MonoBehaviour, ISelectable
     }
 
 
+    protected void ResetPossibleAttacks()
+    {
+        foreach(BattleOutcome outcome in Enum.GetValues(typeof(BattleOutcome)))
+        {
+            PossibleAttacks[outcome] = 0;
+        }
+    }
 
+    public float CountOutcomesOfPossibleBattles(BattleOutcome expectation)
+    {
+        return (float)PossibleAttacks[expectation];
+    }
+
+
+    /*
+     * Count Likely Possible Attacks
+     * 
+     * Returns the number of units that this unit could stalemate or destroy outright
+     * battles that would result in the unit being countered are ignored because we assume the player won't be dumb enough to do that
+     */
+    public float CountLikelyPossibleAttacks()
+    {
+        float sum = PossibleAttacks[BattleOutcome.stalemate] + PossibleAttacks[BattleOutcome.destroyed];
+        return sum;
+    }
 
 
 

@@ -29,7 +29,7 @@ public abstract class RangedUnit : TurretedUnit {
         unexplored.Add(start);
 
         int itter = 0;
-        
+        ResetPossibleAttacks();
 
 
         int step = 0;
@@ -63,6 +63,7 @@ public abstract class RangedUnit : TurretedUnit {
                             if(hex.GetOccupiedBy().GetAllegiance() != this.GetAllegiance())
                             {
                                 state = HexState.snipe;
+                                PossibleAttacks[PredictBattleResult(this, hex.GetOccupiedBy())]++;
                             }
                         }
 

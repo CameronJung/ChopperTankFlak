@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using static UniversalConstants;
 using static AITacticalValues;
+using static ThreatAnalysisVariables;
 
 public class HexIntel
 {
@@ -130,37 +131,7 @@ public class HexIntel
         
 
 
-        /*
-        if(unit.GetUnitType() == UnitType.InfantrySquad || unit.GetUnitType() == UnitType.Artillery)
-        {
-            if (Threats.ContainsValue(true))
-            {
-                danger += MORTAL_DANGER;
-            }
-        }
-        else
-        {
-            //unit is a titular vehicle
-
-            if (Threats[unit.GetUnitType()])
-            {
-                danger += MILD_DANGER;
-            }
-
-            if(Threats[UnitType.Artillery] ||
-                unit.GetUnitType() == UnitType.Helicopter && Threats[UnitType.Flak] ||
-                unit.GetUnitType() == UnitType.Tank && Threats[UnitType.Helicopter] ||
-                unit.GetUnitType() == UnitType.Flak && Threats[UnitType.Tank]) 
-            {
-                danger += MORTAL_DANGER;
-            }
-            else if(Threats[UniversalConstants.GetStrengthOf(unit)] && !Threats[unit.GetUnitType()])
-            {
-                //If there is a threat from a unit we are strong against than hunt it down
-                danger += OPPORTUNITY;
-            }
-        }
-        */
+        
         return danger;
     }
 
@@ -236,6 +207,23 @@ public class HexIntel
         }
 
         return debug;
+    }
+
+
+
+    /*
+     * Threat ananlysis
+     * 
+     * 
+     * 
+     */
+    public float ThreatAnalysis(Unit unit)
+    {
+        float risk = 0.0f;
+
+        
+
+        return risk;
     }
 
 
