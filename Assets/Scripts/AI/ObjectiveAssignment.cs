@@ -16,6 +16,7 @@ public class ObjectiveAssignment : IComparable<ObjectiveAssignment>
     public float suitability { get; private set; }
 
     private AStarMeasurement ruler;
+    private UnitLeader Leader;
     
 
     public ObjectiveAssignment(Unit u, Objective o, AStarMeasurement m)
@@ -24,20 +25,47 @@ public class ObjectiveAssignment : IComparable<ObjectiveAssignment>
         this.objective = o;
         this.suitability = 0;
         this.ruler = m;
+
+        Leader = assignee.GetComponent<UnitLeader>();
     }
+
+
+    /*
+     * Constructor
+     * 
+     * this version of the constructor is to be used when the distance to the objective goal is already known at the
+     * time of creation
+     */
+    public ObjectiveAssignment(Unit u, Objective o, int d)
+    {
+        this.assignee = u;
+        this.objective = o;
+        this.suitability = 0.0f;
+        this.ruler = null;
+
+        this.Leader = assignee.GetComponent<UnitLeader>();
+        this.CalculateSuitability(d);
+    }
+
 
     public IEnumerator CalculateSuitability()
     {
-        float fitness = 0.0f;
+        //float fitness = 0.0f;
         yield return ruler.BeginMeasurement(assignee, objective.GetGoalDestination());
-        float distRating = EvaluateDistance(ruler.GetMeasuredDistance());
-        fitness = distRating * (this.objective.EvaluateSuitablitity(assignee) + this.objective.TacticalImportance);
-
+        //yield return Leader.BeginPlanning(objective.GetGoalDestination());
+        float distRating = EvaluateDistance(Leader.GetMeasuredDistance());
+        
+        float fitness = (this.objective.EvaluateSuitablitity(assignee) + this.objective.TacticalImportance) / distRating;
 
         suitability = fitness;
     }
 
-
+    private void CalculateSuitability(int distance)
+    {
+        float distRating = EvaluateDistance(distance);
+        //fitness = distRating * (this.objective.EvaluateSuitablitity(assignee) + this.objective.TacticalImportance);
+        suitability = (this.objective.EvaluateSuitablitity(assignee) * this.objective.TacticalImportance) / distRating;
+    }
 
 
     public int CompareTo( ObjectiveAssignment other)
@@ -71,9 +99,9 @@ public class ObjectiveAssignment : IComparable<ObjectiveAssignment>
     {
         float rating = 0.0f;
 
-        float turns = Mathf.Min((distance / assignee.GetMobility()), MAXIMUMTURNS);
+        float turns = ((float)distance)/((float)this.assignee.GetMobility());//Mathf.Min((distance / assignee.GetMobility()), MAXIMUMTURNS);
 
-        rating = Mathf.Abs(turns - MAXIMUMTURNS);
+        rating = Mathf.Ceil(turns);
 
         return rating;
     }

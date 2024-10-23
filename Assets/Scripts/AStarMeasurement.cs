@@ -291,7 +291,6 @@ public class AStarMeasurement : MonoBehaviour
                         //  If adjacent tile is in closed list, ignore it
                         // Only add impassable tile if it is the destination, revert if I think of a reason where getting to an ajacent tile isn't good enough
                         if (!closedList.ContainsKey(hex.myCoords) && (hex.CheckTerrainFor(Agent) || hex.myCoords == Destination.myCoords))
-                        //if (!closedList.Contains(hex) && hex.CheckTerrainFor(Agent))
                         {
                             //  If adjacent tile is not in the open list, add it to the open list
                             if (!(openList.Contains(hex)))

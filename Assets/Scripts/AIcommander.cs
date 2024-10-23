@@ -50,7 +50,115 @@ public class AIcommander : MonoBehaviour
     {
         //this.military = units.ToArray();
         this.military = militaryManager.GetListOfUnits(Faction.ComputerTeam).ToArray();
-        StartCoroutine(IssueDirectives());
+        //StartCoroutine(IssueDirectives());
+        StartCoroutine(ObjectiveBasedTurn());
+    }
+
+
+
+    private IEnumerator ObjectiveBasedTurn()
+    {
+        yield return null;
+
+        float turnStarted = Time.realtimeSinceStartup;
+
+        List<Unit> myUnits = militaryManager.GetListOfReadyUnits(Faction.ComputerTeam);
+
+        List<Unit> enemies = militaryManager.GetListOfUnits(Faction.PlayerTeam);
+
+        while(myUnits.Count > 0 && !manager.IsBattleOver())
+        {
+            yield return null;
+
+            intel.WipeOldData();
+
+            foreach(Unit enemy in enemies)
+            {
+                selector.HandleAISelection(enemy.myTilePos);
+
+                //yield return null;
+
+                selector.PerformTacticalAnalysis();
+                //yield return null;
+
+                selector.HandleDeselect();
+            }
+
+
+            yield return Tactician.AssignObjectives();
+
+            Unit important = myUnits[0];
+
+            float best = -1.0f;
+
+            foreach(KeyValuePair<Unit, ObjectiveAssignment> kv in Tactician.Assignments)
+            {
+                if(kv.Value.suitability > best)
+                {
+                    best = kv.Value.suitability;
+                    important = kv.Key;
+                }
+            }
+
+            yield return null;
+
+            selector.HandleAISelection(important.myTilePos);
+
+            yield return selector.GetSmartestMoves(intel);
+
+            List<Directive> choices = selector.GetDirectives();
+
+            Directive picked = this.RandomDirective(choices);
+
+
+            string moveDetails = "Chosen move was: " + picked.ToString() + " The unit was assigned: " + Tactician.Assignments[picked.GetUnit()];
+            UnitLeader leader = picked.GetUnit().GetComponent<UnitLeader>();
+            if (leader.HasWaypoint())
+            {
+                moveDetails += " Waypoint was at " + leader.WayPoint.myCoords;//+ " Waypoint is for " + leader.WaypointTowards.ToString();
+            }
+
+            if (Tactician.Assignments[picked.GetUnit()].objective.EvaluateUnitViability(picked.GetUnit()) < 0)
+            {
+                leader.LogObjectivesList();
+            }
+
+            Debug.Log(moveDetails);
+
+
+            commander.SpoofSendCommand(picked.getDestinationCoords());
+            selector.HandleDeselect();
+            yield return null;
+
+            //unmoved.Remove(choice.GetUnit());
+
+            int cycles = 0;
+
+            //wait until the unit is moving
+            while (!manager.IsUnitMoving() && cycles < 600)
+            {
+                //Rounding off time scale means that frames during a pause won't be counted
+                cycles += Mathf.RoundToInt(Time.timeScale);
+                Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
+                yield return null;
+            }
+
+            cycles = 0;
+
+            //Wait until the unit is done moving
+            while (manager.IsUnitMoving() && cycles < 600)
+            {
+                yield return null;
+                cycles += Mathf.RoundToInt(Time.timeScale);
+            }
+            Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
+
+
+
+
+            myUnits = militaryManager.GetListOfReadyUnits(Faction.ComputerTeam);
+        }
+        Debug.Log("The Commander took " + (Time.realtimeSinceStartup - turnStarted) + " seconds to complete its turn");
     }
 
 
@@ -155,9 +263,21 @@ public class AIcommander : MonoBehaviour
             {
                 Directive choice = RandomDirective(moves);
 
-                
+
                 //Describes the move in the console
-                Debug.Log("Chosen move was: " + choice.ToString() + " The unit was assigned: " + Tactician.Assignments[choice.GetUnit()]);
+                string moveDetails = "Chosen move was: " + choice.ToString() + " The unit was assigned: " + Tactician.Assignments[choice.GetUnit()];
+                UnitLeader leader = choice.GetUnit().GetComponent<UnitLeader>();
+                if (leader.HasWaypoint())
+                {
+                    moveDetails += " Waypoint was at " + leader.WayPoint.myCoords + " Waypoint is for " + leader.WaypointTowards.ToString();
+                }
+
+                if(Tactician.Assignments[choice.GetUnit()].objective.EvaluateUnitViability(choice.GetUnit()) < 0)
+                {
+                    leader.LogObjectivesList();
+                }
+
+                Debug.Log(moveDetails);
 
                 selector.HandleAISelection(choice.GetUnit().myTilePos);
 

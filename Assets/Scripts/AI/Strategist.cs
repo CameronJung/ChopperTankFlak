@@ -20,6 +20,8 @@ public class Strategist : MonoBehaviour
     private GlobalNavigationData Navigation;
     private AStarMeasurement measurer;
 
+    public Dictionary<Vector3Int, Objective> Destinations { get; private set; } = new Dictionary<Vector3Int, Objective>();
+
 
     
 
@@ -65,10 +67,10 @@ public class Strategist : MonoBehaviour
         List<Unit> units = militaryManager.GetListOfReadyUnits(Faction.ComputerTeam);
 
         GenerateObjectives();
-
+        yield return null;
         Dictionary<Unit, List<ObjectiveAssignment>> possibilities = new Dictionary<Unit, List<ObjectiveAssignment>>();
 
-
+        /*
         foreach(Unit unit in units)
         {
             possibilities.Add(unit, new List<ObjectiveAssignment>());
@@ -87,14 +89,54 @@ public class Strategist : MonoBehaviour
             possibilities[unit].Sort();
             Assignments.Add(unit, (possibilities[unit])[0]);
 
+        }*/
+
+
+        foreach (Unit unit in units)
+        {
+            possibilities.Add(unit, new List<ObjectiveAssignment>());
+            List<ObjectiveAssignment> oas = new List<ObjectiveAssignment>();
+
+            foreach (Objective goal in Objectives)
+            {
+                //if (goal.EvaluateUnitViability(unit) > 0.0f)
+                //{
+                    ObjectiveAssignment oa = new ObjectiveAssignment(unit, goal, GridHelper.CalcTilesBetweenGridCoords(unit.myTilePos, goal.GetGoalDestination()));
+                    oas.Add(oa);
+                //}
+            }
+
+            //possibilities[unit].Sort();
+            oas.Sort();
+            UnitLeader leader = unit.GetComponent<UnitLeader>();
+            yield return leader.BeginPlanning(oas[0].objective.GetGoalDestination());
+
+            List<ObjectiveAssignment> leaderSuggestions = leader.GetPossibleAssignments();
+
+            if(leaderSuggestions.Count > 0)
+            {
+                if (!leader.HasWaypoint())
+                {
+                    //If the leader does not have a waypoint than it must not have found a path to the objective
+                    //So we repeat the search, this time for the best objective that was found
+                    yield return leader.BeginPlanning(leaderSuggestions[0].objective.GetGoalDestination());
+
+                    Debug.Assert(leader.HasWaypoint(), "The unit leader was unable to make a waypoint for an objective it found.");
+
+                }
+
+                
+                this.Assignments.Add(unit, leader.GetPossibleAssignments()[0]);
+            }
+            else
+            {
+                this.Assignments.Add(unit, oas[0]);
+            }
+
+            
+
         }
 
-        //PseudoCode
-        //Get list of AI units (units)
-
-        //if the list of units isn't empty
-        //  go through the list of units
-        //      assign each unit to its most suited objective
     }
 
 
@@ -105,18 +147,35 @@ public class Strategist : MonoBehaviour
         List<BuildingOverlay> buildings = militaryManager.GetListOfBuildings(Faction.PlayerTeam);
 
         Objectives.Clear();
-
-        foreach(Unit enemy in enemies)
-        {
-            DestroyUnitObjective killMission = new DestroyUnitObjective(enemy, enemies.Count);
-            Objectives.Add( killMission);
-        }
+        Destinations.Clear();
 
         foreach (BuildingOverlay building in buildings)
         {
             CaptureBuildingObjective captureMission = new CaptureBuildingObjective(building);
             Objectives.Add(captureMission);
+            Destinations.Add(captureMission.GetGoalDestination(), captureMission);
         }
+
+        //It is important that destroy unit objectives are generated after capture building objectives
+        //If a player unit is on a player building than they have the same destination and this will result in a
+        //collision in the Destinations Dictionary
+        //To account for the missing objective the unit covering the building will have its bounty increased
+        foreach(Unit enemy in enemies)
+        {
+            DestroyUnitObjective killMission = new DestroyUnitObjective(enemy, enemies.Count);
+            Objectives.Add( killMission);
+            if (Destinations.ContainsKey(killMission.GetGoalDestination()))
+            {
+                Destinations[killMission.GetGoalDestination()] = killMission;
+            }
+            else
+            {
+                Destinations.Add(killMission.GetGoalDestination(), killMission);
+            }
+            
+        }
+
+        
 
         //Debug.Log("The tactician has found " + Objectives.Count + " Objective(s) to pursue");
     }
@@ -138,6 +197,18 @@ public class Strategist : MonoBehaviour
         Debug.Assert(destination.z == 0, "A unit has been assigned to an invalid destination");
 
         return destination;
+    }
+
+    public bool IsHexDestroyUnitDestination(HexOverlay hex)
+    {
+        bool hostileHere = Destinations.ContainsKey(hex.myCoords);
+
+        if (hostileHere)
+        {
+            hostileHere = Destinations[hex.myCoords] is DestroyUnitObjective;
+        }
+
+        return hostileHere;
     }
 
 }

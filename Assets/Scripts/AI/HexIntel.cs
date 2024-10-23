@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using static UniversalConstants;
 using static AITacticalValues;
 using static ThreatAnalysisVariables;
@@ -221,6 +222,68 @@ public class HexIntel
     {
         float risk = 0.0f;
 
+        float instaKillRisk = 0.0f;
+        float stalemateRisk = 0.0f;
+
+
+        int numEnemies = 0;
+
+        List<Unit> affectors = this.Tile.GetAffectingUnits();
+
+        affectors.Remove(unit);
+
+        Dictionary<UnitType, List<Unit>> enemies = new Dictionary<UnitType, List<Unit>>();
+        Dictionary<UnitType, List<Unit>> allies = new Dictionary<UnitType, List<Unit>>();
+
+        UnitType[] unitTypes = (UnitType[])Enum.GetValues(typeof(UnitType));
+
+        foreach(UnitType value in unitTypes)
+        {
+            enemies.Add(value, new List<Unit>());
+            allies.Add(value, new List<Unit>());
+        }
+
+
+        foreach(Unit factor in affectors)
+        {
+            if(unit.GetAllegiance() != factor.GetAllegiance())
+            {
+                //Enemy unit
+                enemies[factor.GetUnitType()].Add(factor);
+                numEnemies++;
+                BattleOutcome outcome = PredictBattleResult(factor, unit);
+
+                int options = factor.PossibleAttacks[outcome];
+
+                if(options > 0)
+                {
+                    switch (outcome)
+                    {
+                        case BattleOutcome.destroyed:
+                            instaKillRisk = Mathf.Min(ThreatAnalysisVariables.MaximumKillThreat, instaKillRisk + (MaximumKillThreat / (float)options));
+                            break;
+                        case BattleOutcome.stalemate:
+                            stalemateRisk = Mathf.Min(ThreatAnalysisVariables.MaximumStalemateThreat, instaKillRisk + (MaximumStalemateThreat / (float)options));
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                //allied unit
+                allies[factor.GetUnitType()].Add(factor);
+            }
+        }
+
+        if(numEnemies < 2)
+        {
+            // a stalemate is still detrimental, but less important if the player can't resolve it
+            stalemateRisk = Mathf.Min(stalemateRisk, 1.0f);
+        }
+
+        risk = -instaKillRisk - stalemateRisk;
+
+        Debug.Assert(this.Tile.GetAffectingUnits().Contains(unit), "Conducted threat analysis on hex that couldn't be reached");
         
 
         return risk;

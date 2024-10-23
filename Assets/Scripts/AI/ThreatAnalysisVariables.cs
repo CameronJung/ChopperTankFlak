@@ -5,7 +5,7 @@ using UnityEngine;
 public static class ThreatAnalysisVariables
 {
 
-    readonly static float MaximumKillThreat = 5.0f;
-    readonly static float MaximumStaleateThreat = 3.0f;
+    public readonly static float MaximumKillThreat = 7.0f;
+    public readonly static float MaximumStalemateThreat = 3.0f;
 
 }

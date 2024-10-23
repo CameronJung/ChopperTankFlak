@@ -287,7 +287,9 @@ public class SelectionManager : MonoBehaviour
         int destDistance = -1;
 
         
-        Debug.Assert(unitDistance > 0, "Ruler was not finished measuring distance for Unit");
+        Debug.Assert(unitDistance >= 0, "Ruler was not finished measuring distance for Unit");
+        
+
         
 
 
@@ -318,7 +320,7 @@ public class SelectionManager : MonoBehaviour
             {
                 Directive noob = new Directive(selectedUnit, hex, knowledge);
 
-                
+                noob.ShowSmartnessOnBoard();
 
                 if (hex.distanceFrom == selectedUnit.GetMobility())
                 {
@@ -370,6 +372,9 @@ public class SelectionManager : MonoBehaviour
             }
 
         }
+
+        yield return new WaitForSeconds(0.5f);
+
         timeForTurn = Time.realtimeSinceStartup - timeForTurn;
         //Debug.Log("It Took " + timeForTurn + " seconds to make a move.");
         //Debug.Log(timeSpentMeasuring + " seconds were spent measuring distances");

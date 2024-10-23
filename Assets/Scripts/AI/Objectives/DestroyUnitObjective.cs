@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static UniversalConstants;
+using static AITacticalValues;
 
 public class DestroyUnitObjective : Objective
 {
@@ -19,11 +20,7 @@ public class DestroyUnitObjective : Objective
     public override float EvaluateSuitablitity(Unit unit)
     {
         float rating = ((float)PredictBattleResult(unit, target) + 1.0f) * 0.5f;
-        if(unit is RangedUnit)
-        {
-            //devalue ranged units since they are effective on everything
-            rating *= 0.75f;
-        }
+        rating *= GetDestructionPriority(unit, target);
 
         return rating;
     }

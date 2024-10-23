@@ -1533,6 +1533,7 @@ GameObject:
   - component: {fileID: 906500263}
   - component: {fileID: 906500265}
   - component: {fileID: 906500264}
+  - component: {fileID: 906500266}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -13818,6 +13819,18 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &906500266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 906500262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba114c55d9a86a44bb3fe7abe17ca1d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &936706146 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5255287528332269928, guid: 935cb19ddab8f394bb38da1add102a37, type: 3}
@@ -15455,6 +15468,7 @@ GameObject:
   - component: {fileID: 1917969239}
   - component: {fileID: 1917969240}
   - component: {fileID: 1917969241}
+  - component: {fileID: 1917969242}
   m_Layer: 0
   m_Name: EnemyCommander
   m_TagString: Untagged
@@ -15506,6 +15520,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   computerBaseLoc: {x: -11, y: 17, z: 0}
   playerBaseLoc: {x: 10, y: -17, z: 0}
+--- !u!114 &1917969242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1917969237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 842880824307ef54aa31b3bbf86a89f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1980806567 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5255287528332269928, guid: 935cb19ddab8f394bb38da1add102a37, type: 3}

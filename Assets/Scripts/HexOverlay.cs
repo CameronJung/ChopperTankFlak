@@ -541,6 +541,26 @@ public class HexOverlay : MonoBehaviour
     }
 
 
+
+    /*
+     * Get Affecting Units
+     * 
+     * This method returns a list of units that have some sort of affect on this hex
+     * 
+     */
+    public List<Unit> GetAffectingUnits()
+    {
+        List<Unit> units = new List<Unit>();
+
+        foreach(Unit unit in this.AffectedBy)
+        {
+            units.Add(unit);
+        }
+
+        return units;
+    }
+
+
     virtual protected void ChangeState(HexState state, bool doShow)
     {
         switch (state)
@@ -749,5 +769,11 @@ public class HexOverlay : MonoBehaviour
         snipeSprite.SetActive(false);
         currState = HexState.unreachable;
         this.nav.ChangeDebugTextTo(myCoords.ToString());
+    }
+
+
+    public void DiplayMessageOnBoard(string msg)
+    {
+        nav.ChangeDebugTextTo(msg);
     }
 }

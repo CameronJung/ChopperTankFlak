@@ -4534,6 +4534,7 @@ GameObject:
   - component: {fileID: 1620846725}
   - component: {fileID: 1620846727}
   - component: {fileID: 1620846726}
+  - component: {fileID: 1620846728}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -11175,6 +11176,18 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &1620846728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1620846724}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba114c55d9a86a44bb3fe7abe17ca1d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1629399151
 GameObject:
   m_ObjectHideFlags: 0
@@ -11913,6 +11926,7 @@ GameObject:
   - component: {fileID: 1917969239}
   - component: {fileID: 1917969240}
   - component: {fileID: 1917969241}
+  - component: {fileID: 1917969242}
   m_Layer: 0
   m_Name: EnemyCommander
   m_TagString: Untagged
@@ -11964,6 +11978,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   computerBaseLoc: {x: 0, y: -13, z: 0}
   playerBaseLoc: {x: 0, y: 11, z: 0}
+--- !u!114 &1917969242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1917969237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 842880824307ef54aa31b3bbf86a89f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1946675491
 PrefabInstance:
   m_ObjectHideFlags: 0

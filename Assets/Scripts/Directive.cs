@@ -159,9 +159,11 @@ public class Directive
     private int ConsiderGeography()
     {
         int smart = 0;
-        bool distant = false;
+        //bool distant = false;
 
-        if (capable.GetMobility() == destination.distanceFrom)
+
+        /*
+        if (capable.GetMobility() <= destination.distanceFrom)
         {
             smart += MOVES_MAXIMUM;
             distant = true;
@@ -178,7 +180,7 @@ public class Directive
         {
             smart += MARCH_ON;
         }
-
+        
         if (intel != null)
         {
             
@@ -210,8 +212,54 @@ public class Directive
                 smart += INFANTRY_CAPTURES_BASE;
             }
         }
+        */
+        if(capable.GetAllegiance() == Faction.ComputerTeam)
+        {
+            UnitLeader leader = capable.GetComponent<UnitLeader>();
 
+            if (leader.HasWaypoint())
+            {
+                HexOverlay waypoint = leader.WayPoint;
+
+                int dGoal = GridHelper.CalcTilesBetweenGridCoords(destination.myCoords, waypoint.myCoords);
+                int dUnit = CalcTilesBetweenGridCoords(capable.myTilePos, destination.myCoords);
+
+                //This calculation is true for a wedge shape opening toward the waypoint
+                if (dGoal <= capable.GetMobility() && (dUnit + dGoal <= capable.GetMobility() + 1))
+                {
+                    smart += TOWARDS_WAYPOINT;
+
+                    smart += Mathf.RoundToInt((float)(capable.GetMobility() - dGoal) / (float)(capable.GetMobility()) * CLOSENESS_BONUS);
+                    
+                    if(destination.myCoords == waypoint.myCoords) { smart += ON_WAYPOINT; }
+                }
+                else
+                {
+                    smart += AWAY_FROM_WAYPOINT;
+                }
+
+
+            }
+
+
+        }
+
+
+
+        if(intel != null)
+        {
+            if (capable.GetUnitType() == UnitType.InfantrySquad && destination.myCoords == intel.GetPlayerBaseLoc())
+            {
+                smart += INFANTRY_CAPTURES_BASE;
+
+            }
+        }
         
+
+        if (capable.IsCapturing() && capable.myTilePos == destination.myCoords)
+        {
+            smart += COMPLETES_CAPTURE;
+        }
 
         return smart;
     }
@@ -225,7 +273,7 @@ public class Directive
      */
     private int ConsiderThreats()
     {
-        int smart = destination.intel.ThreatTo(capable);
+        int smart = Mathf.RoundToInt(destination.intel.ThreatAnalysis(capable));
 
 
         return smart;
@@ -275,6 +323,13 @@ public class Directive
         this.DestinationDistance = destDist;
 
         this.ThinkThrough();
+    }
+
+
+    public void ShowSmartnessOnBoard()
+    {
+        string description = "G:" + this.ConsiderGeography() + "\nR:" + this.ConsiderThreats() + "\nT:" + this.smartness;
+        this.destination.DiplayMessageOnBoard(description);
     }
 
 }
