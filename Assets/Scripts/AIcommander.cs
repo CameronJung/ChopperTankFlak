@@ -8,7 +8,7 @@ public class AIcommander : MonoBehaviour
 {
     private const int MAXCAUTION = 10;
     private const int MINCAUTION = 4;
-
+    private const int CHECKS_PER_FRAME = 4;
 
     [SerializeField] private SelectionManager selector;
     [SerializeField] private CommandTracer commander;
@@ -62,6 +62,8 @@ public class AIcommander : MonoBehaviour
 
         float turnStarted = Time.realtimeSinceStartup;
 
+        bestMoves = new List<Directive>();
+
         List<Unit> myUnits = militaryManager.GetListOfReadyUnits(Faction.ComputerTeam);
 
         List<Unit> enemies = militaryManager.GetListOfUnits(Faction.PlayerTeam);
@@ -69,9 +71,12 @@ public class AIcommander : MonoBehaviour
         while(myUnits.Count > 0 && !manager.IsBattleOver())
         {
             yield return null;
-
+            selector.HandleDeselect();
             intel.WipeOldData();
 
+            int itter = 0;
+
+            //Look at what the player might do
             foreach(Unit enemy in enemies)
             {
                 selector.HandleAISelection(enemy.myTilePos);
@@ -82,27 +87,68 @@ public class AIcommander : MonoBehaviour
                 //yield return null;
 
                 selector.HandleDeselect();
+                itter++;
+                if (itter % CHECKS_PER_FRAME == 0)
+                {
+                    yield return null;
+                }
+
+            }
+
+            yield return Tactician.AssignObjectives();
+            itter = 0;
+
+            //update everything I can do
+            foreach(Unit ally in myUnits)
+            {
+                selector.HandleAISelection(ally.myTilePos);
+
+                selector.HandleDeselect();
+
+                itter++;
+                if (itter % CHECKS_PER_FRAME == 0)
+                {
+                    yield return null;
+                }
+            }
+
+            itter = 0;
+            //Now that all the options are known we choose a unit to move
+            foreach (Unit ally in myUnits)
+            {
+                selector.HandleAISelection(ally.myTilePos);
+
+
+
+                bestMoves = MaintainBest(this.bestMoves, selector.GetSmartestMoves(intel, ally));
+                
+                selector.HandleDeselect();
+
+                itter++;
+                if (itter % CHECKS_PER_FRAME == 0)
+                {
+                    yield return null;
+                }
             }
 
 
-            yield return Tactician.AssignObjectives();
-
-            Unit important = myUnits[0];
+            Unit chosenUnit = this.RandomDirective(bestMoves).GetUnit();
 
             float best = -1.0f;
-
+            /*
             foreach(KeyValuePair<Unit, ObjectiveAssignment> kv in Tactician.Assignments)
             {
                 if(kv.Value.suitability > best)
                 {
                     best = kv.Value.suitability;
-                    important = kv.Key;
+                    chosenUnit = kv.Key;
                 }
-            }
+            }*/
+
 
             yield return null;
 
-            selector.HandleAISelection(important.myTilePos);
+            selector.HandleAISelection(chosenUnit.myTilePos);
 
             yield return selector.GetSmartestMoves(intel);
 
@@ -126,7 +172,7 @@ public class AIcommander : MonoBehaviour
             Debug.Log(moveDetails);
 
 
-            commander.SpoofSendCommand(picked.getDestinationCoords());
+            commander.SpoofSendCommand(picked.GetDestinationCoords());
             selector.HandleDeselect();
             yield return null;
 
@@ -153,12 +199,18 @@ public class AIcommander : MonoBehaviour
             }
             Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
 
-
+            bestMoves.Clear();
 
 
             myUnits = militaryManager.GetListOfReadyUnits(Faction.ComputerTeam);
         }
         Debug.Log("The Commander took " + (Time.realtimeSinceStartup - turnStarted) + " seconds to complete its turn");
+
+        selector.HandleDeselect();
+        yield return null;
+        
+        manager.HandleTurnEnd(Faction.ComputerTeam);
+        
     }
 
 
@@ -285,7 +337,7 @@ public class AIcommander : MonoBehaviour
                 //yield return null;
                 //yield return null;
 
-                commander.SpoofSendCommand(choice.getDestinationCoords());
+                commander.SpoofSendCommand(choice.GetDestinationCoords());
                 selector.HandleDeselect();
                 yield return null;
 
@@ -492,11 +544,11 @@ public class AIcommander : MonoBehaviour
         }
         else
         {
-            int smartest = best[0].getSmartness();
+            int smartest = best[0].GetSmartness();
 
-            if(candidates[0].getSmartness() >= smartest)
+            if(candidates[0].GetSmartness() >= smartest)
             {
-                if(candidates[0].getSmartness() > smartest)
+                if(candidates[0].GetSmartness() > smartest)
                 {
                     best = candidates;
                 }

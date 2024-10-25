@@ -327,8 +327,8 @@ public class UnitLeader : MonoBehaviour
             while (chosen != this.Origin && iterations < 200)
             {
                 int chosenG = LookupGValue(chosen.myCoords);
-
-                if (LookupGValue(chosen.myCoords) <= Detatchment.GetMobility() +1)
+                bool isAttackable = Tactician.IsHexDestroyUnitDestination(chosen);
+                if ((LookupGValue(chosen.myCoords) <= Detatchment.GetMobility()) || (LookupGValue(chosen.myCoords) <= Detatchment.GetMobility() +1 && isAttackable) )
                 {
                     if(LookupGValue(chosen.myCoords) > FurthestWaypointDist)
                     {

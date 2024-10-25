@@ -221,7 +221,6 @@ public abstract class Unit : MonoBehaviour, ISelectable
                 hexes.Add(affect.Hex);
             }
             return hexes;
-            //return map.GetInstantiatedObject(this.myTilePos).GetComponent<HexOverlay>().BeginExploration(this, conspicuous);
         }
         else
         {

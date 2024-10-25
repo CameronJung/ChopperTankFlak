@@ -294,12 +294,12 @@ public class Directive
 
     /*          ACCESSORS           */
 
-    public int getSmartness()
+    public int GetSmartness()
     {
         return smartness;
     }
 
-    public Vector3Int getDestinationCoords()
+    public Vector3Int GetDestinationCoords()
     {
 
         return this.destination.myCoords;

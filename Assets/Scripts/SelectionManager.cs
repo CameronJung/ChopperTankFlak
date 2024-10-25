@@ -355,9 +355,9 @@ public class SelectionManager : MonoBehaviour
                 if(Directives.Count > 0) { 
 
                     //Maintain possibilities as a list of the best possible moves
-                    if(noob.getSmartness() >= Directives[0].getSmartness())
+                    if(noob.GetSmartness() >= Directives[0].GetSmartness())
                     {
-                        if(noob.getSmartness() > Directives[0].getSmartness())
+                        if(noob.GetSmartness() > Directives[0].GetSmartness())
                         {
                             Directives.Clear();
                         }
@@ -373,7 +373,7 @@ public class SelectionManager : MonoBehaviour
 
         }
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.5f);
 
         timeForTurn = Time.realtimeSinceStartup - timeForTurn;
         //Debug.Log("It Took " + timeForTurn + " seconds to make a move.");
@@ -381,6 +381,44 @@ public class SelectionManager : MonoBehaviour
         //Debug.Log("A total of " + numberOfMeasurements + " measurements were made");
         //Debug.Log("The average measurement took " + (timeSpentMeasuring / numberOfMeasurements) + " seconds to compute");
         //return possibilities;
+    }
+
+
+
+    /*
+     * Get Smartest Moves
+     * 
+     * This Method returns a list of directives that represent the smartest moves available to the Unit in the parameter, "unit"
+     * 
+     */
+    public List<Directive> GetSmartestMoves(AIIntelHandler knowledge, Unit unit)
+    {
+        List<Directive> moves = new List<Directive>();
+        List<HexOverlay> options = unit.OnSelected(false);
+
+        int smartest = int.MinValue;
+
+        foreach(HexOverlay hex in options)
+        {
+
+            Directive move = new Directive(unit, hex, knowledge);
+
+            if(move.GetSmartness() >= smartest)
+            {
+                if(move.GetSmartness() > smartest)
+                {
+                    //If we find a better move toss out the dumber ones
+                    moves.Clear();
+                    smartest = move.GetSmartness();
+                }
+
+                moves.Add(move);
+
+            }
+
+        }
+
+        return moves;
     }
 
 

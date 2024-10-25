@@ -225,8 +225,12 @@ public class HexIntel
         float instaKillRisk = 0.0f;
         float stalemateRisk = 0.0f;
 
+        float instaKillCoverage = 0.0f;
+        float stalemateCoverage = 0.0f;
+
 
         int numEnemies = 0;
+        int numAllies = 0;
 
         List<Unit> affectors = this.Tile.GetAffectingUnits();
 
@@ -253,9 +257,11 @@ public class HexIntel
                 numEnemies++;
                 BattleOutcome outcome = PredictBattleResult(factor, unit);
 
-                int options = factor.PossibleAttacks[outcome];
 
-                if(options > 0)
+                //The +1 accounts for the currently hypothetical movement of unit, it also prevents a divide by zero error
+                int options = factor.PossibleAttacks[outcome] +1;
+
+                if(options >= 0)
                 {
                     switch (outcome)
                     {
@@ -263,7 +269,7 @@ public class HexIntel
                             instaKillRisk = Mathf.Min(ThreatAnalysisVariables.MaximumKillThreat, instaKillRisk + (MaximumKillThreat / (float)options));
                             break;
                         case BattleOutcome.stalemate:
-                            stalemateRisk = Mathf.Min(ThreatAnalysisVariables.MaximumStalemateThreat, instaKillRisk + (MaximumStalemateThreat / (float)options));
+                            stalemateRisk = Mathf.Min(ThreatAnalysisVariables.MaximumStalemateThreat, stalemateRisk + (MaximumStalemateThreat / (float)options));
                             break;
                     }
                 }
@@ -272,17 +278,61 @@ public class HexIntel
             {
                 //allied unit
                 allies[factor.GetUnitType()].Add(factor);
+                numAllies++;
             }
         }
 
-        if(numEnemies < 2)
+
+        foreach(UnitType unitType in unitTypes)
+        {
+            if(enemies[unitType].Count > 0)
+            {
+                //An enemy of this type is present
+                
+
+
+
+                foreach (Unit enemy in enemies[unitType])
+                {
+                    BattleOutcome outcome = PredictBattleResult(enemy, unit);
+                    UnitType foil = UniversalConstants.GetWeaknessOf(enemy);
+
+                    switch (outcome)
+                    {
+                        case BattleOutcome.destroyed:
+                            if(allies[foil].Count > 0)
+                            {
+                                instaKillCoverage = Mathf.Min(MaximumKillCoverage, instaKillCoverage + (MaximumKillCoverage * ((float)allies[foil].Count/(float)enemies[unitType].Count)));
+                            }
+                            
+                            break;
+                        case BattleOutcome.stalemate:
+                            stalemateCoverage = Mathf.Min(MaximumStalemateCoverage, stalemateCoverage + (MaximumStalemateCoverage * ((float)numAllies / (float)enemies[unitType].Count)));
+                            break;
+                    }
+                }
+
+                
+
+            }
+        }
+
+
+        if(numEnemies < 2 && stalemateRisk > 0.0f)
         {
             // a stalemate is still detrimental, but less important if the player can't resolve it
             stalemateRisk = Mathf.Min(stalemateRisk, 1.0f);
         }
+        else if(numAllies == 0)
+        {
+            //stalemates should be considered a greater risk if there is no unit available to resolve it
+            stalemateCoverage = 0.0f;
+            stalemateRisk *= 1.5f;
+        }
 
-        risk = -instaKillRisk - stalemateRisk;
-
+        //The risk reduction of target saturation & coverage should only reduce the rating and not increase it
+        risk = Mathf.Min(instaKillCoverage + stalemateCoverage -instaKillRisk - stalemateRisk, 0.0f);
+        //risk = -instaKillRisk - stalemateRisk;
         Debug.Assert(this.Tile.GetAffectingUnits().Contains(unit), "Conducted threat analysis on hex that couldn't be reached");
         
 
