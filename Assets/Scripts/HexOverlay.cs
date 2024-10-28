@@ -635,6 +635,40 @@ public class HexOverlay : MonoBehaviour
     }
 
 
+
+
+    public HexOverlay FindSafestNeighbiourFor(Unit me)
+    {
+        HexOverlay safest = null;
+        int lowest = int.MaxValue;
+        List<HexOverlay> safe = new List<HexOverlay>();
+
+        foreach(HexOverlay hex in adjacent)
+        {
+            if(hex.CanIBeOn(me) && (hex.currState == HexState.reachable || hex.currState == HexState.hold))
+            {
+                int safety = Mathf.RoundToInt(hex.intel.ThreatAnalysis(me));
+                if(safety <= lowest)
+                {
+                    if(safety < lowest)
+                    {
+                        safe.Clear();
+                        lowest = safety;
+                    }
+
+                    safe.Add(hex);
+                }
+            }
+        }
+
+        safest = safe[Random.Range(0, safe.Count)];
+
+        Debug.Assert(safest != null, "The FindSafestNeighborFor function returned null value for the position " + this.myCoords + " with regards to the unit: " + me.ToString());
+
+        return safest;
+    }
+
+
     public Vector3Int GetAstarCoords()
     {
         return nav.cubePosition;

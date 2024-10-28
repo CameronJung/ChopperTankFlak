@@ -249,7 +249,7 @@ public class CommandTracer : MonoBehaviour
         if (directDestination.currState == HexState.attackable)
         {
 
-            Debug.Log("An attack mission is being redrawn");
+            //Debug.Log("An attack mission is being redrawn");
 
 
             //set the tile before the curr tile as the attack position
@@ -260,7 +260,15 @@ public class CommandTracer : MonoBehaviour
                 && CoarseAdjacencyTest(points[currTileIdx], points[currTileIdx - 1])))
             {
                 //Find a valid attack position adjacent to the curr tile
-                attackPosition = currTile.FindValidNeighborFor(commandee);
+                if(commandee.GetAllegiance() == Faction.ComputerTeam)
+                {
+                    attackPosition = currTile.FindSafestNeighbiourFor(commandee);
+                }
+                else
+                {
+                    attackPosition = currTile.FindValidNeighborFor(commandee);
+                }
+                
                 
             }
 

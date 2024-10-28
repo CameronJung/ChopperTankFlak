@@ -42,6 +42,8 @@ public class Directive
         capable = unit;
         destination = hex;
         directiveType = hex.currState;
+
+
         ThinkThrough();
     }
 

@@ -365,7 +365,7 @@ public class UnitLeader : MonoBehaviour
         }
         else
         {
-            Debug.Log("Unit leader failed to find a path for " + Detatchment.ToString() + " To " + Destination.myCoords);
+            //Debug.Log("Unit leader failed to find a path for " + Detatchment.ToString() + " To " + Destination.myCoords);
             WayPoint = null;
             //this.Distance = -1;
         }

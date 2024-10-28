@@ -117,6 +117,7 @@ public class Strategist : MonoBehaviour
             {
                 if (!leader.HasWaypoint())
                 {
+                    
                     //If the leader does not have a waypoint than it must not have found a path to the objective
                     //So we repeat the search, this time for the best objective that was found
                     yield return leader.BeginPlanning(leaderSuggestions[0].objective.GetGoalDestination());
