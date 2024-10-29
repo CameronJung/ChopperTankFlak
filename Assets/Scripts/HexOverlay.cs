@@ -637,7 +637,7 @@ public class HexOverlay : MonoBehaviour
 
 
 
-    public HexOverlay FindSafestNeighbiourFor(Unit me)
+    public HexOverlay FindSafestNeighbourFor(Unit me)
     {
         HexOverlay safest = null;
         int lowest = int.MaxValue;
@@ -666,6 +666,25 @@ public class HexOverlay : MonoBehaviour
         Debug.Assert(safest != null, "The FindSafestNeighborFor function returned null value for the position " + this.myCoords + " with regards to the unit: " + me.ToString());
 
         return safest;
+    }
+
+
+    /*
+     * Could I Attack With
+     * 
+     * this method returns a bool value indicating if this hex is occupied by a unit that
+     * is from a different team than the Unit attacker
+     */
+    public bool CouldIAttackWith(Unit attacker)
+    {
+        bool attack = false;
+
+        if(this.occupiedBy != null)
+        {
+            attack = this.occupiedBy.GetAllegiance() != attacker.GetAllegiance();
+        }
+
+        return attack;
     }
 
 

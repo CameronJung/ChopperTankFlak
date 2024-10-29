@@ -19,6 +19,7 @@ public class Directive
 
     //This the bottom tile in the order stack, the tile you click on to execute a command
     private HexOverlay destination;
+    private HexOverlay Safest = null;
 
     public  HexState  directiveType { get; private set; }
 
@@ -59,13 +60,14 @@ public class Directive
         if(directiveType == HexState.attackable || directiveType == HexState.snipe)
         {
             smartness += ConsiderMatchup();
+            if(directiveType == HexState.attackable)
+            {
+                Safest = destination.FindSafestNeighbourFor(capable);
+            }
+            
         }
 
-        //Do not consider geography in a combat situation
-        //if (!capable.GetOccupiedHex().intel.IsUnitThreatened(capable))
-        //{
-            smartness += ConsiderGeography();
-        //}
+        smartness += ConsiderGeography();
         smartness += ConsiderThreats();
         
     }
@@ -275,7 +277,17 @@ public class Directive
      */
     private int ConsiderThreats()
     {
-        int smart = Mathf.RoundToInt(destination.intel.ThreatAnalysis(capable));
+        int smart = 0;
+
+        if (Safest != null)
+        {
+            Mathf.RoundToInt(Safest.intel.ThreatAnalysis(capable));
+        }
+        else
+        {
+            Mathf.RoundToInt(destination.intel.ThreatAnalysis(capable));
+        }
+        
 
 
         return smart;
