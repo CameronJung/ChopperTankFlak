@@ -54,14 +54,14 @@ public static class AITacticalValues
     public const int CAN_CAPTURE_BASE = 15;
 
     //These values represent how valuable it is for a unit to destroy a unit in a situation where the attack deals the kill
-    public static readonly Dictionary<UnitType, Dictionary<UnitType, float>> DESTROY_WITH_PRIORITIES = new Dictionary<UnitType, Dictionary<UnitType, float>>
+    public static readonly Dictionary<UnitType, Dictionary<UnitType, float>> ATTACK_WITH_PRIORITIES = new Dictionary<UnitType, Dictionary<UnitType, float>>
     {
         { UnitType.InfantrySquad, new Dictionary<UnitType, float>
             {
                 {UnitType.InfantrySquad, 1.0f},
-                {UnitType.Helicopter, 1.5f},
-                {UnitType.Tank, 1.5f},
-                {UnitType.Flak, 1.5f},
+                {UnitType.Helicopter, 0.1f},
+                {UnitType.Tank, 0.1f},
+                {UnitType.Flak, 0.1f},
                 {UnitType.Artillery, 1.25f},
             }
         },
@@ -69,25 +69,25 @@ public static class AITacticalValues
             {
                 {UnitType.InfantrySquad, 0.25f},
                 {UnitType.Helicopter, 1.0f},
-                {UnitType.Tank, 1.0f},
-                {UnitType.Flak, 1.25f},
+                {UnitType.Tank, 1.5f},
+                {UnitType.Flak, 0.1f},
                 {UnitType.Artillery, 0.75f},
             }
         },
         { UnitType.Tank, new Dictionary<UnitType, float>
             {
                 {UnitType.InfantrySquad, 0.25f},
-                {UnitType.Helicopter, 1.25f},
+                {UnitType.Helicopter, 0.1f},
                 {UnitType.Tank, 1.0f},
-                {UnitType.Flak, 1.0f},
+                {UnitType.Flak, 1.5f},
                 {UnitType.Artillery, 0.75f},
             }
         },
         { UnitType.Flak, new Dictionary<UnitType, float>
             {
                 {UnitType.InfantrySquad, 0.25f},
-                { UnitType.Helicopter, 1.0f},
-                { UnitType.Tank, 1.25f},
+                { UnitType.Helicopter, 1.5f},
+                { UnitType.Tank, 0.1f},
                 { UnitType.Flak, 1.0f},
                 { UnitType.Artillery, 0.75f},
             }
@@ -97,15 +97,76 @@ public static class AITacticalValues
             {
                 {UnitType.InfantrySquad, 0.25f},
                 {UnitType.Helicopter, 1.25f},
-                {UnitType.Tank, 1.0f},
-                {UnitType.Flak, 1.0f},
+                {UnitType.Tank, 1.25f},
+                {UnitType.Flak, 1.25f},
+                {UnitType.Artillery, 1.5f},
+            }
+        }
+    };
+
+
+    public static readonly Dictionary<UnitType, Dictionary<UnitType, float>> END_STALEMATE_PRIORITIES = new Dictionary<UnitType, Dictionary<UnitType, float>>
+    {
+        { UnitType.InfantrySquad, new Dictionary<UnitType, float>
+            {
+                {UnitType.InfantrySquad, 1.5f},
+                {UnitType.Helicopter, 1.5f},
+                {UnitType.Tank, 1.5f},
+                {UnitType.Flak, 1.5f},
+                {UnitType.Artillery, 1.5f},
+            }
+        },
+        { UnitType.Helicopter, new Dictionary<UnitType, float>
+            {
+                {UnitType.InfantrySquad, 1.5f},
+                {UnitType.Helicopter, 1.125f},
+                {UnitType.Tank, 0.25f},
+                {UnitType.Flak, 1.25f},
+                {UnitType.Artillery, 0.75f},
+            }
+        },
+        { UnitType.Tank, new Dictionary<UnitType, float>
+            {
+                {UnitType.InfantrySquad, 1.5f},
+                {UnitType.Helicopter, 1.25f},
+                {UnitType.Tank, 1.125f},
+                {UnitType.Flak, 0.25f},
+                {UnitType.Artillery, 0.75f},
+            }
+        },
+        { UnitType.Flak, new Dictionary<UnitType, float>
+            {
+                {UnitType.InfantrySquad, 0.25f},
+                { UnitType.Helicopter, 0.25f},
+                { UnitType.Tank, 1.25f},
+                { UnitType.Flak, 1.125f},
+                { UnitType.Artillery, 0.75f},
+            }
+        },
+        {
+    UnitType.Artillery, new Dictionary<UnitType, float>
+            {
+                {UnitType.InfantrySquad, 0.75f},
+                {UnitType.Helicopter, 0.75f},
+                {UnitType.Tank, 0.75f},
+                {UnitType.Flak, 0.75f},
                 {UnitType.Artillery, 0.5f},
             }
         }
     };
 
+
     public static float GetDestructionPriority(Unit Attacker, Unit Victim)
     {
-        return DESTROY_WITH_PRIORITIES[Attacker.GetUnitType()][ Victim.GetUnitType()];
+
+        if (Victim.IsInStalemate())
+        {
+            return END_STALEMATE_PRIORITIES[Attacker.GetUnitType()][Victim.GetUnitType()];
+        }
+        else
+        {
+            return ATTACK_WITH_PRIORITIES[Attacker.GetUnitType()][Victim.GetUnitType()];
+        }
+        
     }
 }

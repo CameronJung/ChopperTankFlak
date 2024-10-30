@@ -821,12 +821,16 @@ public class HexOverlay : MonoBehaviour
         rangeSprite.SetActive(false);
         snipeSprite.SetActive(false);
         currState = HexState.unreachable;
-        this.nav.ChangeDebugTextTo(myCoords.ToString());
+        this.DisplayMessageOnBoard(myCoords.ToString());
     }
 
 
-    public void DiplayMessageOnBoard(string msg)
+    public void DisplayMessageOnBoard(string msg)
     {
-        nav.ChangeDebugTextTo(msg);
+        if (Application.isEditor)
+        {
+            nav.ChangeDebugTextTo(msg);
+        }
+        
     }
 }

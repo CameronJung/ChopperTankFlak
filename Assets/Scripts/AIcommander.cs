@@ -133,9 +133,9 @@ public class AIcommander : MonoBehaviour
 
 
             Unit chosenUnit = this.RandomDirective(bestMoves).GetUnit();
-
-            float best = -1.0f;
             /*
+            float best = -1.0f;
+            
             foreach(KeyValuePair<Unit, ObjectiveAssignment> kv in Tactician.Assignments)
             {
                 if(kv.Value.suitability > best)

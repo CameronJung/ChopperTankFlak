@@ -406,6 +406,8 @@ public class UnitLeader : MonoBehaviour
             oas += PossibleObjectives[i].ToString() + " , ";
         }
 
+        oas += " " + GValues.Keys.Count + " tiles were explored";
+
         Debug.Log(oas);
     }
 

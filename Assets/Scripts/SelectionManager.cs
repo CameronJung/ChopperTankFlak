@@ -373,7 +373,15 @@ public class SelectionManager : MonoBehaviour
 
         }
 
-        yield return new WaitForSeconds(1.5f);
+        if (Application.isEditor)
+        {
+            yield return new WaitForSeconds(1.5f);
+        }
+        else
+        {
+            yield return null;
+        }
+        
 
         timeForTurn = Time.realtimeSinceStartup - timeForTurn;
         //Debug.Log("It Took " + timeForTurn + " seconds to make a move.");

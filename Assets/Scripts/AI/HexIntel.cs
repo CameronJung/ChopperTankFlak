@@ -233,7 +233,7 @@ public class HexIntel
         int numAllies = 0;
 
         List<Unit> affectors = this.Tile.GetAffectingUnits();
-
+        Debug.Assert(affectors.Count >= 1, "Hex Affects aren't being updated.");
         affectors.Remove(unit);
 
         Dictionary<UnitType, List<Unit>> enemies = new Dictionary<UnitType, List<Unit>>();

@@ -281,11 +281,11 @@ public class Directive
 
         if (Safest != null)
         {
-            Mathf.RoundToInt(Safest.intel.ThreatAnalysis(capable));
+            smart = Mathf.RoundToInt(Safest.intel.ThreatAnalysis(capable));
         }
         else
         {
-            Mathf.RoundToInt(destination.intel.ThreatAnalysis(capable));
+            smart = Mathf.RoundToInt(destination.intel.ThreatAnalysis(capable));
         }
         
 
@@ -342,8 +342,8 @@ public class Directive
 
     public void ShowSmartnessOnBoard()
     {
-        string description = "G:" + this.ConsiderGeography() + "\nR:" + this.ConsiderThreats() + "\nT:" + this.smartness;
-        this.destination.DiplayMessageOnBoard(description);
+        string description = "G:" + this.ConsiderGeography() + "\nR:" + this.ConsiderThreats() + " U:" + destination.GetAffectingUnits().Count + "\nT:" + this.smartness;
+        this.destination.DisplayMessageOnBoard(description);
     }
 
 }
