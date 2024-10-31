@@ -62,6 +62,11 @@ public class MilitaryManager : MonoBehaviour
         return militaries[faction].CountUnits();
     }
 
+    public int CountUnitsOfType(Faction faction, UnitType kind)
+    {
+        return militaries[faction].CountUnitType(kind);
+    }
+
     public void RevitalizeMilitaryOf(Faction faction)
     {
         militaries[faction].Revitalize();

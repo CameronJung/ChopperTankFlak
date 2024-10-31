@@ -41,10 +41,10 @@ public static class AITacticalValues
 
 
     //Unit Leader Navigation values
-    public const int TOWARDS_WAYPOINT = 3;
+    public const int TOWARDS_WAYPOINT = 2;
     public const int AWAY_FROM_WAYPOINT = -1;
     public const int ON_WAYPOINT = 1;
-    public const int CLOSENESS_BONUS = 3;
+    public const int FURTHER_BONUS = 3;
 
 
 
@@ -52,6 +52,35 @@ public static class AITacticalValues
     public const int CAN_DESTROY_VEHICLE = 6;
     public const int CAN_DESTROY_INFANTRY = 4;
     public const int CAN_CAPTURE_BASE = 15;
+
+
+
+    //Value increase of a factions last unit of a specific type
+    //Losing all of a type of unit represents a significant loss of combat potential
+    public const float LAST_OF_TYPE_VALUE_BONUS = 0.75f;
+
+    //Amount the rating of a move should be increased if it brings the unit to a safer position than it is currently on
+    public const int SAFER_POSITION_BONUS = 2;
+
+    //The value of destroying an enemy unit  or protecting an allied unit
+    public static readonly Dictionary<UnitType, float> UNIT_VALUES = new Dictionary<UnitType, float>
+    {
+        {UnitType.InfantrySquad, 1.75f },
+        {UnitType.Helicopter, 3.0f},
+        {UnitType.Tank, 3.0f},
+        {UnitType.Flak, 3.0f},
+        {UnitType.Artillery, 3.5f},
+    };
+
+
+    //Risk assessment corefficients for stalemates
+    public const float ONLY_ENEMY_CAN_BREAK = 0.1f;
+    public const float ONLY_ALLIE_CAN_BREAK = 1.0f;
+    public const float NONE_CAN_BREAK = 0.5f;
+    public const float BOTH_CAN_BREAK = 0.75f;
+
+
+
 
     //These values represent how valuable it is for a unit to destroy a unit in a situation where the attack deals the kill
     public static readonly Dictionary<UnitType, Dictionary<UnitType, float>> ATTACK_WITH_PRIORITIES = new Dictionary<UnitType, Dictionary<UnitType, float>>

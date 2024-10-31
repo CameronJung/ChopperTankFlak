@@ -64,11 +64,15 @@ public class AIcommander : MonoBehaviour
 
         bestMoves = new List<Directive>();
 
-        List<Unit> myUnits = militaryManager.GetListOfReadyUnits(Faction.ComputerTeam);
+        List<Unit> unmoved = militaryManager.GetListOfReadyUnits(Faction.ComputerTeam);
+
+        List<Unit> myUnits = militaryManager.GetListOfUnits(Faction.ComputerTeam);
 
         List<Unit> enemies = militaryManager.GetListOfUnits(Faction.PlayerTeam);
 
-        while(myUnits.Count > 0 && !manager.IsBattleOver())
+
+
+        while(unmoved.Count > 0 && !manager.IsBattleOver())
         {
             yield return null;
             selector.HandleDeselect();
@@ -76,8 +80,25 @@ public class AIcommander : MonoBehaviour
 
             int itter = 0;
 
+            //update everything I can do
+            foreach (Unit ally in myUnits)
+            {
+                selector.HandleAISelection(ally.myTilePos);
+
+                selector.HandleDeselect();
+
+                ally.SetBounty();
+
+                itter++;
+                if (itter % CHECKS_PER_FRAME == 0)
+                {
+                    yield return null;
+                }
+            }
+            itter = 0;
+
             //Look at what the player might do
-            foreach(Unit enemy in enemies)
+            foreach (Unit enemy in enemies)
             {
                 selector.HandleAISelection(enemy.myTilePos);
 
@@ -86,6 +107,8 @@ public class AIcommander : MonoBehaviour
                 selector.PerformTacticalAnalysis();
                 //yield return null;
 
+                enemy.SetBounty();
+
                 selector.HandleDeselect();
                 itter++;
                 if (itter % CHECKS_PER_FRAME == 0)
@@ -95,26 +118,32 @@ public class AIcommander : MonoBehaviour
 
             }
 
-            yield return Tactician.AssignObjectives();
             itter = 0;
-
-            //update everything I can do
-            foreach(Unit ally in myUnits)
+            foreach (Unit ally in unmoved)
             {
                 selector.HandleAISelection(ally.myTilePos);
 
                 selector.HandleDeselect();
 
+                ally.SetCurrentSafety();
+
                 itter++;
                 if (itter % CHECKS_PER_FRAME == 0)
                 {
                     yield return null;
                 }
             }
+            
+
+
+            yield return Tactician.AssignObjectives();
+            
+
+            
 
             itter = 0;
             //Now that all the options are known we choose a unit to move
-            foreach (Unit ally in myUnits)
+            foreach (Unit ally in unmoved)
             {
                 selector.HandleAISelection(ally.myTilePos);
 
@@ -202,7 +231,9 @@ public class AIcommander : MonoBehaviour
             bestMoves.Clear();
 
 
-            myUnits = militaryManager.GetListOfReadyUnits(Faction.ComputerTeam);
+            unmoved = militaryManager.GetListOfReadyUnits(Faction.ComputerTeam);
+            //The AI will hopefully not be dumb enough to get its own units killed, but I'm not leaving this up to chance
+            myUnits = militaryManager.GetListOfUnits(Faction.ComputerTeam);
         }
         Debug.Log("The Commander took " + (Time.realtimeSinceStartup - turnStarted) + " seconds to complete its turn");
 

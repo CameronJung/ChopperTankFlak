@@ -514,7 +514,11 @@ public class HexOverlay : MonoBehaviour
      */
     public void NotifyAffectOf(Unit unit)
     {
-        this.AffectedBy.Add(unit);
+        if (!this.AffectedBy.Contains(unit))
+        {
+            this.AffectedBy.Add(unit);
+        }
+        
     }
 
     /*
@@ -533,7 +537,7 @@ public class HexOverlay : MonoBehaviour
     {
         foreach(Unit unit in AffectedBy)
         {
-            unit.NoticeBoardChange();
+            unit.NoticeBoardChange(this);
 
         }
 
@@ -555,6 +559,21 @@ public class HexOverlay : MonoBehaviour
         foreach(Unit unit in this.AffectedBy)
         {
             units.Add(unit);
+        }
+
+        return units;
+    }
+
+    public List<Unit> GetAffectingUnitsFromFaction(Faction faction)
+    {
+        List<Unit> units = new List<Unit>();
+
+        foreach (Unit unit in this.AffectedBy)
+        {
+            if (unit.GetAllegiance() == faction)
+            {
+                units.Add(unit);
+            }
         }
 
         return units;
