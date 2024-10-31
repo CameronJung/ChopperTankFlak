@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.Events;
+using System;
 using static UniversalConstants;
 using static AITacticalValues;
 
@@ -40,6 +42,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
 
     protected Tilemap map;
     protected GameManager manager;
+    protected MilitaryManager militaryManager;
 
 
     protected Stack<Order> orders = new Stack<Order>();
@@ -77,6 +80,9 @@ public abstract class Unit : MonoBehaviour, ISelectable
     public bool AffectorsAreCurrent { get; protected set; } = false;
 
     protected Dictionary<int, HexAffect> Affectors = new Dictionary<int, HexAffect>();
+    public Dictionary<BattleOutcome, int> PossibleAttacks { get; protected set; } = new Dictionary<BattleOutcome, int>();
+
+    public float CurrentSafety { get; private set; } = 0;
 
 
     private void Awake()
@@ -89,6 +95,11 @@ public abstract class Unit : MonoBehaviour, ISelectable
     // Start is called before the first frame update
     virtual public void Start()
     {
+        foreach(BattleOutcome outcome in Enum.GetValues(typeof(BattleOutcome)))
+        {
+            PossibleAttacks.Add(outcome, 0);
+        }
+        
         PaintUnit();
         soundMaker = gameObject.GetComponent<AudioSource>();
         puppeteer = gameObject.GetComponent<Animator>();
@@ -125,7 +136,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
         
         HexOverlay hex = map.GetInstantiatedObject(myTilePos).GetComponent<HexOverlay>();
         hex.SetOccupiedBy(null);
-        manager.ReportDeath(this);
+        //manager.ReportDeath(this);
+        militaryManager.RemoveUnitFrom(this);
         if (!actionReported)
         {
             manager.ReportActionComplete(this);
@@ -183,6 +195,8 @@ public abstract class Unit : MonoBehaviour, ISelectable
     protected void Enlist()
     {
         manager = GameObject.Find(MANAGERPATH).GetComponent<GameManager>();
+        militaryManager = GameObject.Find(MANAGERPATH).GetComponent<MilitaryManager>();
+        militaryManager.AddUnit(this);
         manager.ReportForDuty(this);
     }
 
@@ -209,7 +223,6 @@ public abstract class Unit : MonoBehaviour, ISelectable
                 hexes.Add(affect.Hex);
             }
             return hexes;
-            //return map.GetInstantiatedObject(this.myTilePos).GetComponent<HexOverlay>().BeginExploration(this, conspicuous);
         }
         else
         {
@@ -516,9 +529,103 @@ public abstract class Unit : MonoBehaviour, ISelectable
     }
 
 
-    public void NoticeBoardChange()
+    /*
+     * Get Unit Strategic Value
+     * 
+     * this method returns a float value representing how important this Unit is to its
+     * faction's combat ability
+     * 
+     * !Note! this has room for improvement
+     * Trinity units could lose or gain value based on the composition of the enemy military
+     * 
+     */
+    public float GetUnitStrategicValue()
+    {
+        float baseValue = UNIT_VALUES[this.GetUnitType()];
+
+        float modifier = 0.0f;
+
+        if(militaryManager.CountUnitsOfType(this.GetAllegiance(), this.GetUnitType()) == 1)
+        {
+            modifier += LAST_OF_TYPE_VALUE_BONUS;
+        }
+
+        return baseValue + modifier;
+    }
+
+
+
+    /*
+     * Set Bounty
+     * 
+     * this method sets the unit's bounty based using its hex affects instead of relying on
+     * the caller to provide the unit with its own list of options
+     */
+    public void SetBounty()
+    {
+        
+        float myValue = this.GetUnitStrategicValue();
+        float highest = myValue;
+
+
+        if (!AffectorsAreCurrent)
+        {
+            DetermineEffectOfUnit();
+        }
+
+        foreach(HexAffect affect in Affectors.Values)
+        {
+            if(affect.RecordedState == HexState.attackable || affect.RecordedState == HexState.snipe)
+            {
+                Unit target = affect.Hex.GetOccupiedBy();
+                BattleOutcome outcome = PredictBattleResult(this, target);
+
+                highest = Mathf.Max(highest, OUTCOME_WEIGHTS[outcome] * (target.bounty + this.GetUnitStrategicValue()));
+            }
+            else if(affect.RecordedState == HexState.capture)
+            {
+                highest = Mathf.Max(highest, myValue + INFANTRY_CAPTURES_BASE);
+            }
+
+
+        }
+
+
+        bounty = Mathf.RoundToInt(highest);
+    }
+
+    /*
+     * Set Current Safety
+     * 
+     * This method updates the rating of how safe this unit is at its current position
+     * 
+     */
+    public void SetCurrentSafety()
+    {
+        HexOverlay hex = this.GetOccupiedHex();
+        CurrentSafety = hex.intel.ThreatAnalysis(this);
+    }
+
+    /*
+     * Notice Board Change
+     * 
+     * This method is called by a HexOverlay when a the board has changed
+     * 
+     * The parameter "hex" is the HexOverlay that called this method. That HexOverlay is not called and is responsible
+     * for updating itself to avoid a collection modified error.
+     */
+    public void NoticeBoardChange(HexOverlay hex)
     {
         AffectorsAreCurrent = false;
+
+        foreach(HexAffect affect in Affectors.Values)
+        {
+            if(affect.Hex != hex)
+            {
+                affect.Hex.NotifyUnaffectedBy(this);
+            }
+            
+        }
     }
 
 
@@ -683,6 +790,9 @@ public abstract class Unit : MonoBehaviour, ISelectable
     {
         HashSet<HexOverlay> moves = new HashSet<HexOverlay>();
 
+        ResetPossibleAttacks();
+
+
         foreach(HexAffect move in Affectors.Values)
         {
             move.MutateAttackable();
@@ -713,6 +823,7 @@ public abstract class Unit : MonoBehaviour, ISelectable
                         if (attackable)
                         {
                             Affectors.Add(GridHelper.HashGridCoordinates(adj.myCoords), new HexAffect(this, adj, HexState.attackable, dist + 1, false, true));
+                            PossibleAttacks[PredictBattleResult(this, adj.GetOccupiedBy())]++;
                         }
                         else
                         {
@@ -733,11 +844,56 @@ public abstract class Unit : MonoBehaviour, ISelectable
                 }
             }
             
+            
+        }
+
+        //check for hexes that can't be reached because of an allied unit
+        foreach(HexOverlay hex in moves)
+        {
+            if (!hex.CanIBeOn(this))
+            {
+                if (hex.GetOccupiedBy() != null)
+                {
+                    //If a hex got into the movement, than we can move on it, but not be on it, than it must be because an allied unit is on it
+
+                    foreach (HexOverlay adj in hex.adjacent)
+                    {
+                        if (!Affectors.ContainsKey(GridHelper.HashGridCoordinates(adj.myCoords)))
+                        {
+                            Affectors.Add(GridHelper.HashGridCoordinates(adj.myCoords), new HexAffect(this, adj, HexState.unreachable, hex.distanceFrom + 1));
+                        }
+                    }
+                }
+            }
         }
     }
 
 
+    protected void ResetPossibleAttacks()
+    {
+        foreach(BattleOutcome outcome in Enum.GetValues(typeof(BattleOutcome)))
+        {
+            PossibleAttacks[outcome] = 0;
+        }
+    }
 
+    public float CountOutcomesOfPossibleBattles(BattleOutcome expectation)
+    {
+        return (float)PossibleAttacks[expectation];
+    }
+
+
+    /*
+     * Count Likely Possible Attacks
+     * 
+     * Returns the number of units that this unit could stalemate or destroy outright
+     * battles that would result in the unit being countered are ignored because we assume the player won't be dumb enough to do that
+     */
+    public float CountLikelyPossibleAttacks()
+    {
+        float sum = PossibleAttacks[BattleOutcome.stalemate] + PossibleAttacks[BattleOutcome.destroyed];
+        return sum;
+    }
 
 
 

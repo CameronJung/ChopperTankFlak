@@ -12,6 +12,7 @@ public class SelectionManager : MonoBehaviour
 
     public Unit selectedUnit { get; private set; }
 
+    private Strategist Tactician;
 
     private List<HexOverlay> affectedHexes;
     private Vector3Int selectedPos = new Vector3Int();
@@ -23,10 +24,13 @@ public class SelectionManager : MonoBehaviour
     void Start()
     {
         Ruler = gameObject.GetComponent<AStarMeasurement>();
-        Navigation = gameObject.GetComponent<GlobalNavigationData>();
+        Navigation = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<GlobalNavigationData>();
     }
 
-
+    public void RememberStrategist(Strategist strat)
+    {
+        Tactician = strat;
+    }
     
 
     public void HandleNewSelection(Vector3Int tilePos, bool conspicuous = true)
@@ -272,8 +276,10 @@ public class SelectionManager : MonoBehaviour
         Debug.Assert(selectedUnit != null, "There is no unit selected");
         Directives = new List<Directive>();
 
+        Vector3Int tacticalGoal = Tactician.GetDestinationOfUnit(selectedUnit);
+
         float timeForMeasure = Time.realtimeSinceStartup;
-        yield return Ruler.BeginMeasurement(selectedUnit, knowledge.GetPlayerBaseLoc());
+        yield return Ruler.BeginMeasurement(selectedUnit, tacticalGoal);
         timeForMeasure = Time.realtimeSinceStartup - timeForMeasure;
         timeSpentMeasuring += timeForMeasure;
         float numberOfMeasurements = 1.0f;
@@ -281,7 +287,9 @@ public class SelectionManager : MonoBehaviour
         int destDistance = -1;
 
         
-        Debug.Assert(unitDistance > 0, "Ruler was not finished measuring distance for Unit");
+        Debug.Assert(unitDistance >= 0, "Ruler was not finished measuring distance for Unit");
+        
+
         
 
 
@@ -312,20 +320,22 @@ public class SelectionManager : MonoBehaviour
             {
                 Directive noob = new Directive(selectedUnit, hex, knowledge);
 
+                noob.ShowSmartnessOnBoard();
+
                 if (hex.distanceFrom == selectedUnit.GetMobility())
                 {
 
-                    if (Navigation.HasDistance(selectedUnit.GetUnitType(), hex.myCoords, knowledge.GetPlayerBaseLoc()))
+                    if (Navigation.HasDistance(selectedUnit.GetUnitType(), hex.myCoords, tacticalGoal))
                     {
                         //re-use distances already computed
-                        destDistance = Navigation.GetDistance(selectedUnit.GetUnitType(), hex.myCoords, knowledge.GetPlayerBaseLoc());
+                        destDistance = Navigation.GetDistance(selectedUnit.GetUnitType(), hex.myCoords, tacticalGoal);
                     }
                     else { 
                         timeForMeasure = Time.realtimeSinceStartup;
-                        yield return null;
-                        yield return Ruler.BeginMeasurement(selectedUnit, knowledge.GetPlayerBaseLoc(), hex.myCoords);
+                        //yield return null;
+                        yield return Ruler.BeginMeasurement(selectedUnit, tacticalGoal, hex.myCoords);
                         destDistance = Ruler.GetMeasuredDistance();
-                        Navigation.LogDistance(selectedUnit.GetUnitType(), hex.myCoords, knowledge.GetPlayerBaseLoc(), destDistance);
+                        Navigation.LogDistance(selectedUnit.GetUnitType(), hex.myCoords, tacticalGoal, destDistance);
                         timeForMeasure = Time.realtimeSinceStartup - timeForMeasure;
                         timeSpentMeasuring += timeForMeasure;
                         numberOfMeasurements += 1.0f;
@@ -345,9 +355,9 @@ public class SelectionManager : MonoBehaviour
                 if(Directives.Count > 0) { 
 
                     //Maintain possibilities as a list of the best possible moves
-                    if(noob.getSmartness() >= Directives[0].getSmartness())
+                    if(noob.GetSmartness() >= Directives[0].GetSmartness())
                     {
-                        if(noob.getSmartness() > Directives[0].getSmartness())
+                        if(noob.GetSmartness() > Directives[0].GetSmartness())
                         {
                             Directives.Clear();
                         }
@@ -362,12 +372,61 @@ public class SelectionManager : MonoBehaviour
             }
 
         }
+
+        if (Application.isEditor)
+        {
+            yield return new WaitForSeconds(1.5f);
+        }
+        else
+        {
+            yield return null;
+        }
+        
+
         timeForTurn = Time.realtimeSinceStartup - timeForTurn;
         //Debug.Log("It Took " + timeForTurn + " seconds to make a move.");
         //Debug.Log(timeSpentMeasuring + " seconds were spent measuring distances");
         //Debug.Log("A total of " + numberOfMeasurements + " measurements were made");
         //Debug.Log("The average measurement took " + (timeSpentMeasuring / numberOfMeasurements) + " seconds to compute");
         //return possibilities;
+    }
+
+
+
+    /*
+     * Get Smartest Moves
+     * 
+     * This Method returns a list of directives that represent the smartest moves available to the Unit in the parameter, "unit"
+     * 
+     */
+    public List<Directive> GetSmartestMoves(AIIntelHandler knowledge, Unit unit)
+    {
+        List<Directive> moves = new List<Directive>();
+        List<HexOverlay> options = unit.OnSelected(false);
+
+        int smartest = int.MinValue;
+
+        foreach(HexOverlay hex in options)
+        {
+
+            Directive move = new Directive(unit, hex, knowledge);
+
+            if(move.GetSmartness() >= smartest)
+            {
+                if(move.GetSmartness() > smartest)
+                {
+                    //If we find a better move toss out the dumber ones
+                    moves.Clear();
+                    smartest = move.GetSmartness();
+                }
+
+                moves.Add(move);
+
+            }
+
+        }
+
+        return moves;
     }
 
 

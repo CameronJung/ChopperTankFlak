@@ -19,6 +19,9 @@ public static class UniversalConstants : object
     public const float HEXHEIGHTWORLDUNITS = 1.0f;
 
 
+    //This is the maximum value that an objective can have, this maximum value is assigned if
+    //completeing the objective results in victory
+    public const float MAXTACTICALIMPORTANCE = 100.0f;
 
 
     //Constants for unit types using enums makes code more readable
@@ -98,7 +101,13 @@ public static class UniversalConstants : object
         {Faction.PlayerTeam, new Color(0.1f, 0.5f, 0.8f) }
     };
 
-    
+
+    public static readonly Dictionary<BattleOutcome, float> OUTCOME_WEIGHTS = new Dictionary<BattleOutcome, float>
+    {
+        {BattleOutcome.countered, 0.0f },
+        { BattleOutcome.stalemate, 0.75f },
+        {BattleOutcome.destroyed, 1.0f },
+    };
 
     /*
      * 
@@ -169,5 +178,8 @@ public static class UniversalConstants : object
 
         return result;
     }
+
+
+
 
 }

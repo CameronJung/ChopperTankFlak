@@ -140,7 +140,7 @@ public class HexOverlay : MonoBehaviour
 
         if(this.occupiedBy != null)
         {
-            valid = valid && this.occupiedBy.GetAllegiance() != unit.GetAllegiance() || unit == this.occupiedBy ;
+            valid = valid || this.occupiedBy.GetAllegiance() != unit.GetAllegiance() || unit == this.occupiedBy ;
         }
 
         return valid;
@@ -514,7 +514,11 @@ public class HexOverlay : MonoBehaviour
      */
     public void NotifyAffectOf(Unit unit)
     {
-        this.AffectedBy.Add(unit);
+        if (!this.AffectedBy.Contains(unit))
+        {
+            this.AffectedBy.Add(unit);
+        }
+        
     }
 
     /*
@@ -533,11 +537,46 @@ public class HexOverlay : MonoBehaviour
     {
         foreach(Unit unit in AffectedBy)
         {
-            unit.NoticeBoardChange();
+            unit.NoticeBoardChange(this);
 
         }
 
         AffectedBy.Clear();
+    }
+
+
+
+    /*
+     * Get Affecting Units
+     * 
+     * This method returns a list of units that have some sort of affect on this hex
+     * 
+     */
+    public List<Unit> GetAffectingUnits()
+    {
+        List<Unit> units = new List<Unit>();
+
+        foreach(Unit unit in this.AffectedBy)
+        {
+            units.Add(unit);
+        }
+
+        return units;
+    }
+
+    public List<Unit> GetAffectingUnitsFromFaction(Faction faction)
+    {
+        List<Unit> units = new List<Unit>();
+
+        foreach (Unit unit in this.AffectedBy)
+        {
+            if (unit.GetAllegiance() == faction)
+            {
+                units.Add(unit);
+            }
+        }
+
+        return units;
     }
 
 
@@ -612,6 +651,59 @@ public class HexOverlay : MonoBehaviour
         Debug.Assert(neighbor != null, "The FindValidNeighborFor function returned null value for the position " + this.myCoords + " with regards to the unit: " + unit.ToString());
 
         return neighbor;
+    }
+
+
+
+
+    public HexOverlay FindSafestNeighbourFor(Unit me)
+    {
+        HexOverlay safest = null;
+        int lowest = int.MaxValue;
+        List<HexOverlay> safe = new List<HexOverlay>();
+
+        foreach(HexOverlay hex in adjacent)
+        {
+            if(hex.CanIBeOn(me) && (hex.currState == HexState.reachable || hex.currState == HexState.hold))
+            {
+                int safety = Mathf.RoundToInt(hex.intel.ThreatAnalysis(me));
+                if(safety <= lowest)
+                {
+                    if(safety < lowest)
+                    {
+                        safe.Clear();
+                        lowest = safety;
+                    }
+
+                    safe.Add(hex);
+                }
+            }
+        }
+
+        safest = safe[Random.Range(0, safe.Count)];
+
+        Debug.Assert(safest != null, "The FindSafestNeighborFor function returned null value for the position " + this.myCoords + " with regards to the unit: " + me.ToString());
+
+        return safest;
+    }
+
+
+    /*
+     * Could I Attack With
+     * 
+     * this method returns a bool value indicating if this hex is occupied by a unit that
+     * is from a different team than the Unit attacker
+     */
+    public bool CouldIAttackWith(Unit attacker)
+    {
+        bool attack = false;
+
+        if(this.occupiedBy != null)
+        {
+            attack = this.occupiedBy.GetAllegiance() != attacker.GetAllegiance();
+        }
+
+        return attack;
     }
 
 
@@ -748,6 +840,16 @@ public class HexOverlay : MonoBehaviour
         rangeSprite.SetActive(false);
         snipeSprite.SetActive(false);
         currState = HexState.unreachable;
-        this.nav.ChangeDebugTextTo(myCoords.ToString());
+        this.DisplayMessageOnBoard(myCoords.ToString());
+    }
+
+
+    public void DisplayMessageOnBoard(string msg)
+    {
+        if (Application.isEditor)
+        {
+            nav.ChangeDebugTextTo(msg);
+        }
+        
     }
 }

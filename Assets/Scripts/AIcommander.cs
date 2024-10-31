@@ -8,18 +8,19 @@ public class AIcommander : MonoBehaviour
 {
     private const int MAXCAUTION = 10;
     private const int MINCAUTION = 4;
-
+    private const int CHECKS_PER_FRAME = 4;
 
     [SerializeField] private SelectionManager selector;
     [SerializeField] private CommandTracer commander;
     [SerializeField] private GameManager manager;
 
     private Unit[] military;
+    private MilitaryManager militaryManager;
     private List<HexOverlay> possibilities;
     private List<Directive> bestMoves;
     private AIIntelHandler intel;
     private Tilemap Map;
-
+    private Strategist Tactician;
     
 
     //The higher this value is the less likely the AI is to follow through with unfavorable
@@ -30,10 +31,12 @@ public class AIcommander : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Tactician = gameObject.GetComponent<Strategist>();
         caution = Random.Range(MINCAUTION, MAXCAUTION +1);
         intel = gameObject.GetComponent<AIIntelHandler>();
         Map = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<Tilemap>();
-        
+        militaryManager = GameObject.Find(UniversalConstants.MANAGERPATH).GetComponent<MilitaryManager>();
+        selector.RememberStrategist(Tactician);
     }
 
     // Update is called once per frame
@@ -43,10 +46,202 @@ public class AIcommander : MonoBehaviour
     }
 
 
-    public void TakeTurn(List<Unit> units)
+    public void TakeTurn()
     {
-        this.military = units.ToArray();
-        StartCoroutine(IssueDirectives());
+        //this.military = units.ToArray();
+        this.military = militaryManager.GetListOfUnits(Faction.ComputerTeam).ToArray();
+        //StartCoroutine(IssueDirectives());
+        StartCoroutine(ObjectiveBasedTurn());
+    }
+
+
+
+    private IEnumerator ObjectiveBasedTurn()
+    {
+        yield return null;
+
+        float turnStarted = Time.realtimeSinceStartup;
+
+        bestMoves = new List<Directive>();
+
+        List<Unit> unmoved = militaryManager.GetListOfReadyUnits(Faction.ComputerTeam);
+
+        List<Unit> myUnits = militaryManager.GetListOfUnits(Faction.ComputerTeam);
+
+        List<Unit> enemies = militaryManager.GetListOfUnits(Faction.PlayerTeam);
+
+
+
+        while(unmoved.Count > 0 && !manager.IsBattleOver())
+        {
+            yield return null;
+            selector.HandleDeselect();
+            intel.WipeOldData();
+
+            int itter = 0;
+
+            //update everything I can do
+            foreach (Unit ally in myUnits)
+            {
+                selector.HandleAISelection(ally.myTilePos);
+
+                selector.HandleDeselect();
+
+                ally.SetBounty();
+
+                itter++;
+                if (itter % CHECKS_PER_FRAME == 0)
+                {
+                    yield return null;
+                }
+            }
+            itter = 0;
+
+            //Look at what the player might do
+            foreach (Unit enemy in enemies)
+            {
+                selector.HandleAISelection(enemy.myTilePos);
+
+                //yield return null;
+
+                selector.PerformTacticalAnalysis();
+                //yield return null;
+
+                enemy.SetBounty();
+
+                selector.HandleDeselect();
+                itter++;
+                if (itter % CHECKS_PER_FRAME == 0)
+                {
+                    yield return null;
+                }
+
+            }
+
+            itter = 0;
+            foreach (Unit ally in unmoved)
+            {
+                selector.HandleAISelection(ally.myTilePos);
+
+                selector.HandleDeselect();
+
+                ally.SetCurrentSafety();
+
+                itter++;
+                if (itter % CHECKS_PER_FRAME == 0)
+                {
+                    yield return null;
+                }
+            }
+            
+
+
+            yield return Tactician.AssignObjectives();
+            
+
+            
+
+            itter = 0;
+            //Now that all the options are known we choose a unit to move
+            foreach (Unit ally in unmoved)
+            {
+                selector.HandleAISelection(ally.myTilePos);
+
+
+
+                bestMoves = MaintainBest(this.bestMoves, selector.GetSmartestMoves(intel, ally));
+                
+                selector.HandleDeselect();
+
+                itter++;
+                if (itter % CHECKS_PER_FRAME == 0)
+                {
+                    yield return null;
+                }
+            }
+
+
+            Unit chosenUnit = this.RandomDirective(bestMoves).GetUnit();
+            /*
+            float best = -1.0f;
+            
+            foreach(KeyValuePair<Unit, ObjectiveAssignment> kv in Tactician.Assignments)
+            {
+                if(kv.Value.suitability > best)
+                {
+                    best = kv.Value.suitability;
+                    chosenUnit = kv.Key;
+                }
+            }*/
+
+
+            yield return null;
+
+            selector.HandleAISelection(chosenUnit.myTilePos);
+
+            yield return selector.GetSmartestMoves(intel);
+
+            List<Directive> choices = selector.GetDirectives();
+
+            Directive picked = this.RandomDirective(choices);
+
+
+            string moveDetails = "Chosen move was: " + picked.ToString() + " The unit was assigned: " + Tactician.Assignments[picked.GetUnit()];
+            UnitLeader leader = picked.GetUnit().GetComponent<UnitLeader>();
+            if (leader.HasWaypoint())
+            {
+                moveDetails += " Waypoint was at " + leader.WayPoint.myCoords;//+ " Waypoint is for " + leader.WaypointTowards.ToString();
+            }
+
+            if (Tactician.Assignments[picked.GetUnit()].objective.EvaluateUnitViability(picked.GetUnit()) < 0)
+            {
+                leader.LogObjectivesList();
+            }
+
+            Debug.Log(moveDetails);
+
+
+            commander.SpoofSendCommand(picked.GetDestinationCoords());
+            selector.HandleDeselect();
+            yield return null;
+
+            //unmoved.Remove(choice.GetUnit());
+
+            int cycles = 0;
+
+            //wait until the unit is moving
+            while (!manager.IsUnitMoving() && cycles < 600)
+            {
+                //Rounding off time scale means that frames during a pause won't be counted
+                cycles += Mathf.RoundToInt(Time.timeScale);
+                Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
+                yield return null;
+            }
+
+            cycles = 0;
+
+            //Wait until the unit is done moving
+            while (manager.IsUnitMoving() && cycles < 600)
+            {
+                yield return null;
+                cycles += Mathf.RoundToInt(Time.timeScale);
+            }
+            Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
+
+            bestMoves.Clear();
+
+
+            unmoved = militaryManager.GetListOfReadyUnits(Faction.ComputerTeam);
+            //The AI will hopefully not be dumb enough to get its own units killed, but I'm not leaving this up to chance
+            myUnits = militaryManager.GetListOfUnits(Faction.ComputerTeam);
+        }
+        Debug.Log("The Commander took " + (Time.realtimeSinceStartup - turnStarted) + " seconds to complete its turn");
+
+        selector.HandleDeselect();
+        yield return null;
+        
+        manager.HandleTurnEnd(Faction.ComputerTeam);
+        
     }
 
 
@@ -80,8 +275,11 @@ public class AIcommander : MonoBehaviour
                 selector.HandleDeselect();
 
 
+                
+
                 //Start by considering what the player might do next turn
-                Unit[] enemies = manager.GetPlayerMilitary();
+                //Unit[] enemies = manager.GetPlayerMilitary();
+                Unit[] enemies = militaryManager.GetListOfUnits(Faction.PlayerTeam).ToArray();
                 intel.WipeOldData();
                 foreach(Unit enemy in enemies)
                 {
@@ -98,13 +296,16 @@ public class AIcommander : MonoBehaviour
                 }
 
 
+                //Tactician.GenerateObjectives();
+                yield return Tactician.AssignObjectives();
+
                 if (unmoved[idx].myState == UnitState.ready)
                 {
                     yield return null;
 
 
 
-                    yield return null;
+                    //yield return null;
 
                     selector.HandleAISelection(unmoved[idx].myTilePos);
 
@@ -145,14 +346,29 @@ public class AIcommander : MonoBehaviour
             {
                 Directive choice = RandomDirective(moves);
 
-                Debug.Log("Chosen move was: " + choice.ToString());
+
+                //Describes the move in the console
+                string moveDetails = "Chosen move was: " + choice.ToString() + " The unit was assigned: " + Tactician.Assignments[choice.GetUnit()];
+                UnitLeader leader = choice.GetUnit().GetComponent<UnitLeader>();
+                if (leader.HasWaypoint())
+                {
+                    moveDetails += " Waypoint was at " + leader.WayPoint.myCoords + " Waypoint is for " + leader.WaypointTowards.ToString();
+                }
+
+                if(Tactician.Assignments[choice.GetUnit()].objective.EvaluateUnitViability(choice.GetUnit()) < 0)
+                {
+                    leader.LogObjectivesList();
+                }
+
+                Debug.Log(moveDetails);
 
                 selector.HandleAISelection(choice.GetUnit().myTilePos);
 
-                yield return null;
-                yield return null;
 
-                commander.SpoofSendCommand(choice.getDestinationCoords());
+                //yield return null;
+                //yield return null;
+
+                commander.SpoofSendCommand(choice.GetDestinationCoords());
                 selector.HandleDeselect();
                 yield return null;
 
@@ -359,11 +575,11 @@ public class AIcommander : MonoBehaviour
         }
         else
         {
-            int smartest = best[0].getSmartness();
+            int smartest = best[0].GetSmartness();
 
-            if(candidates[0].getSmartness() >= smartest)
+            if(candidates[0].GetSmartness() >= smartest)
             {
-                if(candidates[0].getSmartness() > smartest)
+                if(candidates[0].GetSmartness() > smartest)
                 {
                     best = candidates;
                 }

@@ -249,6 +249,8 @@ public class CommandTracer : MonoBehaviour
         if (directDestination.currState == HexState.attackable)
         {
 
+            //Debug.Log("An attack mission is being redrawn");
+
 
             //set the tile before the curr tile as the attack position
             HexOverlay attackPosition = map.GetInstantiatedObject(map.WorldToCell(points[currTileIdx - 1])).GetComponent<HexOverlay>();
@@ -258,7 +260,15 @@ public class CommandTracer : MonoBehaviour
                 && CoarseAdjacencyTest(points[currTileIdx], points[currTileIdx - 1])))
             {
                 //Find a valid attack position adjacent to the curr tile
-                attackPosition = currTile.FindValidNeighborFor(commandee);
+                if(commandee.GetAllegiance() == Faction.ComputerTeam)
+                {
+                    attackPosition = currTile.FindSafestNeighbourFor(commandee);
+                }
+                else
+                {
+                    attackPosition = currTile.FindValidNeighborFor(commandee);
+                }
+                
                 
             }
 
@@ -402,15 +412,42 @@ public class CommandTracer : MonoBehaviour
     {
         prevTilePos = new Vector3Int(0, 0, -100);
         HexOverlay lie = map.GetInstantiatedObject(fakeMouseTile).GetComponent<HexOverlay>();
+        Vector3Int cursorLoc = fakeMouseTile;
 
         if(lie.currState == HexState.attackable)
         {
-            prevTilePos = lie.FindValidNeighborFor(commandee).myCoords;
+            prevTilePos = lie.FindSafestNeighbourFor(commandee).myCoords;
+        }
+        else if(lie.currState == HexState.reachable && !(commandee is RangedUnit))
+        {
+            //If we are just moving a unit make sure we aren't passing up an opportunity to destroy a unit
+
+            HexOverlay opportunity = null;
+
+            foreach(HexOverlay hex in lie.adjacent)
+            {
+                if (hex.CouldIAttackWith(commandee))
+                {
+                    if(PredictBattleResult(commandee, hex.GetOccupiedBy()) == BattleOutcome.destroyed)
+                    {
+                        opportunity = hex;
+                    }
+                }
+            }
+
+            //This is one of those great examples of naming variables, this condition literally translates to if there is an opportunity
+            if(opportunity != null)
+            {
+                Debug.Log("The unit, " + commandee.ToString() + " found an opportunity that would have been overlooked");
+                prevTilePos = fakeMouseTile;
+                cursorLoc = opportunity.myCoords;
+            }
+
         }
 
 
 
-        HandleMouseAtTile(fakeMouseTile);
+        HandleMouseAtTile(cursorLoc);
 
         SendCommand();
     }

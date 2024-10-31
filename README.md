@@ -2,9 +2,17 @@
 A simple rock-paper-scissors strategy game built in the Unity engine.
 
 
-Current Version: 1.5.0
+Current Version: 1.6.0
 
 Update Log:
+
+V 1.6.0 (android v8)(Major update)
+ - Overhauled the AI, not neccesarily smarter, but more fun to play against
+ - Made a new navigation system, sacrifices some accuracy for superior speed
+ - The AI can now direct its units towards things to do
+ - The AI now considers its units covered when within range of a friendly unit
+ - The AI now considers target saturation when evaluating risks
+ - The AI is able to pathfind around the player's units
 
 V 1.5.0 (android v8)(Major update)
  - Added a ranged unit, the rocket carrier

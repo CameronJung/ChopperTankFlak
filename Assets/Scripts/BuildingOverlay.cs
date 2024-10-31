@@ -13,6 +13,7 @@ public class BuildingOverlay : HexOverlay
     [SerializeField] private GameObject captureSprite;
 
     private GameManager manager;
+    private MilitaryManager militaryManager;
 
     private int security = 2;
 
@@ -22,6 +23,8 @@ public class BuildingOverlay : HexOverlay
         base.Start();
         facilitySprite.color = TeamColours.GetValueOrDefault(owner);
         manager = GameObject.Find(MANAGERPATH).GetComponent<GameManager>();
+        militaryManager = GameObject.Find(MANAGERPATH).GetComponent<MilitaryManager>();
+        militaryManager.RegisterBuildingOwnership(this);
     }
 
     // Update is called once per frame
@@ -68,6 +71,7 @@ public class BuildingOverlay : HexOverlay
             if(security == 0)
             {
                 //The building has been captured
+                militaryManager.ChangeBuildingOwnershipRegistration(this, unit.GetAllegiance());
                 owner = unit.GetAllegiance();
                 facilitySprite.color = TeamColours.GetValueOrDefault(owner);
                 Debug.Log("Building Captured");
@@ -131,5 +135,11 @@ public class BuildingOverlay : HexOverlay
     {
         base.SetBlank();
         captureSprite.SetActive(false);
+    }
+
+
+    public Faction GetAllegiance()
+    {
+        return this.owner;
     }
 }

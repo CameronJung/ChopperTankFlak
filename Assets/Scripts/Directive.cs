@@ -19,6 +19,7 @@ public class Directive
 
     //This the bottom tile in the order stack, the tile you click on to execute a command
     private HexOverlay destination;
+    private HexOverlay Safest = null;
 
     public  HexState  directiveType { get; private set; }
 
@@ -26,6 +27,8 @@ public class Directive
 
     private int CapableDistance = -1;
     private int DestinationDistance = -1;
+
+    
 
     //Constructors
     public Directive(Unit unit, HexOverlay hex, AIIntelHandler knowledge)
@@ -42,6 +45,8 @@ public class Directive
         capable = unit;
         destination = hex;
         directiveType = hex.currState;
+
+
         ThinkThrough();
     }
 
@@ -57,13 +62,14 @@ public class Directive
         if(directiveType == HexState.attackable || directiveType == HexState.snipe)
         {
             smartness += ConsiderMatchup();
+            if(directiveType == HexState.attackable)
+            {
+                Safest = destination.FindSafestNeighbourFor(capable);
+            }
+            
         }
 
-        //Do not consider geography in a combat situation
-        //if (!capable.GetOccupiedHex().intel.IsUnitThreatened(capable))
-        //{
-            smartness += ConsiderGeography();
-        //}
+        smartness += ConsiderGeography();
         smartness += ConsiderThreats();
         
     }
@@ -78,7 +84,7 @@ public class Directive
      */
     private int ConsiderMatchup()
     {
-        int smart = 0;
+        float smart = 0;
         Unit other = this.destination.GetOccupiedBy();
         
 
@@ -97,13 +103,56 @@ public class Directive
                     smart += WILL_BE_DESTROYED;
                     break;
                 case BattleOutcome.stalemate:
-
+                    /*
                     smart += STARTS_STALEMATE + other.bounty;
-
-                    if (destination.FindValidNeighborFor(capable).intel.IsStalemateRisky(other))
+                    
+                    if (destination.FindSafestNeighbourFor(capable).intel.IsStalemateRisky(other))
                     {
                         smart += MILD_DANGER;
                     }
+                    */
+
+                    if(Safest == null)
+                    {
+                        Safest = destination.FindSafestNeighbourFor(capable);
+                    }
+
+                    List<Unit> enemies = Safest.GetAffectingUnitsFromFaction(other.GetAllegiance());
+                    enemies.Remove(other);
+
+                    List<Unit> allies = destination.GetAffectingUnitsFromFaction(capable.GetAllegiance());
+                    allies.Remove(capable);
+
+                    //Shortcoming this does not account for an allied or enemy unit relying on the same hex as capable
+
+                    bool allieBreak = allies.Count > 0;
+                    bool enemyBreak = enemies.Count > 0;
+
+
+                    if(allieBreak && enemyBreak)
+                    {
+                        smart += Mathf.RoundToInt(BOTH_CAN_BREAK * (float)(STARTS_STALEMATE + other.bounty));
+                    }
+                    else if(allieBreak || enemyBreak)
+                    {
+                        if (allieBreak)
+                        {
+                            smart += Mathf.RoundToInt(ONLY_ALLIE_CAN_BREAK * (float)(STARTS_STALEMATE + other.bounty));
+                        }
+                        else
+                        {
+                            smart += Mathf.RoundToInt(ONLY_ENEMY_CAN_BREAK * (float)(STARTS_STALEMATE + other.bounty));
+                            smart += MORTAL_DANGER;
+                        }
+                    }
+                    else
+                    {
+                        smart += Mathf.RoundToInt(BOTH_CAN_BREAK * (float)(STARTS_STALEMATE + other.bounty));
+                        smart += MILD_DANGER;
+                    }
+                    
+
+
 
                     break;
                 case BattleOutcome.destroyed:
@@ -143,10 +192,11 @@ public class Directive
                     smart += INFANTRY_ENDS_STALEMATE;
                 }
             }
-            
-        }
 
-        return smart;
+            smart *= GetDestructionPriority(capable, other);
+        }
+        
+        return Mathf.RoundToInt(smart);
     }
 
 
@@ -159,9 +209,11 @@ public class Directive
     private int ConsiderGeography()
     {
         int smart = 0;
-        bool distant = false;
+        //bool distant = false;
 
-        if (capable.GetMobility() == destination.distanceFrom)
+
+        /*
+        if (capable.GetMobility() <= destination.distanceFrom)
         {
             smart += MOVES_MAXIMUM;
             distant = true;
@@ -178,7 +230,7 @@ public class Directive
         {
             smart += MARCH_ON;
         }
-
+        
         if (intel != null)
         {
             
@@ -210,8 +262,55 @@ public class Directive
                 smart += INFANTRY_CAPTURES_BASE;
             }
         }
+        */
+        if(capable.GetAllegiance() == Faction.ComputerTeam)
+        {
+            UnitLeader leader = capable.GetComponent<UnitLeader>();
 
+            if (leader.HasWaypoint())
+            {
+                HexOverlay waypoint = leader.WayPoint;
+
+                int dGoal = GridHelper.CalcTilesBetweenGridCoords(destination.myCoords, waypoint.myCoords);
+                int dUnit = CalcTilesBetweenGridCoords(capable.myTilePos, destination.myCoords);
+
+                //This calculation is true for a wedge shape opening toward the waypoint
+                if (dGoal <= capable.GetMobility() && (dUnit + dGoal <= capable.GetMobility() + 1))
+                {
+                    smart += TOWARDS_WAYPOINT;
+
+                    smart += Mathf.RoundToInt((float)(dUnit) / (float)(capable.GetMobility()) * FURTHER_BONUS);
+                    
+                    //if(destination.myCoords == waypoint.myCoords) { smart += ON_WAYPOINT; }
+                }
+                
+                if(dUnit < dGoal)
+                {
+                    smart += AWAY_FROM_WAYPOINT;
+                }
+
+
+            }
+
+
+        }
+
+
+
+        if(intel != null)
+        {
+            if (capable.GetUnitType() == UnitType.InfantrySquad && destination.myCoords == intel.GetPlayerBaseLoc())
+            {
+                smart += INFANTRY_CAPTURES_BASE;
+
+            }
+        }
         
+
+        if (capable.IsCapturing() && capable.myTilePos == destination.myCoords)
+        {
+            smart += COMPLETES_CAPTURE;
+        }
 
         return smart;
     }
@@ -225,8 +324,25 @@ public class Directive
      */
     private int ConsiderThreats()
     {
-        int smart = destination.intel.ThreatTo(capable);
+        
 
+        float destSafety;
+
+        if (Safest != null)
+        {
+            destSafety = Safest.intel.ThreatAnalysis(capable);
+        }
+        else
+        {
+            destSafety = destination.intel.ThreatAnalysis(capable);
+        }
+
+        int smart = Mathf.RoundToInt(destSafety);
+
+        if(destSafety > capable.CurrentSafety)
+        {
+            smart += SAFER_POSITION_BONUS;
+        }
 
         return smart;
     }
@@ -246,12 +362,12 @@ public class Directive
 
     /*          ACCESSORS           */
 
-    public int getSmartness()
+    public int GetSmartness()
     {
         return smartness;
     }
 
-    public Vector3Int getDestinationCoords()
+    public Vector3Int GetDestinationCoords()
     {
 
         return this.destination.myCoords;
@@ -275,6 +391,13 @@ public class Directive
         this.DestinationDistance = destDist;
 
         this.ThinkThrough();
+    }
+
+
+    public void ShowSmartnessOnBoard()
+    {
+        string description = "G:" + this.ConsiderGeography() + "\nR:" + this.ConsiderThreats() + " U:" + destination.GetAffectingUnits().Count + "\nT:" + this.smartness;
+        this.destination.DisplayMessageOnBoard(description);
     }
 
 }

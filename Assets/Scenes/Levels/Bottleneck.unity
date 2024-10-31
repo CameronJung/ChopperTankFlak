@@ -1323,6 +1323,7 @@ GameObject:
   - component: {fileID: 481967380}
   - component: {fileID: 481967382}
   - component: {fileID: 481967381}
+  - component: {fileID: 481967383}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -5980,6 +5981,18 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
+--- !u!114 &481967383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 481967379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba114c55d9a86a44bb3fe7abe17ca1d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &500070488
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6348,8 +6361,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 133.30817, y: -45.4189}
-  m_SizeDelta: {x: 250.61633, y: 0}
+  m_AnchoredPosition: {x: 120, y: -47.949844}
+  m_SizeDelta: {x: 224, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &642421499
 MonoBehaviour:
@@ -8097,6 +8110,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1031768489}
   - component: {fileID: 1031768488}
+  - component: {fileID: 1031768490}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -8136,6 +8150,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1031768490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1031768487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 279c1138d1ee2bf49b1d048af66e093f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1074719713
 GameObject:
   m_ObjectHideFlags: 0
@@ -8795,7 +8821,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 133.30817, y: -263.60788}
+  m_AnchoredPosition: {x: 120, y: -291.4483}
   m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1356189000
@@ -10123,6 +10149,7 @@ GameObject:
   - component: {fileID: 1917969239}
   - component: {fileID: 1917969240}
   - component: {fileID: 1917969241}
+  - component: {fileID: 1917969242}
   m_Layer: 0
   m_Name: EnemyCommander
   m_TagString: Untagged
@@ -10174,6 +10201,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   computerBaseLoc: {x: 3, y: -6, z: 0}
   playerBaseLoc: {x: -6, y: 0, z: 0}
+--- !u!114 &1917969242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1917969237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 842880824307ef54aa31b3bbf86a89f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1948474142
 GameObject:
   m_ObjectHideFlags: 0
