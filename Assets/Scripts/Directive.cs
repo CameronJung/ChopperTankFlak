@@ -103,14 +103,8 @@ public class Directive
                     smart += WILL_BE_DESTROYED;
                     break;
                 case BattleOutcome.stalemate:
-                    /*
-                    smart += STARTS_STALEMATE + other.bounty;
                     
-                    if (destination.FindSafestNeighbourFor(capable).intel.IsStalemateRisky(other))
-                    {
-                        smart += MILD_DANGER;
-                    }
-                    */
+                    
 
                     if(Safest == null)
                     {
@@ -120,8 +114,10 @@ public class Directive
                     List<Unit> enemies = Safest.GetAffectingUnitsFromFaction(other.GetAllegiance());
                     enemies.Remove(other);
 
-                    List<Unit> allies = destination.GetAffectingUnitsFromFaction(capable.GetAllegiance());
+                    List<Unit> allies = destination.GetReadyAffectingUnitsFromFaction(capable.GetAllegiance());
                     allies.Remove(capable);
+
+
 
                     //Shortcoming this does not account for an allied or enemy unit relying on the same hex as capable
 
@@ -172,7 +168,7 @@ public class Directive
 
                     if(capable.GetUnitType() == UnitType.InfantrySquad)
                     {
-                        //Prioritize destroying unirs with infantry, as this is an efficient use of firepower
+                        //Prioritize destroying units with infantry, as this is an efficient use of firepower
                         smart += INFANTRY_DESTROYS_UNIT;
                     }
 
@@ -209,60 +205,7 @@ public class Directive
     private int ConsiderGeography()
     {
         int smart = 0;
-        //bool distant = false;
-
-
-        /*
-        if (capable.GetMobility() <= destination.distanceFrom)
-        {
-            smart += MOVES_MAXIMUM;
-            distant = true;
-        }
-
-
-        int distDest = GridHelper.CalcTilesBetweenGridCoords(capable.prevTilePos, destination.myCoords);
-
         
-        int distCurr = GridHelper.CalcTilesBetweenGridCoords(capable.prevTilePos, capable.myTilePos);
-
-        
-        if (distCurr < distDest)
-        {
-            smart += MARCH_ON;
-        }
-        
-        if (intel != null)
-        {
-            
-
-            if (distant)
-            {
-                
-                if (CapableDistance > DestinationDistance)
-                {
-                    
-                    if (capable.GetUnitType() == UnitType.InfantrySquad)
-                    {
-                        smart += INFANTRY_CLOSER_TO_ENEMY_BASE;
-                    }
-                    else if(capable.GetUnitType() == UnitType.Artillery)
-                    {
-                        smart += ARTILLERY_CLOSER_TO_BASE;
-                    }
-                    else
-                    {
-                        smart += CLOSER_TO_ENEMY_BASE;
-                    }
-                }
-            }
-            
-
-            if (capable.GetUnitType() == UnitType.InfantrySquad && destination.myCoords == intel.GetPlayerBaseLoc())
-            {
-                smart += INFANTRY_CAPTURES_BASE;
-            }
-        }
-        */
         if(capable.GetAllegiance() == Faction.ComputerTeam)
         {
             UnitLeader leader = capable.GetComponent<UnitLeader>();

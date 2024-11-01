@@ -579,6 +579,21 @@ public class HexOverlay : MonoBehaviour
         return units;
     }
 
+    public List<Unit> GetReadyAffectingUnitsFromFaction(Faction faction)
+    {
+        List<Unit> units = new List<Unit>();
+
+        foreach (Unit unit in this.AffectedBy)
+        {
+            if (unit.GetAllegiance() == faction && unit.myState == UnitState.ready)
+            {
+                units.Add(unit);
+            }
+        }
+
+        return units;
+    }
+
 
     virtual protected void ChangeState(HexState state, bool doShow)
     {

@@ -5025,20 +5025,20 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "ROCKET CARRIERS\n\tThe Rocket Carrier (shown right) is the possibly the
-    most unique unit  in Chopper Tank Flak. The rocket carrier is the only ranged
-    unit in the game. It can destroy any unit within its effective range of 3 to
-    5 tiles as the crow flies. A Rocket Carrier behind a mountain range makes for
-    a formidable defence.\n\tThe Rocket Carrier is far from invulnerable though,
-    infact it is very much the opposite. The Rocket carrier is completely defenseless
-    at close range, and any unit, even infantry can destroy it.\n\tFurthermore, the
-    Rocket Carrier is the slowest unit in the game, having a movement range of just
-    3 tiles. Additionally, the Rocket Carrier is a wheeled vehicle, thus it shares
-    the lack-lustre terrain crossing abilities of the Armoured Flak Car. \n\tUsing
-    the Rocket Carrier is simple. Just select the Rocket Carrier on the board like
-    any other unit. Its movement range and attack range will then be displayed, then
-    you can move the Rocket Carrier like any other unit, or select a Ranged Attack
-    symbol (right) to attack an enemy unit within range."
+  m_text: "ROCKET CARRIERS\n\tThe Rocket Carrier (shown right) is possibly the most
+    unique unit  in Chopper Tank Flak. The rocket carrier is the only ranged unit
+    in the game. It can destroy any unit within its effective range of 3 to 5 tiles
+    as the crow flies. A Rocket Carrier behind a mountain range makes for a formidable
+    defence.\n\tThe Rocket Carrier is far from invulnerable though, infact it is
+    very much the opposite. The Rocket carrier is completely defenseless at close
+    range, and any unit, even infantry can destroy it.\n\tFurthermore, the Rocket
+    Carrier is the slowest unit in the game, having a movement range of just 3 tiles.
+    Additionally, the Rocket Carrier is a wheeled vehicle, thus it shares the lack-lustre
+    terrain crossing abilities of the Armoured Flak Car. \n\tUsing the Rocket Carrier
+    is simple. Just select the Rocket Carrier on the board like any other unit. Its
+    movement range and attack range will then be displayed, then you can move the
+    Rocket Carrier like any other unit, or select a Ranged Attack symbol (right)
+    to attack an enemy unit within range."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7681,7 +7681,7 @@ MonoBehaviour:
   m_text: "MOVEMENT\n\tThere is some small variation in how fast units are. Tanks
     and infantry can both move 4 tiles in a turn. Helicopters and flak cars are slightly
     faster, able to move 5 tiles in a turn.\n\nTERRAIN\n\tHowever, the movement of
-    units is far more influenced by terrain. Much like combat, movement over terrain
+    units is also influenced by terrain. Much like combat, movement over terrain
     is an all or nothing condition, a unit can either cross the terrain or it is
     blocked by it.\n\tSome of the more notable types of terrain in Chopper Tank Flak
     are explained to the right.\n\tYou can learn about any type of terrain you might

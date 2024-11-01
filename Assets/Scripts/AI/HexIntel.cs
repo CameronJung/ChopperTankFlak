@@ -277,8 +277,11 @@ public class HexIntel
             else
             {
                 //allied unit
+                
                 allies[factor.GetUnitType()].Add(factor);
                 numAllies++;
+                
+                
             }
         }
 
@@ -300,10 +303,9 @@ public class HexIntel
                     switch (outcome)
                     {
                         case BattleOutcome.destroyed:
-                            if(allies[foil].Count > 0)
-                            {
-                                instaKillCoverage = Mathf.Min(MaximumKillCoverage, instaKillCoverage + (MaximumKillCoverage * ((float)allies[foil].Count/(float)enemies[unitType].Count)));
-                            }
+                            
+                            instaKillCoverage = Mathf.Min(MaximumKillCoverage, instaKillCoverage + (MaximumKillCoverage * ((float)allies[foil].Count/((float)enemies[unitType].Count +1.0f ))));
+                            
                             
                             break;
                         case BattleOutcome.stalemate:
