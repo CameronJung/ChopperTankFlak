@@ -17,6 +17,8 @@ public class CommandTracer : MonoBehaviour
     [SerializeField] private GameManager manager;
 
     private LineRenderer liner;
+    private ControlsManager Controller;
+    private SelectionManager Selector;
 
     private Vector3Int currTilePos = new Vector3Int(0, 0, 100);
     private Vector3Int prevTilePos = new Vector3Int(0, 0, 100);
@@ -41,6 +43,8 @@ public class CommandTracer : MonoBehaviour
     void Start()
     {
         liner = gameObject.GetComponent<LineRenderer>();
+        Controller = GameObject.Find(UniversalConstants.MANAGERPATH).GetComponent<ControlsManager>();
+        Selector = GameObject.Find(UniversalConstants.SELECTORPATH).GetComponent<SelectionManager>();
     }
 
     // Update is called once per frame
@@ -324,6 +328,7 @@ public class CommandTracer : MonoBehaviour
         
         if (validTile)
         {
+            /*
             HexOverlay currHex = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>();
 
             if (currHex.currState != HexState.snipe && !CheckLineValidity(endPoint))
@@ -387,8 +392,8 @@ public class CommandTracer : MonoBehaviour
                     }
                 }
             }
-            
-
+            */
+            Mission mission = this.GenerateMission();
             
 
             commandee.BeginMission(mission);
@@ -403,7 +408,115 @@ public class CommandTracer : MonoBehaviour
     }
 
 
+    public void PlayerSendCommand()
+    {
+        if(!Controller.CurrentPermissions.CheckSpecifiableControlPermission(SpecifiableControls.order_unit, ControlAccess.forbidden))
+        {
+            //Mission mission = GenerateMission();
 
+            SendCommand();
+
+
+            if(Controller.CurrentPermissions.CheckSpecifiableControlPermission(SpecifiableControls.order_unit, ControlAccess.conditional))
+            {
+                if (Controller.IsConditionSatisfied())
+                {
+                    Selector.HandleDeselect();
+                }
+                else 
+                {
+                
+                    commandee.CancelMission();
+                }
+
+            }
+            else
+            {
+                Selector.HandleDeselect();
+            }
+
+
+            
+        }
+    }
+
+    /*
+     * Generate Mission
+     * 
+     * This Method will create a Mission object from the current state of the command tracer.
+     * 
+     */
+    public Mission GenerateMission()
+    {
+        Mission mission = new Mission(commandee, map);
+
+        HexOverlay currHex = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>();
+
+        if (currHex.currState != HexState.snipe && !CheckLineValidity(endPoint))
+        {
+
+            string lineData = "";
+
+            for (int i = 0; i < points.Length; i++)
+            {
+                lineData += map.WorldToCell(points[i]) + " -> ";
+            }
+
+        }
+
+
+
+        if (commandee.myTilePos == currTilePos)
+        {
+            mission.AddOrder(new HoldOrder(points[0], points[0], commandee));
+        }
+        else
+        {
+            //Check if we are performing a ranged attack
+            if (currHex.currState == HexState.snipe)
+            {
+                //If so the mission is a single attack order
+                mission.AddOrder(new AttackOrder(points[0], points[1], this.commandee));
+            }
+            else
+            {
+
+
+                //Check if the last order is an attack
+                bool attacks = map.GetInstantiatedObject(currTilePos).GetComponent<HexOverlay>().currState == HexState.attackable;
+
+                for (int idx = endPoint; idx >= 1; idx--)
+                {
+                    if (idx == endPoint)
+                    {
+                        if (attacks)
+                        {
+                            mission.AddOrder(new AttackOrder(points[idx - 1], points[idx], this.commandee));
+                        }
+                        else
+                        {
+                            //Add an extra hold command at the end
+                            if ((map.GetInstantiatedObject(map.WorldToCell(points[endPoint])).GetComponent(typeof(HexOverlay)) as HexOverlay).currState == HexState.capture)
+                            {
+                                mission.AddOrder(new HoldOrder(points[endPoint], points[endPoint], commandee));
+                            }
+
+                            mission.AddOrder(new MoveOrder(points[endPoint - 1], points[endPoint], this.commandee));
+                        }
+
+                    }
+                    else
+                    {
+                        mission.AddOrder(new MoveOrder(points[idx - 1], points[idx], this.commandee));
+                    }
+                }
+            }
+        }
+
+
+
+        return mission;
+    }
 
 
     //This method sets up the command tracer as though the mouse moved to a specific tile

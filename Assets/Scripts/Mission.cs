@@ -97,6 +97,20 @@ public class Mission
         return Orders.Last.Value is AttackOrder;
     }
 
+    public bool CheckFinalPositionTile(Vector3Int tilePos)
+    {
+        Vector3Int dest = map.WorldToCell(this.GetFinalPosition());
+
+        return tilePos == dest;
+    }
+
+    public Vector3Int GetDestinationTile()
+    {
+        Order last = Orders.Last.Value;
+
+        return map.WorldToCell(last.destination);
+    }
+
     public override string ToString()
     {
         string description = "The mission is: ";

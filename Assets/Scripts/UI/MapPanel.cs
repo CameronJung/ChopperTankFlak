@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UniversalConstants;
 
 public class MapPanel : MonoBehaviour
 {
@@ -18,8 +19,15 @@ public class MapPanel : MonoBehaviour
     [SerializeField] private GameObject camObject;
     private Camera cam;
 
+    private ControlsManager Controller;
+
     //The playable area of the game board
     [SerializeField] private Vector2Int mapSize = Vector2Int.zero;
+    [SerializeField] private bool IsAsymetrical = false;
+
+    //These numbers indicate the size of the map as the vertical and hoeizontal distances to the furthest traversable tile from the origin
+    //The distanses are in the order: East, West, North, South
+    [SerializeField] private int[] CardinalDistances = { 0,0,0,0 };
     [SerializeField] private RectTransform Deadzone;
 
     [SerializeField] private float scrollSpeed = 1.25f;
@@ -28,6 +36,8 @@ public class MapPanel : MonoBehaviour
     private Rect mapCentreRect;
     private Vector2 mapCentre;
 
+    
+
     private Vector2 mapDimensions;
 
     private Rect MapFrameRect;
@@ -35,6 +45,9 @@ public class MapPanel : MonoBehaviour
     private Vector2 mapPos;
     private Vector2 MapWorldSize;
     private Vector2 MapViewSize;
+
+    //The middle of the map in world coordinates
+    private Vector2 WorldCentre;
 
     //The distance the camera can move without going over the edge of the map
     private float moveableHeight;
@@ -50,15 +63,37 @@ public class MapPanel : MonoBehaviour
     void Start()
     {
 
+        Controller = GameObject.Find(MANAGERPATH).GetComponent<ControlsManager>();
+
         MapFrameRect = gameObject.GetComponent<RectTransform>().rect;
         MapTransform = gameObject.GetComponent<RectTransform>();
 
+        if (IsAsymetrical)
+        {
+
+            MapWorldSize = new Vector2(HEXWIDTHWORLDUNITS * (3 + CardinalDistances[0] + CardinalDistances[1]), HEXHEIGHTWORLDUNITS * (1 + CardinalDistances[2] + CardinalDistances[3]));
+
+            mapDimensions = new Vector2((3 + CardinalDistances[0] + CardinalDistances[1]) * HEXWIDTH, (1 + CardinalDistances[2] + CardinalDistances[3]) * HEXHEIGHT);
+
+            WorldCentre = new Vector2((CardinalDistances[0] - CardinalDistances[1]) * HEXWIDTH * 0.5f,
+                (CardinalDistances[2] - CardinalDistances[3]) * HEXHEIGHT * 0.5f);
+
+            Debug.Log("The world centre is " + WorldCentre);
+        }
+        else
+        {
+            MapWorldSize = new Vector2(UniversalConstants.HEXWIDTHWORLDUNITS * mapSize.x, UniversalConstants.HEXHEIGHTWORLDUNITS * mapSize.y);
+
+            mapDimensions = new Vector2(mapSize.x * HEXWIDTH, mapSize.y * HEXHEIGHT);
+
+            WorldCentre = new Vector2(0.0f, 0.0f);
+        }
+
         //The real world size of the map
-        MapWorldSize = new Vector2(UniversalConstants.HEXWIDTHWORLDUNITS * mapSize.x, UniversalConstants.HEXHEIGHTWORLDUNITS * mapSize.y);
 
-        
 
-        mapDimensions = new Vector2(mapSize.x * HEXWIDTH, mapSize.y * HEXHEIGHT);
+
+        mapCentre = Deadzone.position;
         cam = camObject.GetComponent<Camera>();
 
         MapViewSize = new Vector2(cam.orthographicSize * cam.aspect * 2, cam.orthographicSize * 2);
@@ -74,17 +109,16 @@ public class MapPanel : MonoBehaviour
         
         
         mapCentreRect = new Rect(mapRect.xMin + BORDER, mapRect.yMin + BORDER, mapRect.width - 2 * BORDER, mapRect.height - 2 * BORDER);
-        mapCentre = Deadzone.position;//Deadzone.TransformPoint(Deadzone.position);
+        
 
         //ViewScale = new Vector3((float)cam.pixelWidth/ (float)Screen.width, (float)cam.pixelHeight/ (float)Screen.height);
         ViewScale = new Vector3(1f / 64f, 1f / 64f);
 
         movableWidth = Mathf.Max((mapDimensions.x - MapViewSize.x) * 0.5f, 0.0f);
         moveableHeight = Mathf.Max((mapDimensions.y - MapViewSize.y) * 0.5f, 0.0f);
-        /*
-        movableWidth = Mathf.Max((mapDimensions.x - cam.pixelWidth / PIXDISTX * HEXWIDTH) * 0.5f, 0.0f);
-        moveableHeight = Mathf.Max((mapDimensions.y - cam.pixelHeight / PIXDISTY * HEXHEIGHT) * 0.5f, 0.0f);
-        /**/
+
+        //ensure the camera is within the movable space
+        PanMapBy(Vector3.zero);
     }
 
     // Update is called once per frame
@@ -181,11 +215,15 @@ public class MapPanel : MonoBehaviour
      */
     public void PanMapBy(Vector3 change)
     {
-        
-
-        camObject.transform.position = new Vector3(Mathf.Clamp(camObject.transform.position.x + change.x, -movableWidth, movableWidth),
-                Mathf.Clamp(camObject.transform.position.y + change.y, -moveableHeight, moveableHeight),
+        if (Controller.CurrentPermissions.CheckBooleanControlPermission(BooleanControls.pan_map))
+        {
+            camObject.transform.position = new Vector3(
+            Mathf.Clamp(camObject.transform.position.x + change.x, WorldCentre.x - movableWidth, WorldCentre.x + movableWidth),
+                Mathf.Clamp(camObject.transform.position.y + change.y, WorldCentre.y - moveableHeight, WorldCentre.y + moveableHeight),
                 camObject.transform.position.z);
+        }
+
+        
     }
 
 

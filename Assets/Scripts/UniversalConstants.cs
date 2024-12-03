@@ -8,6 +8,7 @@ public static class UniversalConstants : object
     public const string MANAGERPATH = "GameManager";
     public const string AIPATH = "EnemyCommander";
     public const string AUDIOPATH = "AudioSettings";
+    public const string SELECTORPATH = "SelectionManager";
 
     //The number of turns it takes to capture a building
     public const int BUILDINGCAPFRESH = 2;
@@ -83,6 +84,30 @@ public static class UniversalConstants : object
         countered = -1,
         stalemate = 0,
         destroyed = 1
+    }
+
+
+    public enum BooleanControls : int
+    {
+        deselect = 0,
+        end_turn = 1,
+        pan_map = 2,
+        AutoTurnEnd = 3,
+        ContinueButton = 4,
+        DialogueShown = 5,
+    }
+
+    public enum SpecifiableControls: int
+    {
+        select = 0,
+        order_unit = 1,
+    }
+
+    public enum ControlAccess : int
+    {
+        forbidden = 0,
+        conditional = 1,
+        free = 2,
     }
 
 
