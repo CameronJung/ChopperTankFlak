@@ -16,6 +16,9 @@ public class DialogueBox : MonoBehaviour
     [SerializeField] private GameObject ContinueButton;
 
     [SerializeField] private GameObject Pointer;
+    [SerializeField] private GameObject Highlighter = null;
+
+
     private Sprite PointerSprite;
 
     private DialogueStep CurrStep;
@@ -87,13 +90,57 @@ public class DialogueBox : MonoBehaviour
                 ObscureSelf();
             }
 
+
+
             ContinueButton.SetActive(step.GetControlsForStep().CheckBooleanControlPermission(UniversalConstants.BooleanControls.ContinueButton));
+
+            if (Highlighter != null)
+            {
+                if (step.GetHighlighted() != null)
+                {
+                    RectTransform highlight = step.GetHighlighted();
+
+                    Highlighter.SetActive(true);
+
+                    RectTransform ink = Highlighter.GetComponent<RectTransform>();
+
+                    ink.pivot = highlight.pivot;
+
+
+
+                    //ink.anchoredPosition = highlight.anchoredPosition;
+                    //ink.anchorMax = highlight.anchorMax;
+                    //ink.anchorMin = highlight.anchorMin;
+
+
+                    ink.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, highlight.rect.width);
+                    ink.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, highlight.rect.height);
+
+                    //ink.offsetMin = highlight.offsetMin;
+                    //ink.offsetMax = highlight.offsetMax;
+
+                    ink.position = highlight.position;
+
+                    
+
+                    //ink.sizeDelta = highlight.sizeDelta;
+
+
+                }
+                else
+                {
+                    Highlighter.SetActive(false);
+                }
+            }
         }
         else
         {
             //Being sent null indicates there are no more steps so the dialogue box should hide
             ObscureSelf();
         }
+
+        
+        
         
 
     }

@@ -1140,6 +1140,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 08cb307b3746f324d9be88f71e490feb, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &336853851
 GameObject:
   m_ObjectHideFlags: 0
@@ -1180,6 +1181,7 @@ MonoBehaviour:
     your finger is above the crossed swords symbol release your finger to attack."
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: a6afbdb7b78d23b44967fc7861ce2144, type: 2}
+  highlighted: {fileID: 0}
 --- !u!114 &336853853
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1415,6 +1417,7 @@ MonoBehaviour:
   MobileText: Touch the infantry squad indicated by the green arrow.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 11d1eb5e3b9f9614c863b90328a3cf96, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &371214627
 GameObject:
   m_ObjectHideFlags: 0
@@ -1450,6 +1453,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: a6afbdb7b78d23b44967fc7861ce2144, type: 2}
+  highlighted: {fileID: 0}
 --- !u!114 &371214629
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1563,6 +1567,7 @@ MonoBehaviour:
     If you ever want to deselect a unit, just scroll the map."
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 9ddbd92c57e8c254cae91338584fa0ac, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &452690559
 GameObject:
   m_ObjectHideFlags: 0
@@ -1612,6 +1617,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 0
   ControlsDuringStep: {fileID: 11400000, guid: a5404ad70631fc9499f869c43ecf2504, type: 2}
+  highlighted: {fileID: 0}
   Selected: {fileID: 1938071524}
   Targeted: {fileID: 1774252278}
   Destination: {x: 0, y: 0, z: 0}
@@ -1786,6 +1792,7 @@ MonoBehaviour:
     your finger is above the crossed swords symbol release your finger to attack."
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: a6afbdb7b78d23b44967fc7861ce2144, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &642421497
 GameObject:
   m_ObjectHideFlags: 0
@@ -2010,6 +2017,7 @@ MonoBehaviour:
     by the green arrow.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 08cb307b3746f324d9be88f71e490feb, type: 2}
+  highlighted: {fileID: 0}
 --- !u!114 &655229190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2578,6 +2586,7 @@ MonoBehaviour:
     your finger is above the crossed swords symbol release your finger to attack."
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: a6afbdb7b78d23b44967fc7861ce2144, type: 2}
+  highlighted: {fileID: 0}
 --- !u!224 &800736723 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1732336247291710501, guid: 7b3f206bc20f74140aeecf3d708629f7, type: 3}
@@ -3760,6 +3769,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 08cb307b3746f324d9be88f71e490feb, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &1064135794
 GameObject:
   m_ObjectHideFlags: 0
@@ -3828,6 +3838,7 @@ MonoBehaviour:
     your finger is above the crossed swords symbol release your finger to attack."
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: a6afbdb7b78d23b44967fc7861ce2144, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &1074719713
 GameObject:
   m_ObjectHideFlags: 0
@@ -4005,6 +4016,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 08cb307b3746f324d9be88f71e490feb, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &1106123412
 GameObject:
   m_ObjectHideFlags: 0
@@ -4071,6 +4083,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 11d1eb5e3b9f9614c863b90328a3cf96, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &1143925914
 GameObject:
   m_ObjectHideFlags: 0
@@ -4120,6 +4133,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 0
   ControlsDuringStep: {fileID: 11400000, guid: a5404ad70631fc9499f869c43ecf2504, type: 2}
+  highlighted: {fileID: 0}
   Selected: {fileID: 1921047044}
   Targeted: {fileID: 0}
   Destination: {x: 1, y: 2, z: 0}
@@ -4798,6 +4812,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 08cb307b3746f324d9be88f71e490feb, type: 2}
+  highlighted: {fileID: 0}
 --- !u!224 &1327436140 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6671220303551837262, guid: 167cdc0ec4540ba4e933dd244fceda24, type: 3}
@@ -4853,6 +4868,7 @@ MonoBehaviour:
   MobileText: Touch the infantry squad indicated by the green arrow.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 11d1eb5e3b9f9614c863b90328a3cf96, type: 2}
+  highlighted: {fileID: 0}
 --- !u!114 &1341180217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10687,6 +10703,7 @@ MonoBehaviour:
   MobileText: Touch the infantry squad indicated by the green arrow.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 11d1eb5e3b9f9614c863b90328a3cf96, type: 2}
+  highlighted: {fileID: 0}
 --- !u!114 &1392533180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10773,6 +10790,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 08cb307b3746f324d9be88f71e490feb, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &1456657847
 GameObject:
   m_ObjectHideFlags: 0
@@ -11116,6 +11134,7 @@ MonoBehaviour:
     the map panel. Then just drag the map around to move it.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 11d1eb5e3b9f9614c863b90328a3cf96, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &1577763690
 GameObject:
   m_ObjectHideFlags: 0
@@ -11458,6 +11477,7 @@ MonoBehaviour:
     your finger is above the crossed swords symbol release your finger to attack."
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: a6afbdb7b78d23b44967fc7861ce2144, type: 2}
+  highlighted: {fileID: 0}
 --- !u!114 &1649766143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11553,6 +11573,7 @@ MonoBehaviour:
   MobileText: Touch the infantry squad indicated by the green arrow.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 11d1eb5e3b9f9614c863b90328a3cf96, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &1675140004
 GameObject:
   m_ObjectHideFlags: 0
@@ -11591,6 +11612,7 @@ MonoBehaviour:
     your finger is above the crossed swords symbol release your finger to attack."
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: a6afbdb7b78d23b44967fc7861ce2144, type: 2}
+  highlighted: {fileID: 0}
 --- !u!114 &1675140006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12144,6 +12166,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 08cb307b3746f324d9be88f71e490feb, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &1850153692
 GameObject:
   m_ObjectHideFlags: 0
@@ -12276,7 +12299,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowMapArrow: 1
-  UnitTarget: {fileID: 0}
+  UnitTarget: {fileID: 1884266297}
   TileTarget: {x: 3, y: -4, z: 0}
 --- !u!114 &1865696961
 MonoBehaviour:
@@ -12297,6 +12320,7 @@ MonoBehaviour:
     by the green arrow.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 08cb307b3746f324d9be88f71e490feb, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1001 &1870623560
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12422,6 +12446,7 @@ MonoBehaviour:
     by the green arrow.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 08cb307b3746f324d9be88f71e490feb, type: 2}
+  highlighted: {fileID: 0}
 --- !u!4 &1884266294 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5255287528332269928, guid: 935cb19ddab8f394bb38da1add102a37, type: 3}
@@ -12883,6 +12908,7 @@ MonoBehaviour:
   MobileText: Touch the infantry squad indicated by the green arrow.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 11d1eb5e3b9f9614c863b90328a3cf96, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &1985501713
 GameObject:
   m_ObjectHideFlags: 0
@@ -12950,6 +12976,7 @@ MonoBehaviour:
     by the green arrow.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 08cb307b3746f324d9be88f71e490feb, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1001 &2043018079
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13152,6 +13179,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 11d1eb5e3b9f9614c863b90328a3cf96, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &2109509349
 GameObject:
   m_ObjectHideFlags: 0
@@ -13269,6 +13297,7 @@ MonoBehaviour:
     by the green arrow.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 08cb307b3746f324d9be88f71e490feb, type: 2}
+  highlighted: {fileID: 0}
 --- !u!4 &2119544696 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4910570094358356590, guid: c3704f1e0f7cb9f49908f24d5f91689f, type: 3}
@@ -13338,6 +13367,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 08cb307b3746f324d9be88f71e490feb, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &2146231121
 GameObject:
   m_ObjectHideFlags: 0

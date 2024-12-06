@@ -10,6 +10,7 @@ public class SelectionManager : MonoBehaviour
     [SerializeField] private ReconPanel recon;
     [SerializeField] private GameObject cursor;
     [SerializeField] private CommandTracer commander;
+    
 
     public Unit selectedUnit { get; private set; }
 

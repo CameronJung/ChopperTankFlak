@@ -14,6 +14,11 @@ public class DialogueStep : MonoBehaviour{
     [SerializeField] private bool ShowBox = true;
 
     [SerializeField] protected ControlStateCard ControlsDuringStep = null;
+
+    //The rectangle transformation of what should be highlighted during the step
+    [SerializeField] protected RectTransform highlighted = null;
+
+
     protected DialogueBox Box = null;
 
 
@@ -49,5 +54,10 @@ public class DialogueStep : MonoBehaviour{
     public bool ShouldBoxBeShown()
     {
         return ShowBox;
+    }
+
+    public RectTransform GetHighlighted()
+    {
+        return highlighted;
     }
 }

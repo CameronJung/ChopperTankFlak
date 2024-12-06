@@ -1135,6 +1135,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: fee1d4a9976393d4d928823fc297efab, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &352309278
 GameObject:
   m_ObjectHideFlags: 0
@@ -1313,6 +1314,7 @@ MonoBehaviour:
     to move to that tile.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: ac8ae592d78cd0440aacf68277a054d8, type: 2}
+  highlighted: {fileID: 0}
 --- !u!114 &413361273
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1325,6 +1327,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d9eff77970c07c49a5c3c9b44ffb088, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowMapArrow: 1
   TileDestination: {x: 2, y: -2, z: 0}
   SelectedUnit: {fileID: 754670328}
   UnitDestination: {fileID: 0}
@@ -1392,6 +1395,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 0
   ControlsDuringStep: {fileID: 11400000, guid: d6fafe2ffdcb08940af08afc460225ba, type: 2}
+  highlighted: {fileID: 0}
   Selected: {fileID: 357371928}
   Targeted: {fileID: 1735256046}
   Destination: {x: 0, y: 0, z: 0}
@@ -1451,6 +1455,7 @@ MonoBehaviour:
     units to attack, as this will decide which tile the unit is on when it is finished."
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: fee1d4a9976393d4d928823fc297efab, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &534173669
 GameObject:
   m_ObjectHideFlags: 0
@@ -1489,6 +1494,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 215ff7b4109032b4a84c7d5def486c14, type: 2}
+  highlighted: {fileID: 1755063222}
 --- !u!4 &534173671
 Transform:
   m_ObjectHideFlags: 0
@@ -1549,6 +1555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 120a27fe72b77174fa4493a09ec3217d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowMapArrow: 1
   TargetedUnit: {fileID: 754670328}
 --- !u!114 &535047440
 MonoBehaviour:
@@ -1570,6 +1577,104 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 11d1eb5e3b9f9614c863b90328a3cf96, type: 2}
+  highlighted: {fileID: 0}
+--- !u!1001 &550142327
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 824977219}
+    m_Modifications:
+    - target: {fileID: 7197622814572467282, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_Name
+      value: UIHighlighter
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
 --- !u!1 &580817661
 GameObject:
   m_ObjectHideFlags: 0
@@ -1889,6 +1994,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 120a27fe72b77174fa4493a09ec3217d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowMapArrow: 1
   TargetedUnit: {fileID: 1735256046}
 --- !u!114 &643526613
 MonoBehaviour:
@@ -1908,6 +2014,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 23aa0fa798264e8429753fb5aef0102b, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &655229187
 GameObject:
   m_ObjectHideFlags: 0
@@ -1960,6 +2067,7 @@ MonoBehaviour:
     by the green arrow.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 23aa0fa798264e8429753fb5aef0102b, type: 2}
+  highlighted: {fileID: 0}
 --- !u!114 &655229190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1972,6 +2080,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db2fae33c5466bd48b58a42370c051f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowMapArrow: 1
   TargetedTile: {x: 3, y: 0, z: 0}
 --- !u!1 &684557169
 GameObject:
@@ -2009,6 +2118,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: a6afbdb7b78d23b44967fc7861ce2144, type: 2}
+  highlighted: {fileID: 0}
 --- !u!114 &684557171
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2021,6 +2131,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d9eff77970c07c49a5c3c9b44ffb088, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowMapArrow: 1
   TileDestination: {x: 3, y: 0, z: 0}
   SelectedUnit: {fileID: 754670328}
   UnitDestination: {fileID: 0}
@@ -2449,6 +2560,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: fee1d4a9976393d4d928823fc297efab, type: 2}
+  highlighted: {fileID: 0}
 --- !u!114 &754670328 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7137924168088364416, guid: f9f27ac743dccd8448c332660b2c4c5c, type: 3}
@@ -2497,6 +2609,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: a6afbdb7b78d23b44967fc7861ce2144, type: 2}
+  highlighted: {fileID: 0}
 --- !u!114 &755078312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2509,6 +2622,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d9eff77970c07c49a5c3c9b44ffb088, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowMapArrow: 1
   TileDestination: {x: 3, y: 0, z: 0}
   SelectedUnit: {fileID: 754670328}
   UnitDestination: {fileID: 0}
@@ -2715,6 +2829,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 08cb307b3746f324d9be88f71e490feb, type: 2}
+  highlighted: {fileID: 0}
 --- !u!224 &800736723 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1732336247291710501, guid: 7b3f206bc20f74140aeecf3d708629f7, type: 3}
@@ -3028,6 +3143,7 @@ RectTransform:
   - {fileID: 203824243}
   - {fileID: 1017184671}
   - {fileID: 719704495}
+  - {fileID: 1935289141}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3841,6 +3957,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 08cb307b3746f324d9be88f71e490feb, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &1064135794
 GameObject:
   m_ObjectHideFlags: 0
@@ -3886,6 +4003,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d9eff77970c07c49a5c3c9b44ffb088, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowMapArrow: 1
   TileDestination: {x: 0, y: 0, z: 0}
   SelectedUnit: {fileID: 1735256046}
   UnitDestination: {fileID: 1680741171}
@@ -3909,6 +4027,7 @@ MonoBehaviour:
     your finger is above the crossed swords symbol release your finger to attack."
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: ac8ae592d78cd0440aacf68277a054d8, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &1074719713
 GameObject:
   m_ObjectHideFlags: 0
@@ -4199,6 +4318,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: fee1d4a9976393d4d928823fc297efab, type: 2}
+  highlighted: {fileID: 1629399152}
 --- !u!1 &1208153763
 GameObject:
   m_ObjectHideFlags: 0
@@ -4755,10 +4875,16 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: fee1d4a9976393d4d928823fc297efab, type: 2}
+  highlighted: {fileID: 0}
 --- !u!224 &1327436140 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 6671220303551837262, guid: 167cdc0ec4540ba4e933dd244fceda24, type: 3}
   m_PrefabInstance: {fileID: 1310439318}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1335928473 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 111122174232659821, guid: 6b0cceb3518588f41be3087ceccf2c09, type: 3}
+  m_PrefabInstance: {fileID: 111122174045405890}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1341180214
 GameObject:
@@ -4810,6 +4936,7 @@ MonoBehaviour:
   MobileText: Touch the infantry squad indicated by the green arrow.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 23aa0fa798264e8429753fb5aef0102b, type: 2}
+  highlighted: {fileID: 0}
 --- !u!114 &1341180217
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4822,6 +4949,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 120a27fe72b77174fa4493a09ec3217d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowMapArrow: 1
   TargetedUnit: {fileID: 754670328}
 --- !u!1 &1356188998
 GameObject:
@@ -9482,6 +9610,7 @@ MonoBehaviour:
     the map panel. Then just drag the map around to move it.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 11d1eb5e3b9f9614c863b90328a3cf96, type: 2}
+  highlighted: {fileID: 0}
 --- !u!114 &1450976795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9494,6 +9623,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 120a27fe72b77174fa4493a09ec3217d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowMapArrow: 1
   TargetedUnit: {fileID: 754670328}
 --- !u!4 &1450976796
 Transform:
@@ -9831,6 +9961,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 120a27fe72b77174fa4493a09ec3217d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowMapArrow: 1
   TargetedUnit: {fileID: 157363834}
 --- !u!114 &1482382877
 MonoBehaviour:
@@ -9853,6 +9984,7 @@ MonoBehaviour:
     the map panel. Then just drag the map around to move it.
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 11d1eb5e3b9f9614c863b90328a3cf96, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1 &1577763690
 GameObject:
   m_ObjectHideFlags: 0
@@ -10616,6 +10748,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 0
   ControlsDuringStep: {fileID: 11400000, guid: d6fafe2ffdcb08940af08afc460225ba, type: 2}
+  highlighted: {fileID: 0}
   Selected: {fileID: 357371928}
   Targeted: {fileID: 1735256046}
   Destination: {x: 0, y: 0, z: 0}
@@ -10663,13 +10796,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0f7af42fc1d1144b811dbc6553a1b46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: Welcome, this Tutorial will introduce you to the game's controls and user
-    interface. Additionally, we will cover how to command your troops and capture
-    buildings. Press the continue button to proceed.
+  Words: "\tWelcome, this Tutorial will introduce you to the game's controls and
+    user interface. Additionally, we will cover how to command your troops and capture
+    buildings. \n\tPress the continue button to proceed."
   RequiresMobileVersion: 0
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: fee1d4a9976393d4d928823fc297efab, type: 2}
+  highlighted: {fileID: 1335928473}
 --- !u!1 &1850153692
 GameObject:
   m_ObjectHideFlags: 0
@@ -10902,6 +11036,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Map: {fileID: 1365311421}
+--- !u!1 &1935289140 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7197622814572467282, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+  m_PrefabInstance: {fileID: 550142327}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1935289141 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7197622814572467283, guid: 9f70fe587e2e61542978576b4247cbd3, type: 3}
+  m_PrefabInstance: {fileID: 550142327}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1948474142
 GameObject:
   m_ObjectHideFlags: 0
@@ -11224,6 +11368,7 @@ MonoBehaviour:
   MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 08cb307b3746f324d9be88f71e490feb, type: 2}
+  highlighted: {fileID: 0}
 --- !u!1001 &2043018079
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11673,6 +11818,10 @@ PrefabInstance:
       propertyPath: Playbook
       value: 
       objectReference: {fileID: 744762309}
+    - target: {fileID: 111122174566813278, guid: 6b0cceb3518588f41be3087ceccf2c09, type: 3}
+      propertyPath: Highlighter
+      value: 
+      objectReference: {fileID: 1935289140}
     - target: {fileID: 111122174809714438, guid: 6b0cceb3518588f41be3087ceccf2c09, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
