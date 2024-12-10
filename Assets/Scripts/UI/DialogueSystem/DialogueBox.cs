@@ -137,6 +137,8 @@ public class DialogueBox : MonoBehaviour
         {
             //Being sent null indicates there are no more steps so the dialogue box should hide
             ObscureSelf();
+            Highlighter.SetActive(false);
+            Pointer.SetActive(false);
         }
 
         
