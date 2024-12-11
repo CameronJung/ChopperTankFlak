@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0db5a84b2050c1340843bac39388519a, type: 3}
+  m_Name: Lvl_Trinity
+  m_EditorClassIdentifier: 
+  LevelName: Operation Trinity
+  Description: "\tThis tutorial will get you familiar with the titular units of this
+    game, the Battle Tank, Attack Helicopter and Armoured Flak Car. You will learn
+    how these units fair in battle against eachother and how stalemates work."
+  SceneID: Trinity

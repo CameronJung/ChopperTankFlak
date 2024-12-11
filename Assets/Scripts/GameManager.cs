@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject pausePanel;
     private MilitaryManager militaryManager;
-    private DialogueManager Director;
+    private DialogueManager Director = null;
 
 
     private AIIntelHandler intel;
@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
 
     //Changes to true when the game ends for some reason
     private bool battleOver = false;
-    private ControlsManager Controller;
+    private ControlsManager Controller = null;
 
 
     private void Awake()
@@ -109,11 +109,20 @@ public class GameManager : MonoBehaviour
         {
             clicker.BlockClicks();
 
-            List<RequiredMove> moves = Director.CurrAct.GetAISteps();
+            if(Director != null)
+            {
+                List<RequiredMove> moves = Director.CurrAct.GetAISteps();
+
+                enemyCO.TakeTurn(moves);
+            }
+            else
+            {
+                enemyCO.TakeTurn();
+            }
+            
 
 
 
-            enemyCO.TakeTurn(moves);
             musicManager.PlayComputerMusic();
         }
     }
@@ -124,7 +133,7 @@ public class GameManager : MonoBehaviour
     private void EndTurn()
     {
         turn++;
-        if(Controller != null)
+        if (Controller != null && Director != null)
         {
             Director.NextAct();
         }

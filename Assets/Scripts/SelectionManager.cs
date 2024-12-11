@@ -140,8 +140,17 @@ public class SelectionManager : MonoBehaviour
                 }
                 else if (hex.GetOccupiedBy() != null)
                 {
-                    HandleUnitSelected(conspicuous);
-                    recon.DisplayIntelAbout(hex.GetOccupiedBy(), tilePos);
+                    //Units that are proccessing a mission should be unselectable
+                    if (!hex.GetOccupiedBy().HasMission())
+                    {
+                        HandleUnitSelected(conspicuous);
+                        recon.DisplayIntelAbout(hex.GetOccupiedBy(), tilePos);
+                    }
+                    else
+                    {
+                        recon.DisplayIntelAbout(map.GetTile<TerrainTile>(tilePos), tilePos);
+                    }
+                    
                 }
             }
             //Otherwise send the unit if one is present

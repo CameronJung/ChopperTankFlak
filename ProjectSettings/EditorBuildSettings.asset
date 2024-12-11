@@ -32,4 +32,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Levels/Castle.unity
     guid: 171af9179d4c0dd4dabc039899d0ac88
+  - enabled: 1
+    path: Assets/Scenes/Tutorials/OperationBaptism.unity
+    guid: eedbd12fc73346b4db3ba7a27fde1100
+  - enabled: 1
+    path: Assets/Scenes/Tutorials/Trinity.unity
+    guid: 26d883096a02c804bb859962ccb12e1b
+  - enabled: 1
+    path: Assets/Scenes/Tutorials/Cargo.unity
+    guid: ff1ad7f15a44e394091732518573b9d4
   m_configObjects: {}

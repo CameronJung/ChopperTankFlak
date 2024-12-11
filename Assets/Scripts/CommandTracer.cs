@@ -148,6 +148,7 @@ public class CommandTracer : MonoBehaviour
     {
         if (unit.GetAllegiance() == manager.WhosTurn() && (unit.myState == UnitState.ready))
         {
+            Debug.Log("Started Drawing Command");
             //The most tiles any unit could have will be mobility + 2
             points = new Vector3[unit.GetMobility() + 2];
             points[0] = map.GetCellCenterWorld(unit.myTilePos);

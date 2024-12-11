@@ -11,10 +11,11 @@ public class Pages : MonoBehaviour
 
     [SerializeField] private GameObject[] MouseSheets;
     [SerializeField] private GameObject[] TouchSheets;
-    [SerializeField] private TextMeshProUGUI label;
+    [SerializeField] private TextMeshProUGUI label = null;
     [SerializeField] private Slider slider;
 
     private GameObject[][] Sheets;
+    
 
     private int currPage = 1;
     //0 for mouse controls, 1 for touch screen controls
@@ -31,13 +32,13 @@ public class Pages : MonoBehaviour
         if (ControlSet == 1)
         {
             //ControlSet = 1;
-            slider.maxValue = TouchSheets.Length;
+            slider.maxValue = TouchSheets.Length - 1;
             Debug.Log("application is a mobile device");
         }
         else
         {
             //ControlSet = 0;
-            slider.maxValue = MouseSheets.Length;
+            slider.maxValue = MouseSheets.Length - 1;
             Debug.Log("Application is not a mobile device");
         }
 
@@ -55,26 +56,18 @@ public class Pages : MonoBehaviour
     //Changes the displayed page
     public void TurnToPage()
     {
-        int pageNum = Mathf.RoundToInt(slider.value) - 1;
-
-        //Deactivate all sheets
-        foreach (GameObject sheet in MouseSheets)
-        {
-            sheet.SetActive(false);
-        }
-        foreach (GameObject sheet in TouchSheets)
-        {
-            sheet.SetActive(false);
-        }
-
+        int pageNum = Mathf.RoundToInt(slider.value);
         
-        //And just turn the selected sheet back on
-        Sheets[ControlSet][pageNum].SetActive(true);
 
-        currPage = pageNum;
+        for(int i = Mathf.FloorToInt(slider.minValue); i <= slider.maxValue; i++)
+        {
+            Sheets[ControlSet][i].SetActive(i == Mathf.RoundToInt(slider.value));
+        }
 
-
-        label.text = (currPage + 1) + " / " + MouseSheets.Length;
+        if (label != null)
+        {
+            label.text = (pageNum + 1) + " / " + MouseSheets.Length;
+        }
     }
 
     public void ToTitle()
