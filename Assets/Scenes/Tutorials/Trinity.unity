@@ -786,10 +786,10 @@ MonoBehaviour:
   lines:
   - {fileID: 1317046188}
   - {fileID: 1865696961}
-  - {fileID: 1482382877}
-  - {fileID: 591230435}
   - {fileID: 313980826}
   - {fileID: 2125427727}
+  - {fileID: 1482382877}
+  - {fileID: 591230435}
   - {fileID: 1427323613}
   - {fileID: 1106123415}
   - {fileID: 771240380}
@@ -809,10 +809,10 @@ Transform:
   m_Children:
   - {fileID: 1317046187}
   - {fileID: 1865696959}
-  - {fileID: 1482382875}
-  - {fileID: 591230433}
   - {fileID: 313980825}
   - {fileID: 2125427726}
+  - {fileID: 1482382875}
+  - {fileID: 591230433}
   - {fileID: 1427323612}
   - {fileID: 1106123413}
   - {fileID: 771240378}
@@ -1118,7 +1118,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 178961910}
-  m_RootOrder: 4
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &313980826
 MonoBehaviour:
@@ -1132,10 +1132,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0f7af42fc1d1144b811dbc6553a1b46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tI'll explain what just happened in a moment. But for simplicity's sake;
-    Helicopters, Tanks, and Armoured Flak are something I like to call \"Trinity
-    Units\".\n\tAs we have seen each of these units has another unit that it is strong
-    against, and will destroy instantly in a fight."
+  Words: "\tFor simplicity's sake; helicopters, tanks, and flak cars are something
+    I like to call \"Trinity Units\".\n\tAs we have seen each of these units has
+    another trinity unit that it is strong against, and will destroy instantly in
+    a fight."
   RequiresMobileVersion: 0
   MobileText: 
   ShowBox: 1
@@ -1171,10 +1171,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf40ac41b436c4fa20caff9c600eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tFlak Car's are great at dealing with low altitude aircraft, and anything
+  Words: "\tFlak car's are great at dealing with low altitude aircraft, and anything
     else with thin armour. Their advanced targeting system can even shoot down small
-    missiles.\n\tNaturally, all of this makes the Armoured Flak Car an absolute terror
-    for helicopters. Order our Flak Car to take out that enemy chopper."
+    missiles.\n\tNaturally, all of this makes the armoured flak car an absolute terror
+    for helicopters. Order our flak car to take out that enemy chopper."
   RequiresMobileVersion: 0
   MobileText: "\tNow let's order our infantry to attack. Touch and hold one finger
     on any of the symbols, then drag your finger over to the enemy infantry. Once,
@@ -1411,8 +1411,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf40ac41b436c4fa20caff9c600eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tNow that that's been taken care of let's get back to talking about Flak.
-    Select our Armoured Flak Car, and I'll show you its finer qualities."
+  Words: "\tNow that that's been taken care of let's get back to talking about flak.
+    Select our armoured flak car, and I'll show you its finer qualities."
   RequiresMobileVersion: 0
   MobileText: Touch the infantry squad indicated by the green arrow.
   ShowBox: 1
@@ -1561,7 +1561,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Words: "\tThis is a good opportunity to teach you how to deselect a unit. Just
-    right click and you will deselect the Flak Car."
+    right click and you will deselect the flak car."
   RequiresMobileVersion: 1
   MobileText: "\tThis is a good opportunity to teach you how to deselect a unit.
     If you ever want to deselect a unit, just scroll the map."
@@ -1755,7 +1755,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 178961910}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &591230434
 MonoBehaviour:
@@ -1785,11 +1785,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf40ac41b436c4fa20caff9c600eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tGood.\n\tNow have our helicopter attack the enemy Helicopter"
+  Words: "\tGood.\n\tNow have our helicopter attack the enemy helicopter"
   RequiresMobileVersion: 0
-  MobileText: "\tNow let's order our infantry to attack. Touch and hold one finger
-    on any of the symbols, then drag your finger over to the enemy infantry. Once,
-    your finger is above the crossed swords symbol release your finger to attack."
+  MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: a6afbdb7b78d23b44967fc7861ce2144, type: 2}
   highlighted: {fileID: 0}
@@ -2009,7 +2007,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf40ac41b436c4fa20caff9c600eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tThe Attack Helicopter is the fastest unit in your arsenal, able to move
+  Words: "\tThe attack helicopter is the fastest unit in your arsenal, able to move
     5 tiles in a turn and able to cross most types of terrain. Helicopters are great
     at hunting tanks and can defeat them outright."
   RequiresMobileVersion: 0
@@ -2581,9 +2579,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Words: "\tNow have our infantry finish off that enemy Helicopter."
   RequiresMobileVersion: 0
-  MobileText: "\tNow let's order our infantry to attack. Touch and hold one finger
-    on any of the symbols, then drag your finger over to the enemy infantry. Once,
-    your finger is above the crossed swords symbol release your finger to attack."
+  MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: a6afbdb7b78d23b44967fc7861ce2144, type: 2}
   highlighted: {fileID: 0}
@@ -3763,7 +3759,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0f7af42fc1d1144b811dbc6553a1b46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tRemember how I mentioned Attack Helicopters can cross most types of terrain?
+  Words: "\tRemember how I mentioned attack helicopters can cross most types of terrain?
     Let me show you what I mean."
   RequiresMobileVersion: 0
   MobileText: 
@@ -3831,7 +3827,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf40ac41b436c4fa20caff9c600eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tAnd now give the Helicopter orders to attack that enemy tank!"
+  Words: "\tAnd now give the helicopter orders to attack that enemy tank!"
   RequiresMobileVersion: 0
   MobileText: "\tNow let's order our infantry to attack. Touch and hold one finger
     on any of the symbols, then drag your finger over to the enemy infantry. Once,
@@ -4077,8 +4073,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Words: "\tUnits locked in stalemate are vulnerable; even to attacks they would
-    normally counter. Even an attack from infantry. \n\tI'm sure you can see where
-    I'm going with this; select our infantry."
+    normally counter, Including an attack from infantry. \n\tI'm sure you can see
+    where I'm going with this; select our infantry."
   RequiresMobileVersion: 0
   MobileText: 
   ShowBox: 1
@@ -4863,7 +4859,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf40ac41b436c4fa20caff9c600eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tHow about a demonstration? Go ahead and select our Helicopter."
+  Words: "\tHow about a demonstration? Go ahead and select our helicopter."
   RequiresMobileVersion: 0
   MobileText: Touch the infantry squad indicated by the green arrow.
   ShowBox: 1
@@ -4921,7 +4917,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 120, y: -291.4483}
-  m_SizeDelta: {x: 200, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1356189000
 MonoBehaviour:
@@ -10782,10 +10778,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0f7af42fc1d1144b811dbc6553a1b46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tThe remaining possible encounter; when two alike units fight is a stalemate.
-    The lock symbol over these units shows that they are in stalemate.\n\tA unit
-    in stalemate needs to stay focused on the unit it is in stalemate with. This
-    leaves it vulnerable to attack."
+  Words: "\tThe remaining possible encounter; when two alike trinity units fight
+    is a stalemate. The lock symbol over these units shows that they are in stalemate."
   RequiresMobileVersion: 0
   MobileText: 
   ShowBox: 1
@@ -11098,7 +11092,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 178961910}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1482382876
 MonoBehaviour:
@@ -11127,7 +11121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Words: "\tWe can take out the enemy helicopter through something called \"Stalemate\".
-    Start by selecting our Helicopter."
+    Start by selecting our helicopter."
   RequiresMobileVersion: 0
   MobileText: Clearly I haven't been looking at the whole battlefield. To change
     the part of the map displayed you can hold the map by pressing two fingers on
@@ -11568,7 +11562,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf40ac41b436c4fa20caff9c600eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tTo start, select our Armoured Flak Car."
+  Words: "\tTo start, select our armoured flak car."
   RequiresMobileVersion: 0
   MobileText: Touch the infantry squad indicated by the green arrow.
   ShowBox: 1
@@ -11604,7 +11598,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf40ac41b436c4fa20caff9c600eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tWhich means our tank can destroy the eneny Flak Car. Go ahead and give
+  Words: "\tWhich means our tank can destroy the eneny flak car. Go ahead and give
     our tank the order to engage."
   RequiresMobileVersion: 0
   MobileText: "\tNow let's order our infantry to attack. Touch and hold one finger
@@ -12438,9 +12432,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf40ac41b436c4fa20caff9c600eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tThe Armoured Flak Car can move a maximum of 5 tiles in a turn; but has
+  Words: "\tThe armoured flak car can move a maximum of 5 tiles in a turn; but has
     trouble crossing some types of terrain.\n\tCase and point, notice how it can't
-    reach the enemy's Armoured Car over here?"
+    reach the enemy's armoured car over here?"
   RequiresMobileVersion: 0
   MobileText: Let's start by selecting the enemy base. Tap on the tile indicated
     by the green arrow.
@@ -12969,7 +12963,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf40ac41b436c4fa20caff9c600eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tOur Flak Car can't reach the enemy because it can't cross these wetlands.\n\tHowever,
+  Words: "\tOur flak car can't reach the enemy because it can't cross these wetlands.\n\tHowever,
     even if it could we have a better option to deal with this enemy flak."
   RequiresMobileVersion: 0
   MobileText: Let's start by selecting the enemy base. Tap on the tile indicated
@@ -13288,10 +13282,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf40ac41b436c4fa20caff9c600eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tBattle Tanks are pretty much the bane of the Armoured Flak Car. The Tank's
-    thick frontal armour is pretty much immune to the Flak Car's Autocannons.\n\tWith
-    that being said, the Battle Tank is slower, only able to move 4 tiles. However,
-    The Battle Tank can cross wetlands."
+  Words: "\tBattle tanks are pretty much the bane of the armoured flak car. The tank's
+    thick frontal armour is pretty much immune to the flak car's autocannons.\n\tWith
+    that being said, the battle tank is slower, only able to move 4 tiles. However,
+    The battle tank can cross wetlands."
   RequiresMobileVersion: 0
   MobileText: Let's start by selecting the enemy base. Tap on the tile indicated
     by the green arrow.
@@ -13344,7 +13338,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 178961910}
-  m_RootOrder: 5
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2125427727
 MonoBehaviour:
@@ -13361,8 +13355,9 @@ MonoBehaviour:
   Words: "\tWhat do you suppose would happen if a trinity unit attacked the unit
     it is weak against? In short, it would be countered.\n\tThe initial attack would
     be dodged, intercepted, or just plain shrugged off. After that, the attacked
-    unit will return fire, and destroy the attacking unit.\n\tThere is no benefit
-    to such an interaction; DON'T DO IT!"
+    unit will return fire, and destroy the attacking unit. Infantry attacking a trinity
+    unit will give the same result.\n\tThere is no benefit to such an interaction;
+    DON'T DO IT!"
   RequiresMobileVersion: 0
   MobileText: 
   ShowBox: 1

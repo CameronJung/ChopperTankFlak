@@ -435,10 +435,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0f7af42fc1d1144b811dbc6553a1b46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tKeeping Our Rocket Carriers alive is going to be vital to winning this
-    battle, which isn't easy because Rocket Carriers are helpless in close range
+  Words: "\tKeeping Our rocket carriers alive is going to be vital to winning this
+    battle, which isn't easy because rocket carriers are helpless in close range
     combat.\n\tThe terrain here works to our advatage though; and as such there only
-    remains 2 threats to our Rocket Carriers."
+    remains 2 threats to our rocket carriers."
   RequiresMobileVersion: 0
   MobileText: 
   ShowBox: 1
@@ -1914,10 +1914,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf40ac41b436c4fa20caff9c600eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tThis is a Rocket Carrier. It may look like an armoured truck with a rocket
+  Words: "\tThis is a rocket carrier. It may look like an armoured truck with a rocket
     gantry, and it pretty much is. To be more accurate that rocket is a short range
     ballistic missile capable of destroying any unit in a range of 3 to 5 tiles away.\n\tRocket
-    Carriers may be powerful, but they are also slow, only able to move 3 tiles in
+    carriers may be powerful, but they are also slow, only able to move 3 tiles in
     a turn. Additionally, Rocket carriers share the same lack-lustre off road performance
     as flak cars."
   RequiresMobileVersion: 0
@@ -3800,7 +3800,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf40ac41b436c4fa20caff9c600eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: " . . . and here. Than the rocket carriers will be able to cover the entire
+  Words: "\t . . . and here. Than the rocket carriers will be able to cover the entire
     map.\n\tFrom now on though, following my advice is up to you, good luck, Commander."
   RequiresMobileVersion: 1
   MobileText: Clearly I haven't been looking at the whole battlefield. To change
@@ -3870,14 +3870,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf40ac41b436c4fa20caff9c600eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tRemember how I said Rocket Carriers struggle in close range? Any unit
+  Words: "\tRemember how I said rocket carriers struggle in close range? Any unit
     is able to destroy a rocket carrier from close range. Including Infantry.\n\tOur
     infantry will certainly be lost in the next turn, but victory rarely comes without
     sacrifice. Order our infantry to attack the enemy rocket carrier."
   RequiresMobileVersion: 0
-  MobileText: "\tNow let's order our infantry to attack. Touch and hold one finger
-    on any of the symbols, then drag your finger over to the enemy infantry. Once,
-    your finger is above the crossed swords symbol release your finger to attack."
+  MobileText: 
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: a6afbdb7b78d23b44967fc7861ce2144, type: 2}
   highlighted: {fileID: 0}
@@ -4816,7 +4814,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0f7af42fc1d1144b811dbc6553a1b46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tWell Commander I think you can handle things from here. Just one last
+  Words: "\tWell, Commander, I think you can handle things from here. Just one last
     piece of advice before I hand over the reins."
   RequiresMobileVersion: 0
   MobileText: 
@@ -4930,7 +4928,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7cf40ac41b436c4fa20caff9c600eca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tThe first threat is the enemy's Rocket Carrier. However, we can deal
+  Words: "\tThe first threat is the enemy's rocket carrier. However, we can deal
     with that relatively easily. To begin, select our infantry squad."
   RequiresMobileVersion: 0
   MobileText: Touch the infantry squad indicated by the green arrow.
@@ -11319,8 +11317,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Words: "\tThis tile here is a canyon. The narrow passage provided by canyons poses
     a significant hazard to helicopters, and as such forbids their movement.\n\tI'm
-    sure you can see where I'm going with this commander. As long as our rocket carriers
-    remain in these small valleys, they can bombard the enemy with impunity.\t"
+    sure you can see where I'm going with this, Commander. As long as our rocket
+    carriers remain in these small valleys, they can bombard the enemy with impunity.\t"
   RequiresMobileVersion: 0
   MobileText: 
   ShowBox: 1
