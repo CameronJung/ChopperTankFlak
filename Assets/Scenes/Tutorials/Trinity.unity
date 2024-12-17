@@ -1080,7 +1080,7 @@ MonoBehaviour:
   camObject: {fileID: 1463816263}
   mapSize: {x: 15, y: 12}
   IsAsymetrical: 1
-  CardinalDistances: 08000000090000000700000008000000
+  CardinalDistances: 07000000080000000700000006000000
   Deadzone: {fileID: 1327436140}
   scrollSpeed: 1.5
 --- !u!4 &229181067 stripped
@@ -4917,7 +4917,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 120, y: -291.4483}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1356189000
 MonoBehaviour:
@@ -13285,7 +13285,7 @@ MonoBehaviour:
   Words: "\tBattle tanks are pretty much the bane of the armoured flak car. The tank's
     thick frontal armour is pretty much immune to the flak car's autocannons.\n\tWith
     that being said, the battle tank is slower, only able to move 4 tiles. However,
-    The battle tank can cross wetlands."
+    the battle tank can cross rough terrain like wetlands."
   RequiresMobileVersion: 0
   MobileText: Let's start by selecting the enemy base. Tap on the tile indicated
     by the green arrow.

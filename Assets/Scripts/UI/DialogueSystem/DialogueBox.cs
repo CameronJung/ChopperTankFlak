@@ -91,7 +91,6 @@ public class DialogueBox : MonoBehaviour
             }
 
 
-
             ContinueButton.SetActive(step.GetControlsForStep().CheckBooleanControlPermission(UniversalConstants.BooleanControls.ContinueButton));
 
             if (Highlighter != null)
@@ -137,7 +136,11 @@ public class DialogueBox : MonoBehaviour
         {
             //Being sent null indicates there are no more steps so the dialogue box should hide
             ObscureSelf();
-            Highlighter.SetActive(false);
+            if(Highlighter != null)
+            {
+                Highlighter.SetActive(false);
+            }
+            
             Pointer.SetActive(false);
         }
 

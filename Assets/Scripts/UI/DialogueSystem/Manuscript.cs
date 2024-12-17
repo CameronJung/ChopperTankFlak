@@ -77,4 +77,13 @@ public class Manuscript : MonoBehaviour
         return next;
     }
 
+
+    public bool HasAnotherStep()
+    {
+        bool goOn = Acts[CurrActIndex].HasNextStep();
+
+        goOn = goOn || HasNextAct();
+
+        return goOn;
+    }
 }

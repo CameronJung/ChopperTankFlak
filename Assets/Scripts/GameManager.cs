@@ -187,6 +187,12 @@ public class GameManager : MonoBehaviour
         {
             clicker.AllowClicks();
             numPlayerUnitsReady--;
+            
+            if (Director != null && !IsBattleOver())
+            {
+                Director.ShowBox();
+            }
+
         }
         else
         {
@@ -215,8 +221,11 @@ public class GameManager : MonoBehaviour
         if(WhosTurn() == Faction.PlayerTeam)
         {
             clicker.BlockClicks();
+            if (Director != null)
+            {
+                Director.HideBox();
+            }
         }
-        //intel.WipeOldData();
 
         unitMoving = true;
         numUnitsMoving++;

@@ -96,4 +96,21 @@ public class DialogueManager : MonoBehaviour
         HandleStep(Playbook.GetNextStep());
     }
 
+
+    public void HideBox()
+    {
+        Box.ObscureSelf();
+    }
+
+    public void ShowBox()
+    {
+
+        if (Playbook.HasAnotherStep())
+        {
+            Box.RevealSelf();
+        }
+
+        
+    }
+
 }

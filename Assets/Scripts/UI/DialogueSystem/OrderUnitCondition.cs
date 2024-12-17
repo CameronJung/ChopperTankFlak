@@ -25,6 +25,10 @@ public class OrderUnitCondition : ModularCondition
         {
             satisfied = satisfied && (GetDestination() == SelectedUnit.GetMissionDestination());
         }
+        else
+        {
+            satisfied = false;
+        }
 
         return satisfied;
     }

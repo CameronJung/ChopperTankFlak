@@ -415,6 +415,8 @@ public class CommandTracer : MonoBehaviour
         {
             //Mission mission = GenerateMission();
 
+
+
             SendCommand();
 
 

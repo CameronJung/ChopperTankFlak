@@ -183,6 +183,7 @@ public class ClickHandler : MonoBehaviour
 
                         if (commander.drawing)
                         {
+                            commander.HandleMouseAtTile(tilePos);
                             commander.PlayerSendCommand();
                         }
 
