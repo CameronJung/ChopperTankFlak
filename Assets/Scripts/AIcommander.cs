@@ -51,14 +51,69 @@ public class AIcommander : MonoBehaviour
         //this.military = units.ToArray();
         this.military = militaryManager.GetListOfUnits(Faction.ComputerTeam).ToArray();
         //StartCoroutine(IssueDirectives());
-        StartCoroutine(ObjectiveBasedTurn());
+        StartCoroutine(ObjectiveBasedTurn(null));
+    }
+
+    public void TakeTurn( List<RequiredMove> stageLines)
+    {
+        if(stageLines.Count > 0)
+        {
+            StartCoroutine(ObjectiveBasedTurn(stageLines));
+        }
+        else
+        {
+            StartCoroutine(ObjectiveBasedTurn(null));
+        }
     }
 
 
 
-    private IEnumerator ObjectiveBasedTurn()
+    private IEnumerator ObjectiveBasedTurn(List<RequiredMove> stageLines)
     {
         yield return null;
+
+        //First process moves that are predetermined
+        if(stageLines != null)
+        {
+            foreach(RequiredMove line in stageLines)
+            {
+
+                yield return null;
+
+                selector.HandleAISelection(line.GetActor().myTilePos);
+
+                commander.SpoofSendCommand(line.GetDestination());
+                selector.HandleDeselect();
+                yield return null;
+
+                //unmoved.Remove(choice.GetUnit());
+
+                int cycles = 0;
+
+                //wait until the unit is moving
+                while (!manager.IsUnitMoving() && cycles < 600)
+                {
+                    //Rounding off time scale means that frames during a pause won't be counted
+                    cycles += Mathf.RoundToInt(Time.timeScale);
+                    Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
+                    yield return null;
+                }
+
+                cycles = 0;
+
+                //Wait until the unit is done moving
+                while (manager.IsUnitMoving() && cycles < 600)
+                {
+                    yield return null;
+                    cycles += Mathf.RoundToInt(Time.timeScale);
+                }
+                Debug.Assert(cycles < 600, "!ERROR! commander caught in endless wait loop");
+
+                selector.HandleDeselect();
+            }
+        }
+
+
 
         float turnStarted = Time.realtimeSinceStartup;
 

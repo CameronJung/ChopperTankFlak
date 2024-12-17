@@ -253,6 +253,20 @@ public abstract class Unit : MonoBehaviour, ISelectable
         this.currMission = newMission;
     }
 
+    public void CancelMission()
+    {
+        this.currMission = null;
+    }
+
+    public bool HasMission()
+    {
+        return this.currMission != null;
+    }
+
+    public Vector3Int GetMissionDestination()
+    {
+        return currMission.GetDestinationTile();
+    }
 
     public void RecieveOrders(Stack<Order> commands)
     {

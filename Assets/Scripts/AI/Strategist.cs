@@ -126,8 +126,14 @@ public class Strategist : MonoBehaviour
 
                 }
 
-                
-                this.Assignments.Add(unit, leader.GetPossibleAssignments()[0]);
+                if(leader.GetPossibleAssignments().Count > 0)
+                {
+                    this.Assignments.Add(unit, leader.GetPossibleAssignments()[0]);
+                }
+                else
+                {
+                    this.Assignments.Add(unit, oas[0]);
+                }
             }
             else
             {

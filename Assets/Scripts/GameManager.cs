@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private GameObject pausePanel;
     private MilitaryManager militaryManager;
+    private DialogueManager Director = null;
 
 
     private AIIntelHandler intel;
@@ -39,12 +40,15 @@ public class GameManager : MonoBehaviour
 
     //Changes to true when the game ends for some reason
     private bool battleOver = false;
-
+    private ControlsManager Controller = null;
 
 
     private void Awake()
     {
+        Controller = gameObject.GetComponent<ControlsManager>();
         militaryManager = gameObject.GetComponent<MilitaryManager>();
+        Director = gameObject.GetComponent<DialogueManager>();
+        
     }
 
     // Start is called before the first frame update0
@@ -104,7 +108,21 @@ public class GameManager : MonoBehaviour
         else
         {
             clicker.BlockClicks();
-            enemyCO.TakeTurn();
+
+            if(Director != null)
+            {
+                List<RequiredMove> moves = Director.CurrAct.GetAISteps();
+
+                enemyCO.TakeTurn(moves);
+            }
+            else
+            {
+                enemyCO.TakeTurn();
+            }
+            
+
+
+
             musicManager.PlayComputerMusic();
         }
     }
@@ -115,7 +133,12 @@ public class GameManager : MonoBehaviour
     private void EndTurn()
     {
         turn++;
+        if (Controller != null && Director != null)
+        {
+            Director.NextAct();
+        }
         BeginTurn();
+
     }
 
     
@@ -136,30 +159,6 @@ public class GameManager : MonoBehaviour
                     numPlayerUnitsReady++;
                 }
             }
-            /*
-            if (turn % 2 == 0)
-            {
-                foreach (Unit unit in militaryManager.GetListOfUnits(WhosTurn()))
-                {
-
-                    if (unit.Revitalize())
-                    {
-                        unitsAvailable++;
-                        numPlayerUnitsReady++;
-                    }
-                }
-            }
-            else
-            {
-                foreach (Unit unit in computerUnits)
-                {
-                    if (unit.Revitalize())
-                    {
-                        unitsAvailable++;
-                        numComputerUnitsReady++;
-                    }
-                }
-            }*/
         }
         
     }
@@ -170,22 +169,7 @@ public class GameManager : MonoBehaviour
     public void ReportDeath(Unit casualty)
     {
 
-        bool gameOver = false;
-        /*
-        if (casualty.GetAllegiance() == Faction.PlayerTeam)
-        {
-            
-            playerUnits.Remove(casualty);
-            gameOver = (playerUnits.Count == 0) ;
-        }
-        else
-        {
-            computerUnits.Remove(casualty);
-            gameOver = (computerUnits.Count == 0);
-        }
-        */
-
-        gameOver = militaryManager.CountTotalUnits(casualty.GetAllegiance()) == 0;
+        bool gameOver = militaryManager.CountTotalUnits(casualty.GetAllegiance()) == 0;
 
         if (gameOver)
         {
@@ -203,6 +187,12 @@ public class GameManager : MonoBehaviour
         {
             clicker.AllowClicks();
             numPlayerUnitsReady--;
+            
+            if (Director != null && !IsBattleOver())
+            {
+                Director.ShowBox();
+            }
+
         }
         else
         {
@@ -213,7 +203,7 @@ public class GameManager : MonoBehaviour
         if (unit.GetAllegiance() == WhosTurn())
         {
             unitsAvailable--;
-            if (unitsAvailable == 0)
+            if (unitsAvailable == 0 && Controller.CurrentPermissions.CheckBooleanControlPermission(BooleanControls.AutoTurnEnd))
             {
                 HandleTurnEnd(WhosTurn());
             }
@@ -231,8 +221,11 @@ public class GameManager : MonoBehaviour
         if(WhosTurn() == Faction.PlayerTeam)
         {
             clicker.BlockClicks();
+            if (Director != null)
+            {
+                Director.HideBox();
+            }
         }
-        //intel.WipeOldData();
 
         unitMoving = true;
         numUnitsMoving++;
@@ -279,7 +272,7 @@ public class GameManager : MonoBehaviour
     //Called to end a turn voluntarily or automatically
     public void HandleTurnEnd(UniversalConstants.Faction faction)
     {
-        if (!turnComplete && WhosTurn() == faction)
+        if (!turnComplete && WhosTurn() == faction )
         {
             turnComplete = true;
             StartCoroutine(AwaitTurnChange());
@@ -289,7 +282,7 @@ public class GameManager : MonoBehaviour
 
     public void PlayerEndTurn()
     {
-        if (!battleOver)
+        if (!battleOver && Controller.CurrentPermissions.CheckBooleanControlPermission(BooleanControls.end_turn))
         {
             HandleTurnEnd(Faction.PlayerTeam);
         }

@@ -548,6 +548,7 @@ GameObject:
   m_Component:
   - component: {fileID: 319854805}
   - component: {fileID: 319854804}
+  - component: {fileID: 319854806}
   m_Layer: 0
   m_Name: GameBoard
   m_TagString: Untagged
@@ -583,6 +584,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &319854806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 319854803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57b22be190fb79b4a9c2f8f89cfc1ddf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DefaultPermissions: {fileID: 11400000, guid: 883d9d7759aaec941b3e9eacb5820e17, type: 2}
 --- !u!4 &349582093 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4306665396663891279, guid: 046d797aa4e931145af07a5765e136d0, type: 3}

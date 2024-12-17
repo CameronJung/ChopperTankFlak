@@ -445,7 +445,7 @@ public class HexOverlay : MonoBehaviour
         foreach( HexOverlay hex in adjacent)
         {
             if(hex.distanceFrom == this.distanceFrom - 1 && hex.CanIpass(unit) && 
-                (hex.currState == HexState.hold || hex.currState == HexState.reachable))
+                (hex.currState == HexState.hold || hex.currState == HexState.reachable || hex.currState == HexState.capture))
             {
                 
                 if(!pathComplete && hex.ContinueDirectPath(ref validPath, unit))

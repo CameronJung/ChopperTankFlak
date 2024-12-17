@@ -1066,6 +1066,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camObject: {fileID: 1463816263}
   mapSize: {x: 15, y: 12}
+  IsAsymetrical: 0
+  CardinalDistances: 00000000000000000000000000000000
   Deadzone: {fileID: 1327436140}
   scrollSpeed: 1.5
 --- !u!4 &229181067 stripped
@@ -3019,6 +3021,7 @@ GameObject:
   - component: {fileID: 1031768489}
   - component: {fileID: 1031768488}
   - component: {fileID: 1031768490}
+  - component: {fileID: 1031768491}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -3070,6 +3073,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 279c1138d1ee2bf49b1d048af66e093f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1031768491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1031768487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57b22be190fb79b4a9c2f8f89cfc1ddf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DefaultPermissions: {fileID: 11400000, guid: 883d9d7759aaec941b3e9eacb5820e17, type: 2}
 --- !u!1001 &1042496748
 PrefabInstance:
   m_ObjectHideFlags: 0

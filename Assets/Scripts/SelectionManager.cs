@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using static UniversalConstants;
 
 public class SelectionManager : MonoBehaviour
 {
@@ -9,20 +10,31 @@ public class SelectionManager : MonoBehaviour
     [SerializeField] private ReconPanel recon;
     [SerializeField] private GameObject cursor;
     [SerializeField] private CommandTracer commander;
+    
 
     public Unit selectedUnit { get; private set; }
 
     private Strategist Tactician;
 
     private List<HexOverlay> affectedHexes;
-    private Vector3Int selectedPos = new Vector3Int();
+    public Vector3Int selectedPos { get; private set; } = new Vector3Int();
+
     private List<Directive> Directives;
     private AStarMeasurement Ruler;
     private GlobalNavigationData Navigation;
+    private ControlsManager Controller;
+
+    //Variables to remember to revert selection state
+    private List<HexOverlay> MemAffected;
+    private Vector3Int MemPos;
+    private Unit MemUnit = null;
+    private bool MemHadSelection = false;
+
 
     // Start is called before the first frame update
     void Start()
     {
+        Controller = GameObject.Find(UniversalConstants.MANAGERPATH).GetComponent<ControlsManager>();
         Ruler = gameObject.GetComponent<AStarMeasurement>();
         Navigation = GameObject.Find(UniversalConstants.MAPPATH).GetComponent<GlobalNavigationData>();
     }
@@ -33,9 +45,83 @@ public class SelectionManager : MonoBehaviour
     }
     
 
+    private void LogSelectionState()
+    {
+        MemAffected = affectedHexes;
+        MemPos = selectedPos;
+        MemUnit = selectedUnit;
+        MemHadSelection = cursor.activeInHierarchy;
+    }
+
+    private void RevertSelectionState()
+    {
+        
+        cursor.SetActive(MemHadSelection);
+
+        if (MemHadSelection)
+        {
+            HandleNewSelection(MemPos);
+            if (MemUnit != null)
+            {
+                HandleUnitSelected();
+            }
+        }
+        else
+        {
+            HandleDeselect();
+        }
+
+        /*
+        */
+
+        
+        
+    }
+
+    public void HandlePlayerNewSelection(Vector3Int tilePos)
+    {
+        if(!Controller.CurrentPermissions.CheckSpecifiableControlPermission(SpecifiableControls.select, ControlAccess.forbidden))
+        {
+
+
+
+            HandleNewSelection(tilePos);
+            Debug.Log("selected tile is: " + selectedPos);
+
+            if(Controller.CurrentPermissions.CheckSpecifiableControlPermission(SpecifiableControls.select, ControlAccess.conditional))
+            {
+                if (!Controller.IsConditionSatisfied())
+                {
+                    RevertSelectionState();
+                }
+            }
+
+
+        }
+
+        
+    }
+
+    public void HandlePlayerDeselection()
+    {
+        if (Controller.CurrentPermissions.CheckBooleanControlPermission(BooleanControls.deselect))
+        {
+            HandleDeselect();
+
+            if (Controller.CurrentPermissions.CheckSpecifiableControlPermission(SpecifiableControls.select, ControlAccess.conditional))
+            {
+                if (!Controller.IsConditionSatisfied())
+                {
+                    RevertSelectionState();
+                }
+            }
+        }
+    }
+
+
     public void HandleNewSelection(Vector3Int tilePos, bool conspicuous = true)
     {
-
+        LogSelectionState();
         GameObject obj = map.GetInstantiatedObject(tilePos);
 
 
@@ -54,8 +140,17 @@ public class SelectionManager : MonoBehaviour
                 }
                 else if (hex.GetOccupiedBy() != null)
                 {
-                    HandleUnitSelected(conspicuous);
-                    recon.DisplayIntelAbout(hex.GetOccupiedBy(), tilePos);
+                    //Units that are proccessing a mission should be unselectable
+                    if (!hex.GetOccupiedBy().HasMission())
+                    {
+                        HandleUnitSelected(conspicuous);
+                        recon.DisplayIntelAbout(hex.GetOccupiedBy(), tilePos);
+                    }
+                    else
+                    {
+                        recon.DisplayIntelAbout(map.GetTile<TerrainTile>(tilePos), tilePos);
+                    }
+                    
                 }
             }
             //Otherwise send the unit if one is present

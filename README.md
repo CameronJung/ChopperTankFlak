@@ -2,9 +2,18 @@
 A simple rock-paper-scissors strategy game built in the Unity engine.
 
 
-Current Version: 1.6.0
+Current Version: 1.7.1
 
 Update Log:
+
+V 1.7.1 (android v8)(Hotfix)
+ - fixed a bug that could break the tutorials via bypassing the check that a unit is sent the proper order
+ - fixed a minor grammar issue in a tutorial
+ - changed the "How To Play" button on the main menu to a "manual" button as this is now supplementry to the tutorials
+
+V 1.7.0 (android v8)(Major update)
+ - Added 3 tutorial levels
+ - Created a dialogue system, currently just used for tutorial instructions but could be expanded to add a story to the campaign
 
 V 1.6.0 (android v8)(Major update)
  - Overhauled the AI, not neccesarily smarter, but more fun to play against
