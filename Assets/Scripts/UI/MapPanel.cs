@@ -32,6 +32,8 @@ public class MapPanel : MonoBehaviour
 
     [SerializeField] private float scrollSpeed = 1.25f;
 
+    [SerializeField] private int MaximumViewWidthInTiles = 0;
+
     private Rect mapRect;
     private Rect mapCentreRect;
     private Vector2 mapCentre;
@@ -96,12 +98,19 @@ public class MapPanel : MonoBehaviour
         mapCentre = Deadzone.position;
         cam = camObject.GetComponent<Camera>();
 
+        
+
         MapViewSize = new Vector2(cam.orthographicSize * cam.aspect * 2, cam.orthographicSize * 2);
 
+        float maximumViewWidth = MaximumViewWidthInTiles > 0 ? Mathf.Min(MapWorldSize.x, MaximumViewWidthInTiles * HEXWIDTHWORLDUNITS): MapWorldSize.x;
 
-        if (MapViewSize.x > MapWorldSize.x)
+        
+
+
+        //make sure the camera view isn't too big to reveal anything
+        if (MapViewSize.x > maximumViewWidth)
         {
-            cam.orthographicSize = (MapWorldSize.x)/(cam.aspect*2.0f);
+            cam.orthographicSize = (maximumViewWidth)/(cam.aspect*2.0f);
             MapViewSize = new Vector2(cam.orthographicSize * cam.aspect * 2, cam.orthographicSize * 2);
         }
 

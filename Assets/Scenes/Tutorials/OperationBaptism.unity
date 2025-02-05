@@ -1076,6 +1076,7 @@ MonoBehaviour:
   CardinalDistances: 12000000070000000500000005000000
   Deadzone: {fileID: 1327436140}
   scrollSpeed: 1.5
+  MaximumViewWidthInTiles: 16
 --- !u!4 &229181067 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7137924168088364431, guid: f9f27ac743dccd8448c332660b2c4c5c, type: 3}
@@ -1815,8 +1816,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 120, y: -47.949844}
-  m_SizeDelta: {x: 224, y: 0}
+  m_AnchoredPosition: {x: 133.30817, y: -45.4189}
+  m_SizeDelta: {x: 250.61633, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &642421499
 MonoBehaviour:
@@ -4988,7 +4989,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 120, y: -291.4483}
+  m_AnchoredPosition: {x: 133.30817, y: -263.60788}
   m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1356189000

@@ -99,7 +99,7 @@ public class ClickHandler : MonoBehaviour
                         case TouchPhase.Began:
                             if (!(commander.drawing && IsTileActive(touchedTile)))
                             {
-                                selecter.HandleNewSelection(touchedTile);
+                                selecter.HandlePlayerNewSelection(touchedTile);
                                 SelectedThisTouch = commander.drawing;
 
                                 
@@ -121,14 +121,14 @@ public class ClickHandler : MonoBehaviour
                             if (commander.drawing && !SelectedThisTouch)
                             {
 
-                                commander.SendCommand();
-                                selecter.HandleNewSelection(touchedTile);
+                                commander.PlayerSendCommand();
+                                selecter.HandlePlayerNewSelection(touchedTile);
                             }
                             SelectedThisTouch = false;
 
                             break;
                         case TouchPhase.Canceled:
-                            selecter.HandleDeselect();
+                            selecter.HandlePlayerDeselection();
                             SelectedThisTouch = false;
                             break;
                     }
@@ -141,8 +141,8 @@ public class ClickHandler : MonoBehaviour
             {
                 if (!blocked)
                 {
-                    selecter.HandleDeselect();
-                    //selecter.HandlePlayerDeselection();
+                    //selecter.HandleDeselect();
+                    selecter.HandlePlayerDeselection();
                 }
                 //When we start panning the map around initialize the previous point
                 if ( TrackedMapTouches[TouchIDs[0]].phase == TouchPhase.Began || TrackedMapTouches[TouchIDs[1]].phase == TouchPhase.Began)
