@@ -1043,6 +1043,7 @@ MonoBehaviour:
   CardinalDistances: 0a000000090000000600000007000000
   Deadzone: {fileID: 1327436140}
   scrollSpeed: 1.5
+  MaximumViewWidthInTiles: 0
 --- !u!4 &229181067 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7137924168088364431, guid: f9f27ac743dccd8448c332660b2c4c5c, type: 3}
@@ -1332,7 +1333,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Words: "\tWhile it's on the screen I will let you know that the crosshair symbol
     means to launch a ranged attack.\n\tHowever, the safety of our units must take
-    priority, rocket carriers can't move and attack int the same turn. So for now,
+    priority, rocket carriers can't move and attack in the same turn. So for now,
     I'm goint to have to ask you to move our carrier into the valley."
   RequiresMobileVersion: 0
   MobileText: 
@@ -1670,8 +1671,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 120, y: -47.949844}
-  m_SizeDelta: {x: 224, y: 0}
+  m_AnchoredPosition: {x: 133.30817, y: -45.4189}
+  m_SizeDelta: {x: 250.61633, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &642421499
 MonoBehaviour:
@@ -2334,8 +2335,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0f7af42fc1d1144b811dbc6553a1b46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Words: "\tGood. Now I'm sure your tired of me dictating your every move. So, to
-    speed things up I'm just going to show you what to do with the green arrow.\n\tNow
+  Words: "\tGood. Now I'm sure you're tired of me dictating your every move. So,
+    to speed things up I'm just going to show you what to do with the green arrow.\n\tNow
     then, we need to move our other rocket carrier in the east to safety. Just follow
     my directions, Commander."
   RequiresMobileVersion: 0
@@ -3801,8 +3802,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Words: "\t . . . and here. Than the rocket carriers will be able to cover the entire
-    map.\n\tFrom now on though, following my advice is up to you, good luck, Commander."
-  RequiresMobileVersion: 1
+    map.\n\tFrom now on though, following my advice is up to you. Good luck, Commander."
+  RequiresMobileVersion: 0
   MobileText: Clearly I haven't been looking at the whole battlefield. To change
     the part of the map displayed you can hold the map by pressing two fingers on
     the map panel. Then just drag the map around to move it.
@@ -4986,7 +4987,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 120, y: -291.4483}
+  m_AnchoredPosition: {x: 133.30817, y: -263.60788}
   m_SizeDelta: {x: 200, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1356189000
@@ -9808,7 +9809,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Words: "\tBy Placing your rocket carriers in the centre of each of the small valleys,
     here . . ."
-  RequiresMobileVersion: 1
+  RequiresMobileVersion: 0
   MobileText: Clearly I haven't been looking at the whole battlefield. To change
     the part of the map displayed you can hold the map by pressing two fingers on
     the map panel. Then just drag the map around to move it.
@@ -10646,7 +10647,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Words: "\tCommander, you're just in time. In this scenario we will be trying to
-    keep prevent the capture of our base.\n\tTo accomplish this task we will be using
+    prevent the capture of our base.\n\tTo accomplish this task we will be using
     our one stop solution for artillery: the Rocket Carrier."
   RequiresMobileVersion: 0
   MobileText: 
@@ -10818,7 +10819,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   computerBaseLoc: {x: 3, y: 6, z: 0}
-  playerBaseLoc: {x: -3, y: -6, z: 0}
+  playerBaseLoc: {x: 2, y: 9, z: 0}
 --- !u!114 &1917969242
 MonoBehaviour:
   m_ObjectHideFlags: 0

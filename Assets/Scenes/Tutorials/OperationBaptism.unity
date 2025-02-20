@@ -1311,7 +1311,7 @@ MonoBehaviour:
     to move to that tile."
   RequiresMobileVersion: 1
   MobileText: "\tWith that explained, lets order our infantry to move toward the
-    enemy base. Click the tile indicated by the green arrow to order your selected
+    enemy base. Touch the tile indicated by the green arrow to order your selected
     unit to move to that tile."
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: ac8ae592d78cd0440aacf68277a054d8, type: 2}
@@ -9982,7 +9982,8 @@ MonoBehaviour:
   RequiresMobileVersion: 1
   MobileText: "\tClearly I haven't been looking at the whole battlefield. To change
     the part of the map displayed you can hold the map by pressing two fingers on
-    the map panel. Then just drag the map around to move it."
+    the map panel. Then just drag the map around to move it. Move the map view to
+    the east and select the indicated unit."
   ShowBox: 1
   ControlsDuringStep: {fileID: 11400000, guid: 11d1eb5e3b9f9614c863b90328a3cf96, type: 2}
   highlighted: {fileID: 0}
