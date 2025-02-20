@@ -30,7 +30,7 @@ public class DialogueStep : MonoBehaviour{
 
     public string GetText()
     {
-        if (Application.isMobilePlatform)
+        if (Application.isMobilePlatform && RequiresMobileVersion)
         {
             return MobileText;
         }
