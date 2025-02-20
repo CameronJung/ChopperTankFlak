@@ -6,6 +6,10 @@ Current Version: 1.7.1
 
 Update Log:
 
+V 1.7.1 (android v10)(patch)
+ - Updated the android version with the last few major updates
+ - fixed additional spelling and grammar errors in the tutorial dialogue
+
 V 1.7.1 (android v8)(Hotfix)
  - fixed a bug that could break the tutorials via bypassing the check that a unit is sent the proper order
  - fixed a minor grammar issue in a tutorial
